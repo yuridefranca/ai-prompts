@@ -15,6 +15,14 @@ Improve code quality and performance **after tests pass**. This is the "Refactor
 - Architecture alignment required
 - Technical debt reduction
 
+## Workflow Artifact
+
+This skill is invoked as **Phase 7** of the Feature Workflow. It MUST produce an output file in the workflow folder.
+
+**Output File**: `.ai-workflow/[feature-folder]/7-refactoring.md`
+
+**Context**: Read `0-startpoint.md` for initial requirements, `2-architecture.md` for the design, and `5-implementation.md` for what was implemented.
+
 ## Core Principle
 
 **Tests must stay green** - If refactoring breaks tests, revert and try different approach.

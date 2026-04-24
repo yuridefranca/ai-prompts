@@ -15,6 +15,14 @@ This skill converts a user's high-level feature idea or description into a compl
 - Need to validate understanding before design
 - Converting product requests into engineering specs
 
+## Workflow Artifact
+
+This skill is invoked as **Phase 1** of the Feature Workflow. It MUST produce an output file in the workflow folder.
+
+**Output File**: `.ai-workflow/[feature-folder]/1-specification.md`
+
+**Context**: The workflow folder and `0-startpoint.md` were created in Phase 0. Read `0-startpoint.md` to understand the user's initial requirements before extracting the specification.
+
 ## Process
 
 ### Step 1: Understand the Feature Goal

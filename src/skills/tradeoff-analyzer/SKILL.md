@@ -15,6 +15,14 @@ Systematically analyze and compare different technical approaches to help make i
 - Evaluating technology choices
 - Risk vs reward assessment
 
+## Workflow Artifact
+
+This skill is invoked as part of **Phase 2** of the Feature Workflow (alongside system-designer). Its output is included in the architecture document.
+
+**Output File**: `.ai-workflow/[feature-folder]/2-architecture.md` (tradeoff analysis section)
+
+**Context**: Read `0-startpoint.md` for initial requirements and `1-specification.md` for the approved specification before analyzing tradeoffs.
+
 ## Process
 
 ### Step 1: Identify Approaches (Minimum 2)

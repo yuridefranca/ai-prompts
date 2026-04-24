@@ -15,6 +15,15 @@ description: Comprehensive code quality review covering security, performance, m
 - Pull request review
 - Critical/high-impact changes
 
+## Workflow Artifact
+
+This skill is invoked in both workflows:
+
+- **Feature Workflow Phase 8**: Produces `.ai-workflow/[feature-folder]/8-code-review.md`
+- **Improvement Workflow Phase 7**: Produces `.ai-workflow/[feature-folder]/7-post-fix-review.md` (alongside post-fix-reviewer)
+
+**Context**: Read `0-startpoint.md` for initial requirements and all prior phase output files for full context of what's being reviewed.
+
 ## Core Principle
 
 **Prevent Future Problems**: Catch issues now that would cause pain later. Balance thoroughness with pragmatism.

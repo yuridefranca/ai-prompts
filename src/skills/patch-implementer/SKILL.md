@@ -14,6 +14,14 @@ Implement **minimal bug fix** that addresses critic feedback. TDD approach: fail
 - Ready to implement bug fix
 - Have tests demonstrating bug
 
+## Workflow Artifact
+
+This skill is invoked as **Phase 6** of the Improvement Workflow. It MUST produce an output file in the workflow folder.
+
+**Output File**: `.ai-workflow/[feature-folder]/6-fix-implementation.md`
+
+**Context**: Read `0-startpoint.md` for the user's problem description, `2-root-cause-analysis.md` for the root cause, `3-solution-critique.md` for critique feedback, and `5-tdd-tests.md` for the failing tests.
+
 ## Core Principle
 
 **Minimal Fix First**: Implement simplest solution that fixes bug and handles critique concerns. Don't over-engineer.

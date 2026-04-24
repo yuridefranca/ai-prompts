@@ -15,6 +15,14 @@ description: Adversarially stress-test proposed bug fixes before implementation.
 - Critical/high-impact bugs
 - Production incident fixes
 
+## Workflow Artifact
+
+This skill is invoked as **Phase 3** of the Improvement Workflow. It MUST produce an output file in the workflow folder.
+
+**Output File**: `.ai-workflow/[feature-folder]/3-solution-critique.md`
+
+**Context**: Read `0-startpoint.md` for the user's problem description, `1-component-map.md` for affected components, and `2-root-cause-analysis.md` for the root cause before critiquing solutions.
+
 ## Core Principle
 
 **Assume the Fix Will Fail**: Actively search for ways the proposed solution breaks. Better to find problems now than in production.

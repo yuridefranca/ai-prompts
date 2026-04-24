@@ -21,6 +21,15 @@ Generate comprehensive failing UNIT tests BEFORE implementation to drive design 
 - E2E tests (use `integration-test-generator` after implementation)
 - Testing existing code (tests should come first)
 
+## Workflow Artifact
+
+This skill is invoked in multiple phases across both workflows:
+
+- **Feature Workflow Phase 4**: Produces `.ai-workflow/[feature-folder]/4-unit-tests.md`
+- **Improvement Workflow Phase 5**: Produces `.ai-workflow/[feature-folder]/5-tdd-tests.md`
+
+**Context**: Read `0-startpoint.md` for initial requirements. Read `1-specification.md` (Feature) or `2-root-cause-analysis.md` (Improvement) for what needs to be tested.
+
 ## TDD Philosophy
 
 **Red-Green-Refactor-Integration Cycle**:

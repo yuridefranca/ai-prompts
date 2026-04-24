@@ -15,6 +15,14 @@ Identify what components are affected by a bug or improvement request, trace dep
 - Before making changes to existing code
 - Documentation is unclear
 
+## Workflow Artifact
+
+This skill is invoked as **Phase 1** of the Improvement Workflow. It MUST produce an output file in the workflow folder.
+
+**Output File**: `.ai-workflow/[feature-folder]/1-component-map.md`
+
+**Context**: Read `0-startpoint.md` for the user's problem description before mapping components.
+
 ## Process
 
 ### Step 1: Identify Affected Components

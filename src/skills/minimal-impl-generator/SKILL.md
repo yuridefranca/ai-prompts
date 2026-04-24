@@ -14,6 +14,14 @@ Implement the **simplest possible solution** that makes tests pass. This is the 
 - Need to make tests pass
 - Following red-green-refactor cycle
 
+## Workflow Artifact
+
+This skill is invoked as **Phase 5** of the Feature Workflow. It MUST produce an output file in the workflow folder.
+
+**Output File**: `.ai-workflow/[feature-folder]/5-implementation.md`
+
+**Context**: Read `0-startpoint.md` for initial requirements, `1-specification.md` for the spec, `2-architecture.md` for the design, and `4-unit-tests.md` for the tests to pass.
+
 ## Core Principle: YAGNI
 
 **You Aren't Gonna Need It**

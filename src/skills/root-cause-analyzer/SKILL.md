@@ -15,6 +15,14 @@ description: Deeply analyze bugs to identify true root cause through evidence-ba
 - Need evidence-based understanding
 - Before proposing any solution
 
+## Workflow Artifact
+
+This skill is invoked as **Phase 2** of the Improvement Workflow. It MUST produce an output file in the workflow folder.
+
+**Output File**: `.ai-workflow/[feature-folder]/2-root-cause-analysis.md`
+
+**Context**: Read `0-startpoint.md` for the user's problem description and `1-component-map.md` for the affected components before analyzing root cause.
+
 ## Core Principle
 
 **Evidence Over Assumptions**: Every conclusion must be backed by logs, traces, reproductions, or code analysis.

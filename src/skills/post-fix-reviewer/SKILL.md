@@ -14,6 +14,14 @@ description: Verify bug fix works correctly, handles all edge cases, doesn't int
 - Before merging fix
 - For critical/production bugs
 
+## Workflow Artifact
+
+This skill is invoked as **Phase 7** of the Improvement Workflow (alongside code-reviewer). It MUST produce an output file in the workflow folder.
+
+**Output File**: `.ai-workflow/[feature-folder]/7-post-fix-review.md`
+
+**Context**: Read `0-startpoint.md` for the user's problem description, `2-root-cause-analysis.md` for the root cause, `3-solution-critique.md` for critique feedback, and `6-fix-implementation.md` for what was implemented.
+
 ## Core Principle
 
 **Prove It Works**: Don't assume fix works - verify with tests, reproduction, and edge cases.

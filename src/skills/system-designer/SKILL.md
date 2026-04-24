@@ -15,6 +15,14 @@ This skill designs comprehensive system architecture for new features, covering 
 - Planning system changes
 - Need to evaluate technical approaches
 
+## Workflow Artifact
+
+This skill is invoked as **Phase 2** of the Feature Workflow. It MUST produce an output file in the workflow folder.
+
+**Output File**: `.ai-workflow/[feature-folder]/2-architecture.md`
+
+**Context**: Read `0-startpoint.md` for initial requirements and `1-specification.md` for the approved specification before designing the architecture.
+
 ## Input Requirements
 
 - Approved specification document (from spec-extractor)

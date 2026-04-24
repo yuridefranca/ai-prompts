@@ -15,6 +15,16 @@ Update project documentation to capture new feature context, ensuring future dev
 - When feature behavior changes
 - Missing documentation discovered
 
+## Workflow Artifact
+
+This skill is invoked in multiple phases across both workflows:
+
+- **Feature Workflow Phase 3**: Produces `.ai-workflow/[feature-folder]/3-feature-documentation.md`
+- **Improvement Workflow Phase 1**: Contributes to `.ai-workflow/[feature-folder]/1-component-map.md` (if docs missing)
+- **Improvement Workflow Phase 4**: Produces `.ai-workflow/[feature-folder]/4-solution-documentation.md`
+
+**Context**: Read `0-startpoint.md` for initial requirements. Read the relevant phase output files for context about what's being documented.
+
 ## Process
 
 ### Step 0: CRITICAL - Use File Creation Tools

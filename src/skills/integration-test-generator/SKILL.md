@@ -23,6 +23,14 @@ Generate integration and end-to-end tests AFTER implementation to verify real co
 - For unit tests (use `tdd-test-generator`)
 - When dependencies can be mocked (use unit tests instead)
 
+## Workflow Artifact
+
+This skill is invoked as **Phase 6** of the Feature Workflow. It MUST produce an output file in the workflow folder.
+
+**Output File**: `.ai-workflow/[feature-folder]/6-integration-tests.md`
+
+**Context**: Read `0-startpoint.md` for initial requirements, `2-architecture.md` for the design, and `5-implementation.md` for what was implemented.
+
 ## Integration vs Unit Tests
 
 | Aspect          | Unit Tests            | Integration Tests       |
