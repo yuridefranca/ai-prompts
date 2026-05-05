@@ -23,12 +23,13 @@ Generate comprehensive failing UNIT tests BEFORE implementation to drive design 
 
 ## Workflow Artifact
 
-This skill is invoked in multiple phases across both workflows:
+This skill is invoked in multiple phases across all three workflows:
 
 - **Feature Workflow Phase 4**: Produces `.ai-workflow/[feature-folder]/4-unit-tests.md`
-- **Improvement Workflow Phase 5**: Produces `.ai-workflow/[feature-folder]/5-tdd-tests.md`
+- **Bug Workflow Phase 5**: Produces `.ai-workflow/[feature-folder]/5-tdd-tests.md`
+- **Improvement Workflow Phase 4**: Produces `.ai-workflow/[feature-folder]/4-tdd-tests.md`
 
-**Context**: Read `0-startpoint.md` for initial requirements. Read `1-specification.md` (Feature) or `2-root-cause-analysis.md` (Improvement) for what needs to be tested.
+**Context**: Read `0-startpoint.md`, `0.1-grill-me.md`, and the relevant prior phase outputs for what needs to be tested.
 
 ## TDD Philosophy
 

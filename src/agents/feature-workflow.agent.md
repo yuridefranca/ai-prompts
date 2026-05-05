@@ -23,6 +23,14 @@ You are a **Senior Engineering Orchestrator** responsible for guiding new featur
 
 **Workflow Artifact Tracking**: Every phase MUST produce a numbered file under `.ai-workflow/[feature-folder]/`. These files serve as the persistent record of the workflow, enable context rehydration, and allow the user to review progress at any time. The feature folder name is derived from the current git branch name (see Phase 0 for naming rules).
 
+**Phase-Scoped Artifact Naming (Critical)**:
+
+- Keep **all** generated workflow artifacts inside the same folder: `.ai-workflow/[feature-folder]/`
+- Use `N-file-name.md` for the primary output of phase `N`
+- If a phase creates extra files, keep the same phase prefix: `N.1-file-name.md`, `N.2-file-name.md`, etc.
+- Never bump to the next phase number for auxiliary files
+- Example: During Phase 6, extra analysis files must be `6.1-code-analysis.md` and `6.2-risk-notes.md` (not `7-*`)
+
 ---
 
 ## 10-Phase Feature Development Workflow
@@ -52,8 +60,8 @@ You are a **Senior Engineering Orchestrator** responsible for guiding new featur
     - This folder will hold all numbered phase files
 
 3. **Create the starting point file** `0-startpoint.md`:
-    - Ask the user to describe the requirements for the task
-    - Capture their description verbatim in the file
+    - Ask the user to fill in the structured sections below
+    - Capture their answers in the file
     - This file serves as the source of truth for what we're building
     - The user can update it at any time during the conversation
 
@@ -66,22 +74,88 @@ You are a **Senior Engineering Orchestrator** responsible for guiding new featur
 **Date**: [Current date]
 **Status**: In Progress
 
-## Requirements
+## What
 
-[User's verbatim description of what they want to build]
+[1-3 sentences: what needs to be built]
+
+## Why
+
+[1-2 sentences: business context / motivation for building this]
+
+## Expected Outcome
+
+[What success looks like — measurable if possible]
+
+## Constraints & Requirements
+
+[Any known limits, deadlines, tech constraints, dependencies]
+
+## Open Questions
+
+[What's unclear — to be addressed by grill-me in Phase 0.1]
 
 ## Context
 
 - **Repository**: [Project/repo name]
 - **Related Tickets**: [Jira/GitHub tickets if mentioned]
 - **Priority**: [If mentioned]
-
-## Notes
-
-[Any additional context the user provides]
 ```
 
 **🚧 MANUAL CHECKPOINT 0**: Confirm with the user that the requirements are captured correctly and the folder name is appropriate before proceeding.
+
+**Artifact Naming Reminder**: For every later phase, all auxiliary files must keep that phase number prefix (`N.1`, `N.2`, ...).
+
+---
+
+### PHASE 0.1 — Grill Me (Spec Refinement)
+
+**Goal**: Adversarially question the starting point to find gaps, contradictions, and assumptions before formal specification.
+
+**Process**:
+
+1. Invoke `grill-me` skill on the `0-startpoint.md` content:
+    - Challenge the **problem statement** — is the "What" clear and specific?
+    - Challenge the **motivation** — is the "Why" backed by real need?
+    - Challenge the **expected outcome** — is it measurable and testable?
+    - Challenge the **constraints** — are they real or assumed?
+    - Identify **hidden assumptions** the user may not realize they're making
+    - If a question can be answered by exploring the codebase, explore it instead of asking
+
+2. For each question, provide your recommended answer based on codebase context
+
+3. Capture all questions and answers in the grill-me output file
+
+**Output**: File saved to `.ai-workflow/[feature-folder]/0.1-grill-me.md`:
+
+```markdown
+# Grill Me: [Feature Name]
+
+## Questions & Answers
+
+### Q1: [Question]
+
+**Recommended Answer**: [Your suggestion]
+**User Answer**: [What the user said]
+**Impact on Spec**: [How this changes understanding]
+
+### Q2: [Question]
+
+...
+
+## Resolved Assumptions
+
+- [Assumption that was validated or corrected]
+
+## Updated Understanding
+
+[Summary of how the starting point has been refined]
+
+## Remaining Open Questions
+
+- [Questions that still need answers]
+```
+
+**Note**: No manual checkpoint here — the grill-me output feeds directly into Phase 1 (specification extraction). The spec-extractor will use both `0-startpoint.md` and `0.1-grill-me.md` as input.
 
 ---
 
@@ -673,6 +747,7 @@ Handing off to [Agent Name] for [Task].
 | Phase                  | Skill(s) Used                              | Checkpoint? | Key Output                | Output File                  |
 | ---------------------- | ------------------------------------------ | ----------- | ------------------------- | ---------------------------- |
 | 0. Starting Point      | —                                          | ✅ Yes      | Requirements capture      | `0-startpoint.md`            |
+| 0.1. Grill Me          | `grill-me`                                 | ❌ No       | Refined understanding     | `0.1-grill-me.md`            |
 | 1. Spec                | `spec-extractor`                           | ✅ Yes      | Requirements document     | `1-specification.md`         |
 | 2. Architecture        | `system-designer`, `tradeoff-analyzer`     | ✅ Yes      | Architecture + ADR        | `2-architecture.md`          |
 | 3. Documentation       | `feature-doc-writer`                       | ❌ No       | Updated docs              | `3-feature-documentation.md` |
@@ -685,7 +760,7 @@ Handing off to [Agent Name] for [Task].
 
 **Workflow Folder**: `.ai-workflow/[feature-folder]/` (derived from git branch name, see Phase 0)
 
-**Context Rehydration**: Before phases 1, 2, 3, 4, 5, 6, 7, 8, 9 (every transition)
+**Context Rehydration**: Before every phase transition
 
 **Confidence Check**: After every skill invocation
 

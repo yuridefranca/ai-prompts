@@ -16,11 +16,11 @@ Implement **minimal bug fix** that addresses critic feedback. TDD approach: fail
 
 ## Workflow Artifact
 
-This skill is invoked as **Phase 6** of the Improvement Workflow. It MUST produce an output file in the workflow folder.
+This skill is invoked as **Phase 6** of the Bug Workflow. It MUST produce an output file in the workflow folder.
 
 **Output File**: `.ai-workflow/[feature-folder]/6-fix-implementation.md`
 
-**Context**: Read `0-startpoint.md` for the user's problem description, `2-root-cause-analysis.md` for the root cause, `3-solution-critique.md` for critique feedback, and `5-tdd-tests.md` for the failing tests.
+**Context**: Read `0-startpoint.md`, `0.1-grill-me.md`, `2-root-cause-analysis.md`, `3-solution-evaluation.md`, and `5-tdd-tests.md` before implementing the fix.
 
 ## Core Principle
 

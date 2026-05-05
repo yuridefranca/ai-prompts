@@ -17,11 +17,11 @@ description: Deeply analyze bugs to identify true root cause through evidence-ba
 
 ## Workflow Artifact
 
-This skill is invoked as **Phase 2** of the Improvement Workflow. It MUST produce an output file in the workflow folder.
+This skill is invoked as **Phase 2** of the Bug Workflow. It MUST produce an output file in the workflow folder.
 
 **Output File**: `.ai-workflow/[feature-folder]/2-root-cause-analysis.md`
 
-**Context**: Read `0-startpoint.md` for the user's problem description and `1-component-map.md` for the affected components before analyzing root cause.
+**Context**: Read `0-startpoint.md`, `0.1-grill-me.md`, and `1-component-map.md` for the affected components before analyzing root cause.
 
 ## Core Principle
 

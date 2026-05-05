@@ -21,7 +21,7 @@ This skill is invoked as **Phase 7** of the Feature Workflow. It MUST produce an
 
 **Output File**: `.ai-workflow/[feature-folder]/7-refactoring.md`
 
-**Context**: Read `0-startpoint.md` for initial requirements, `2-architecture.md` for the design, and `5-implementation.md` for what was implemented.
+**Context**: Read `0-startpoint.md`, `0.1-grill-me.md`, `2-architecture.md`, and `5-implementation.md` before refactoring.
 
 ## Core Principle
 

@@ -17,13 +17,14 @@ Update project documentation to capture new feature context, ensuring future dev
 
 ## Workflow Artifact
 
-This skill is invoked in multiple phases across both workflows:
+This skill is invoked in multiple phases across all three workflows:
 
 - **Feature Workflow Phase 3**: Produces `.ai-workflow/[feature-folder]/3-feature-documentation.md`
+- **Bug Workflow Phase 4**: Produces `.ai-workflow/[feature-folder]/4-solution-documentation.md`
 - **Improvement Workflow Phase 1**: Contributes to `.ai-workflow/[feature-folder]/1-component-map.md` (if docs missing)
-- **Improvement Workflow Phase 4**: Produces `.ai-workflow/[feature-folder]/4-solution-documentation.md`
+- **Improvement Workflow Phase 3**: Produces `.ai-workflow/[feature-folder]/3-improvement-documentation.md`
 
-**Context**: Read `0-startpoint.md` for initial requirements. Read the relevant phase output files for context about what's being documented.
+**Context**: Read `0-startpoint.md` and `0.1-grill-me.md` for initial requirements. Read the relevant phase output files for context about what's being documented.
 
 ## Process
 

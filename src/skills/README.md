@@ -4,35 +4,45 @@ Specialized capabilities for development workflows. Each skill focuses on a sing
 
 ## Quick Reference
 
-| Skill | Type | Use When | Output |
-|-------|------|----------|--------|
+| Skill | Workflows | Use When | Output |
+|-------|-----------|----------|--------|
+| [grill-me](grill-me/SKILL.md) | All (Phase 0.1) | Before any analysis | Refined understanding, resolved assumptions |
 | [spec-extractor](spec-extractor/SKILL.md) | Feature | Starting new feature | Requirements, edge cases, acceptance criteria |
-| [system-designer](system-designer/SKILL.md) | Feature | After requirements | Domain model, APIs, data model, diagrams |
-| [tradeoff-analyzer](tradeoff-analyzer/SKILL.md) | Feature | Evaluating alternatives | Comparison matrix, recommendation |
-| [feature-doc-writer](feature-doc-writer/SKILL.md) | Shared | Updating docs | AGENTS.md, feature docs |
-| [tdd-test-generator](tdd-test-generator/SKILL.md) | Shared | Before implementation | Failing unit/integration tests |
-| [minimal-impl-generator](minimal-impl-generator/SKILL.md) | Feature | After tests written | Simplest working code |
+| [system-designer](system-designer/SKILL.md) | Feature, Improvement | After requirements/tradeoff | Domain model, APIs, data model, diagrams |
+| [tradeoff-analyzer](tradeoff-analyzer/SKILL.md) | Feature, Bug, Improvement | Evaluating alternatives | Comparison matrix, recommendation |
+| [feature-doc-writer](feature-doc-writer/SKILL.md) | All | Updating docs | AGENTS.md, feature docs |
+| [tdd-test-generator](tdd-test-generator/SKILL.md) | All | Before implementation | Failing unit/integration tests |
+| [minimal-impl-generator](minimal-impl-generator/SKILL.md) | Feature, Improvement | After tests written | Simplest working code |
 | [refactor-optimizer](refactor-optimizer/SKILL.md) | Feature | After tests pass | SOLID, DRY, performant code |
-| [component-mapper](component-mapper/SKILL.md) | Bugfix | Starting bugfix | Component list, dependency graph |
-| [root-cause-analyzer](root-cause-analyzer/SKILL.md) | Bugfix | After component mapping | Evidence-based root cause |
-| [solution-critic](solution-critic/SKILL.md) | Bugfix | Before implementing fix | Failure modes, edge cases, concerns |
-| [patch-implementer](patch-implementer/SKILL.md) | Bugfix | After critique approved | Minimal bug fix |
-| [post-fix-reviewer](post-fix-reviewer/SKILL.md) | Bugfix | After patch | Fix verification, regression check |
-| [code-reviewer](code-reviewer/SKILL.md) | Shared | Before merge | Security, performance, quality review |
+| [integration-test-generator](integration-test-generator/SKILL.md) | Feature, Improvement | After implementation | Integration & E2E tests |
+| [component-mapper](component-mapper/SKILL.md) | Bug, Improvement | Starting bugfix/improvement | Component list, dependency graph |
+| [root-cause-analyzer](root-cause-analyzer/SKILL.md) | Bug | After component mapping | Evidence-based root cause |
+| [solution-critic](solution-critic/SKILL.md) | Bug | Before implementing fix | Failure modes, edge cases, concerns |
+| [patch-implementer](patch-implementer/SKILL.md) | Bug | After critique approved | Minimal bug fix |
+| [post-fix-reviewer](post-fix-reviewer/SKILL.md) | Bug | After patch | Fix verification, regression check |
+| [code-reviewer](code-reviewer/SKILL.md) | All | Before merge | Security, performance, quality review |
 
 ---
 
 ## Skill Categories
 
-### Feature Skills
+### Shared Skills (3)
+
+**Purpose**: Used across all three workflows
+
+- `grill-me` - Adversarial spec refinement (Phase 0.1 in all workflows)
+- `feature-doc-writer` - Documentation updates
+- `code-reviewer` - Quality assurance
+
+### Feature Skills (7)
 
 **Purpose**: Build new functionality using TDD approach
 
 **Flow**:
 ```
-spec-extractor → system-designer → tradeoff-analyzer → 
+grill-me → spec-extractor → system-designer → tradeoff-analyzer → 
 feature-doc-writer → tdd-test-generator → minimal-impl-generator → 
-refactor-optimizer → code-reviewer
+integration-test-generator → refactor-optimizer → code-reviewer
 ```
 
 **Characteristics**:
@@ -42,15 +52,15 @@ refactor-optimizer → code-reviewer
 - Tests before code
 - Optimize after working
 
-### Bugfix Skills
+### Bug Skills (5)
 
 **Purpose**: Fix existing issues through root cause analysis
 
 **Flow**:
 ```
-component-mapper → root-cause-analyzer → solution-critic → 
-feature-doc-writer → tdd-test-generator → patch-implementer → 
-post-fix-reviewer → code-reviewer
+grill-me → component-mapper → root-cause-analyzer → tradeoff-analyzer + 
+solution-critic → feature-doc-writer → tdd-test-generator → 
+patch-implementer → post-fix-reviewer + code-reviewer
 ```
 
 **Characteristics**:
@@ -60,13 +70,27 @@ post-fix-reviewer → code-reviewer
 - Stress-test solution
 - Verify no regressions
 
-### Shared Skills
+### Improvement Skills (2 + shared)
 
-**Purpose**: Used by both feature and bugfix workflows
+**Purpose**: Improve existing working code through tradeoff analysis
 
-- `feature-doc-writer` - Documentation updates
-- `tdd-test-generator` - Test generation
-- `code-reviewer` - Quality assurance
+**Flow**:
+```
+grill-me → component-mapper → tradeoff-analyzer + system-designer → 
+feature-doc-writer → tdd-test-generator → minimal-impl-generator → 
+integration-test-generator → code-reviewer
+```
+
+**Characteristics**:
+- Start with working code that could be better
+- Tradeoff-aware decisions
+- Impact analysis before changes
+- Preserve existing behavior
+- Full implementation (not minimal patch)
+
+### Deployment Skills (1)
+
+- `deploy-to-staging` - Multi-repo branch sync and staging deployment (standalone, not part of workflow phases)
 
 ---
 
@@ -77,6 +101,8 @@ post-fix-reviewer → code-reviewer
 ```
 Feature Workflow Skills:
 
+grill-me
+    ↓
 spec-extractor
     ↓
 system-designer
@@ -89,17 +115,21 @@ tdd-test-generator (*shared*)
     ↓
 minimal-impl-generator
     ↓
+integration-test-generator
+    ↓
 refactor-optimizer
     ↓
 code-reviewer (*shared*)
 
-Bugfix Workflow Skills:
+Bug Workflow Skills:
 
+grill-me
+    ↓
 component-mapper
     ↓
 root-cause-analyzer
     ↓
-solution-critic
+tradeoff-analyzer + solution-critic
     ↓
 feature-doc-writer (*shared*)
     ↓
@@ -107,39 +137,65 @@ tdd-test-generator (*shared*)
     ↓
 patch-implementer
     ↓
-post-fix-reviewer
+post-fix-reviewer + code-reviewer (*shared*)
+
+Improvement Workflow Skills:
+
+grill-me
+    ↓
+component-mapper
+    ↓
+tradeoff-analyzer + system-designer
+    ↓
+feature-doc-writer (*shared*)
+    ↓
+tdd-test-generator (*shared*)
+    ↓
+minimal-impl-generator
+    ↓
+integration-test-generator
     ↓
 code-reviewer (*shared*)
 ```
 
-*Shared skills (*) are used by both workflows
-    style TTG fill:#ffd93d
-    style CR fill:#ffd93d
-```
-
-**Yellow** = Shared skills used by both workflows
+*Shared skills (*) are used by multiple workflows*
 
 ### Data Flow
 
 **Feature Workflow**:
-1. **spec-extractor** → Requirements spec
-2. **system-designer** → Consumes spec, produces architecture
-3. **tradeoff-analyzer** → Consumes architecture, produces recommendation
-4. **feature-doc-writer** → Consumes spec + architecture, updates docs
-5. **tdd-test-generator** → Consumes spec, produces failing tests
-6. **minimal-impl-generator** → Consumes tests, produces implementation
-7. **refactor-optimizer** → Consumes implementation, produces optimized code
-8. **code-reviewer** → Consumes all, produces approval/feedback
+1. **grill-me** → Refined understanding
+2. **spec-extractor** → Requirements spec
+3. **system-designer** → Consumes spec, produces architecture
+4. **tradeoff-analyzer** → Consumes architecture, produces recommendation
+5. **feature-doc-writer** → Consumes spec + architecture, updates docs
+6. **tdd-test-generator** → Consumes spec, produces failing tests
+7. **minimal-impl-generator** → Consumes tests, produces implementation
+8. **integration-test-generator** → Consumes implementation, produces integration tests
+9. **refactor-optimizer** → Consumes implementation, produces optimized code
+10. **code-reviewer** → Consumes all, produces approval/feedback
 
-**Bugfix Workflow**:
-1. **component-mapper** → Component map
-2. **root-cause-analyzer** → Consumes component map, produces root cause analysis
-3. **solution-critic** → Consumes root cause, produces critique
-4. **feature-doc-writer** → Updates docs
-5. **tdd-test-generator** → Produces failing tests
-6. **patch-implementer** → Consumes root cause + critique + tests, produces fix
-7. **post-fix-reviewer** → Consumes fix, verifies it works
-8. **code-reviewer** → Consumes all, produces approval/feedback
+**Bug Workflow**:
+1. **grill-me** → Refined understanding
+2. **component-mapper** → Component map
+3. **root-cause-analyzer** → Consumes component map, produces root cause analysis
+4. **tradeoff-analyzer** → Evaluates solution approaches
+5. **solution-critic** → Consumes root cause, produces critique
+6. **feature-doc-writer** → Updates docs
+7. **tdd-test-generator** → Produces failing tests
+8. **patch-implementer** → Consumes root cause + critique + tests, produces fix
+9. **post-fix-reviewer** → Consumes fix, verifies it works
+10. **code-reviewer** → Consumes all, produces approval/feedback
+
+**Improvement Workflow**:
+1. **grill-me** → Refined understanding
+2. **component-mapper** → Component map + impact analysis
+3. **tradeoff-analyzer** → Evaluates improvement approaches
+4. **system-designer** → Designs chosen approach with migration strategy
+5. **feature-doc-writer** → Updates docs
+6. **tdd-test-generator** → Produces failing tests
+7. **minimal-impl-generator** → Consumes tests + design, produces implementation
+8. **integration-test-generator** → Produces integration tests
+9. **code-reviewer** → Consumes all, produces approval/feedback
 
 ---
 
@@ -149,8 +205,10 @@ Skills integrate with orchestrator and specialist agents:
 
 ### Orchestrator Agents
 
+- [workflow-router](../agents/workflow-router.agent.md) - Classifies tasks and delegates to correct workflow
+- [bug-workflow](../agents/bug-workflow.agent.md) - Coordinates bug fix skills
+- [improvement-workflow](../agents/improvement-workflow.agent.md) - Coordinates improvement skills
 - [feature-workflow](../agents/feature-workflow.agent.md) - Coordinates feature skills
-- [improvement-workflow](../agents/improvement-workflow.agent.md) - Coordinates bugfix skills
 
 ### Specialist Agents
 

@@ -17,11 +17,13 @@ Systematically analyze and compare different technical approaches to help make i
 
 ## Workflow Artifact
 
-This skill is invoked as part of **Phase 2** of the Feature Workflow (alongside system-designer). Its output is included in the architecture document.
+This skill is invoked in multiple workflows:
 
-**Output File**: `.ai-workflow/[feature-folder]/2-architecture.md` (tradeoff analysis section)
+- **Feature Workflow Phase 2**: Contributes to `.ai-workflow/[feature-folder]/2-architecture.md` (tradeoff section)
+- **Bug Workflow Phase 3**: Contributes to `.ai-workflow/[feature-folder]/3-solution-evaluation.md` (solution comparison)
+- **Improvement Workflow Phase 2**: Contributes to `.ai-workflow/[feature-folder]/2-tradeoff-and-design.md` (primary output)
 
-**Context**: Read `0-startpoint.md` for initial requirements and `1-specification.md` for the approved specification before analyzing tradeoffs.
+**Context**: Read `0-startpoint.md`, `0.1-grill-me.md`, and the relevant Phase 1 output before analyzing tradeoffs.
 
 ## Process
 

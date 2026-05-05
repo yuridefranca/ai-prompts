@@ -17,11 +17,12 @@ This skill designs comprehensive system architecture for new features, covering 
 
 ## Workflow Artifact
 
-This skill is invoked as **Phase 2** of the Feature Workflow. It MUST produce an output file in the workflow folder.
+This skill is invoked in multiple workflows:
 
-**Output File**: `.ai-workflow/[feature-folder]/2-architecture.md`
+- **Feature Workflow Phase 2**: Produces `.ai-workflow/[feature-folder]/2-architecture.md`
+- **Improvement Workflow Phase 2**: Contributes to `.ai-workflow/[feature-folder]/2-tradeoff-and-design.md` (design section)
 
-**Context**: Read `0-startpoint.md` for initial requirements and `1-specification.md` for the approved specification before designing the architecture.
+**Context**: Read `0-startpoint.md`, `0.1-grill-me.md`, and `1-specification.md` (Feature) or `1-component-map.md` (Improvement) before designing.
 
 ## Input Requirements
 

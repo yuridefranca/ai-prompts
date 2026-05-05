@@ -25,11 +25,12 @@ Generate integration and end-to-end tests AFTER implementation to verify real co
 
 ## Workflow Artifact
 
-This skill is invoked as **Phase 6** of the Feature Workflow. It MUST produce an output file in the workflow folder.
+This skill is invoked in multiple workflows:
 
-**Output File**: `.ai-workflow/[feature-folder]/6-integration-tests.md`
+- **Feature Workflow Phase 6**: Produces `.ai-workflow/[feature-folder]/6-integration-tests.md`
+- **Improvement Workflow Phase 6**: Produces `.ai-workflow/[feature-folder]/6-integration-tests.md`
 
-**Context**: Read `0-startpoint.md` for initial requirements, `2-architecture.md` for the design, and `5-implementation.md` for what was implemented.
+**Context**: Read `0-startpoint.md`, `0.1-grill-me.md`, and the relevant prior phase outputs before generating integration tests.
 
 ## Integration vs Unit Tests
 

@@ -16,11 +16,12 @@ Implement the **simplest possible solution** that makes tests pass. This is the 
 
 ## Workflow Artifact
 
-This skill is invoked as **Phase 5** of the Feature Workflow. It MUST produce an output file in the workflow folder.
+This skill is invoked in multiple workflows:
 
-**Output File**: `.ai-workflow/[feature-folder]/5-implementation.md`
+- **Feature Workflow Phase 5**: Produces `.ai-workflow/[feature-folder]/5-implementation.md`
+- **Improvement Workflow Phase 5**: Produces `.ai-workflow/[feature-folder]/5-implementation.md`
 
-**Context**: Read `0-startpoint.md` for initial requirements, `1-specification.md` for the spec, `2-architecture.md` for the design, and `4-unit-tests.md` for the tests to pass.
+**Context**: Read `0-startpoint.md`, `0.1-grill-me.md`, and the relevant prior phase outputs (spec, design, tests) before implementing.
 
 ## Core Principle: YAGNI
 

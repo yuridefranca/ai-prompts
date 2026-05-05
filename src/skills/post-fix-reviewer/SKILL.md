@@ -16,11 +16,11 @@ description: Verify bug fix works correctly, handles all edge cases, doesn't int
 
 ## Workflow Artifact
 
-This skill is invoked as **Phase 7** of the Improvement Workflow (alongside code-reviewer). It MUST produce an output file in the workflow folder.
+This skill is invoked as **Phase 7** of the Bug Workflow (alongside code-reviewer). It MUST produce an output file in the workflow folder.
 
 **Output File**: `.ai-workflow/[feature-folder]/7-post-fix-review.md`
 
-**Context**: Read `0-startpoint.md` for the user's problem description, `2-root-cause-analysis.md` for the root cause, `3-solution-critique.md` for critique feedback, and `6-fix-implementation.md` for what was implemented.
+**Context**: Read `0-startpoint.md`, `0.1-grill-me.md`, `2-root-cause-analysis.md`, `3-solution-evaluation.md`, and `6-fix-implementation.md` before reviewing the fix.
 
 ## Core Principle
 

@@ -17,12 +17,13 @@ description: Comprehensive code quality review covering security, performance, m
 
 ## Workflow Artifact
 
-This skill is invoked in both workflows:
+This skill is invoked in all three workflows:
 
 - **Feature Workflow Phase 8**: Produces `.ai-workflow/[feature-folder]/8-code-review.md`
-- **Improvement Workflow Phase 7**: Produces `.ai-workflow/[feature-folder]/7-post-fix-review.md` (alongside post-fix-reviewer)
+- **Bug Workflow Phase 7**: Contributes to `.ai-workflow/[feature-folder]/7-post-fix-review.md` (alongside post-fix-reviewer)
+- **Improvement Workflow Phase 7**: Produces `.ai-workflow/[feature-folder]/7-code-review.md`
 
-**Context**: Read `0-startpoint.md` for initial requirements and all prior phase output files for full context of what's being reviewed.
+**Context**: Read `0-startpoint.md`, `0.1-grill-me.md`, and all prior phase output files for full context of what's being reviewed.
 
 ## Core Principle
 

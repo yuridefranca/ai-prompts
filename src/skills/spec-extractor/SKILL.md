@@ -21,7 +21,7 @@ This skill is invoked as **Phase 1** of the Feature Workflow. It MUST produce an
 
 **Output File**: `.ai-workflow/[feature-folder]/1-specification.md`
 
-**Context**: The workflow folder and `0-startpoint.md` were created in Phase 0. Read `0-startpoint.md` to understand the user's initial requirements before extracting the specification.
+**Context**: Read `0-startpoint.md` for the user's initial requirements and `0.1-grill-me.md` for refined understanding before extracting the specification.
 
 ## Process
 

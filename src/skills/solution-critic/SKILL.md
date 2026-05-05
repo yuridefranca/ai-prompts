@@ -17,11 +17,11 @@ description: Adversarially stress-test proposed bug fixes before implementation.
 
 ## Workflow Artifact
 
-This skill is invoked as **Phase 3** of the Improvement Workflow. It MUST produce an output file in the workflow folder.
+This skill is invoked as **Phase 3** (Part B) of the Bug Workflow. It contributes to the solution evaluation document.
 
-**Output File**: `.ai-workflow/[feature-folder]/3-solution-critique.md`
+**Output File**: `.ai-workflow/[feature-folder]/3-solution-evaluation.md` (stress test section)
 
-**Context**: Read `0-startpoint.md` for the user's problem description, `1-component-map.md` for affected components, and `2-root-cause-analysis.md` for the root cause before critiquing solutions.
+**Context**: Read `0-startpoint.md`, `0.1-grill-me.md`, `1-component-map.md`, and `2-root-cause-analysis.md` before critiquing solutions.
 
 ## Core Principle
 

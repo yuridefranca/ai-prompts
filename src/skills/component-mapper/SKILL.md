@@ -17,11 +17,12 @@ Identify what components are affected by a bug or improvement request, trace dep
 
 ## Workflow Artifact
 
-This skill is invoked as **Phase 1** of the Improvement Workflow. It MUST produce an output file in the workflow folder.
+This skill is invoked in multiple workflows:
 
-**Output File**: `.ai-workflow/[feature-folder]/1-component-map.md`
+- **Bug Workflow Phase 1**: Produces `.ai-workflow/[feature-folder]/1-component-map.md`
+- **Improvement Workflow Phase 1**: Produces `.ai-workflow/[feature-folder]/1-component-map.md`
 
-**Context**: Read `0-startpoint.md` for the user's problem description before mapping components.
+**Context**: Read `0-startpoint.md` and `0.1-grill-me.md` for the user's problem/improvement description before mapping components.
 
 ## Process
 
