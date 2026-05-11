@@ -98,11 +98,11 @@ User Request
 - `improvement-workflow` - Code improvement workflow
 - `feature-workflow` - New feature development
 
-**Specialized Skills** (15):
+**Specialized Skills** (17):
 - 7 feature skills
 - 5 bug skills
 - 2 improvement skills
-- 3 shared skills
+- 5 shared skills
 - 1 deployment skill (standalone)
 
 **Engineer Agents** (3):
@@ -189,6 +189,7 @@ Phase 8: PR Creation (optional)
 | **4. Documentation** | `feature-doc-writer` | Update project docs | - | `4-solution-documentation.md` |
 | **5. TDD Tests** | `tdd-test-generator` | Create failing tests | - | `5-tdd-tests.md` |
 | **6. Patch** | `patch-implementer`<br/>+ Engineer agents | Minimal fix addressing critique | - | `6-fix-implementation.md` |
+| **6.1. Analysis** | `multi-agent-analyzer` | Parallel code validation (quality, edge cases, regression) | - | `6.1-parallel-analysis.md` |
 | **7. Post-Fix Review** | `post-fix-reviewer`<br/>`code-reviewer` | Verify fix works, no regressions | - | `7-post-fix-review.md` |
 | **8. PR Creation** | `github-pr-creator` | Create pull request | Optional | `8-pr-creation.md` |
 
@@ -251,6 +252,7 @@ Phase 8: PR Creation (optional)
 | **3. Documentation** | `feature-doc-writer` | Update project docs | - | `3-improvement-documentation.md` |
 | **4. TDD Tests** | `tdd-test-generator` | Create tests for improvement + regression tests | - | `4-tdd-tests.md` |
 | **5. Implementation** | `minimal-impl-generator`<br/>+ Engineer agents | Full implementation following design | - | `5-implementation.md` |
+| **5.1. Analysis** | `multi-agent-analyzer` | Parallel code validation (quality, edge cases, regression) | - | `5.1-parallel-analysis.md` |
 | **6. Integration Tests** | `integration-test-generator` | Integration & E2E tests | - | `6-integration-tests.md` |
 | **7. Code Review** | `code-reviewer` | Comprehensive quality check | - | `7-code-review.md` |
 | **8. PR Creation** | `github-pr-creator` | Create pull request | Optional | `8-pr-creation.md` |
@@ -320,6 +322,7 @@ Phase 9: PR Creation (optional)
 | **3. Documentation** | `feature-doc-writer` | Update project docs | - | `3-feature-documentation.md` |
 | **4. TDD Tests** | `tdd-test-generator` | Create failing tests | ✅ After | `4-unit-tests.md` |
 | **5. Implementation** | `minimal-impl-generator`<br/>+ Engineer agents | Simplest solution to pass tests | - | `5-implementation.md` |
+| **5.1. Analysis** | `multi-agent-analyzer` | Parallel code validation (quality, edge cases, regression) | - | `5.1-parallel-analysis.md` |
 | **6. Integration & E2E** | `integration-test-generator` | Integration & E2E tests | - | `6-integration-tests.md` |
 | **7. Refactor** | `refactor-optimizer` | Improve code quality | - | `7-refactoring.md` |
 | **8. Code Review** | `code-reviewer` | Final quality check | - | `8-code-review.md` |
@@ -353,13 +356,15 @@ Before **every phase**, the workflow generates a 10-bullet summary:
 
 ## Skills
 
-### Shared Skills (3)
+### Shared Skills (5)
 
 | Skill | Purpose | Key Output |
 |-------|---------|------------|
 | [grill-me](../skills/grill-me/SKILL.md) | Adversarial spec refinement (Phase 0.1) | Refined understanding, resolved assumptions |
-| [feature-doc-writer](../skills/feature-doc-writer/SKILL.md) | Documentation updates | AGENTS.md, feature docs, architecture docs |
+| [multi-agent-analyzer](../skills/multi-agent-analyzer/SKILL.md) | Parallel code validation (Phase 5.1/6.1) | 3-lane analysis report (quality, edge cases, regression) |
+| [feature-doc-writer](../skills/feature-doc-writer/SKILL.md) | Documentation updates + ubiquitous language glossary | AGENTS.md, feature docs, architecture docs, glossary |
 | [code-reviewer](../skills/code-reviewer/SKILL.md) | Comprehensive quality check | Security, performance, maintainability review |
+| [btw](../skills/btw/SKILL.md) | Side questions without context pollution | Quick answer, no artifacts created |
 
 ### Feature Skills (7)
 
@@ -569,7 +574,38 @@ Options:
 
 **When**: Phase 0.1 in all three workflows (between startpoint and first analysis phase)
 
-### 4. Uncertainty Handling
+### 4. Parallel Code Analysis (Phase 5.1/6.1)
+
+**Problem**: Single-perspective code review misses issues that other perspectives would catch
+
+**Solution**: Run 3 parallel analysis lanes after implementation, before testing
+
+```
+Implementation Complete
+    ↓
+Lane 1: Code Quality & Maintainability
+    ├─ Readability, naming, complexity
+    ├─ DRY, SOLID violations
+    └─ Dead code, error handling, type safety
+    ↓
+Lane 2: Edge Cases & Robustness
+    ├─ Null/undefined, empty collections
+    ├─ Boundary values, concurrency
+    └─ Partial failures, idempotency
+    ↓
+Lane 3: Regression & Performance
+    ├─ API contract changes, consumer impact
+    ├─ Query performance, memory usage
+    └─ CPU usage, network calls
+    ↓
+Synthesize → Fix critical issues → Proceed to testing
+```
+
+**When**: Phase 5.1 (improvement/feature) or Phase 6.1 (bug) in all workflows
+
+**Key rule**: This is NOT testing — it's static code analysis. No test execution.
+
+### 5. Uncertainty Handling
 
 **Problem**: Proceeding with incomplete information leads to rework
 
@@ -598,7 +634,7 @@ Options:
 📋 Request clarification on MISSING items
 ```
 
-### 5. Manual Checkpoints
+### 6. Manual Checkpoints
 
 **Problem**: Automated workflows make wrong decisions
 
@@ -623,7 +659,7 @@ Options:
 | Improvement | After tradeoff analysis & design |
 | Feature | After specification, after architecture, after TDD tests |
 
-### 6. Never Jump to Fix (Bug Workflow Only)
+### 7. Never Jump to Fix (Bug Workflow Only)
 
 **Problem**: Quick fixes address symptoms, not root causes
 
@@ -645,7 +681,7 @@ Approved?
 
 **Phase 2 Rule**: `root-cause-analyzer` skill **never proposes fixes**, only analyzes
 
-### 7. Understand Before Changing (Improvement Workflow Only)
+### 8. Understand Before Changing (Improvement Workflow Only)
 
 **Problem**: Modifying working code without understanding impact creates regressions
 
@@ -663,7 +699,7 @@ Approved?
     └─→ No → Back to Phase 2
 ```
 
-### 8. Adversarial Solution Critique (Bug Workflow Only)
+### 9. Adversarial Solution Critique (Bug Workflow Only)
 
 **Problem**: Solutions look good until they break in production
 
@@ -683,7 +719,7 @@ Approved?
 - Still provide "what if" scenarios
 ```
 
-### 9. TDD Cycle
+### 10. TDD Cycle
 
 **Problem**: Implementation-first leads to untestable code
 
@@ -712,7 +748,7 @@ All tests must:
 - ✅ Pass after implementation
 - ✅ Remain green after refactoring
 
-### 10. Skill Composition
+### 11. Skill Composition
 
 **Problem**: Complex tasks need multiple specialized capabilities
 

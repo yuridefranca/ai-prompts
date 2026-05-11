@@ -7,7 +7,7 @@ Central repository of AI-powered development tools: orchestrator agents, special
 This repository provides a **complete development workflow orchestration system** with:
 
 - **4 Orchestrator Agents**: Workflow router + 3 specialized workflows (bug, improvement, feature)
-- **15 Specialized Skills**: Requirements extraction, architecture design, TDD testing, adversarial grilling, code review, and more
+- **17 Specialized Skills**: Requirements extraction, architecture design, TDD testing, adversarial grilling, parallel code analysis, code review, and more
 - **Symlink-Based Distribution**: Single source of truth in `src/`, discoverable by AI tools via symlinks
 - **Versioned Templates**: Langchain-compatible prompt templates in `prompts/`
 
@@ -315,8 +315,10 @@ See [Workflows Documentation](src/workflows/README.md) for complete details.
 | Skill | Purpose |
 |-------|---------|
 | [grill-me](src/skills/grill-me/SKILL.md) | Adversarial spec refinement — question assumptions before work begins |
-| [feature-doc-writer](src/skills/feature-doc-writer/SKILL.md) | Update AGENTS.md, feature docs, architecture docs |
+| [multi-agent-analyzer](src/skills/multi-agent-analyzer/SKILL.md) | Parallel code validation from 3 perspectives (quality, edge cases, regression) |
+| [feature-doc-writer](src/skills/feature-doc-writer/SKILL.md) | Update AGENTS.md, feature docs, architecture docs, ubiquitous language glossary |
 | [code-reviewer](src/skills/code-reviewer/SKILL.md) | Comprehensive security, performance, quality review |
+| [btw](src/skills/btw/SKILL.md) | Ask side questions without polluting workflow context |
 
 ### Feature Skills (5)
 
@@ -605,6 +607,13 @@ V
 ---
 
 ## Version History
+
+- **v2.1.0** (2025-05-07): P2 enhancements
+  - Added `multi-agent-analyzer` skill for parallel code validation (quality, edge cases, regression)
+  - Added Phase 5.1/6.1 parallel analysis to all workflows (after implementation, before testing)
+  - Added `btw` skill for side questions without context pollution
+  - Added ubiquitous language glossary to `feature-doc-writer` skill
+  - 17 specialized skills (7 feature, 5 bug, 2 improvement, 5 shared, 1 deployment)
 
 - **v2.0.0** (2025-05-04): Three-workflow architecture
   - 4 orchestrator agents (workflow-router, bug-workflow, improvement-workflow, feature-workflow)

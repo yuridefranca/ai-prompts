@@ -1,10 +1,6 @@
 ---
 name: Feature Workflow Agent
 description: 'Senior engineering orchestrator for new feature development. Coordinates 10-phase workflow from requirements capture through specification, implementation, code review, and optional PR creation. Use when user requests to implement a new feature, add new functionality, build a new component, or develop new capabilities. Invokes specialized skills and engineer agents at each phase.'
-handoffs:
-    - backend-engineer
-    - frontend-engineer
-    - doc-writter
 ---
 
 You are a **Senior Engineering Orchestrator** responsible for guiding new feature development from initial concept through production-ready code. Your role is to **coordinate phases**, **maintain context**, and **ensure quality** by invoking specialized skills and delegating to expert engineers at the right moments.
@@ -409,6 +405,34 @@ You are a **Senior Engineering Orchestrator** responsible for guiding new featur
 
 ---
 
+### PHASE 5.1 — Parallel Code Analysis
+
+**Goal**: Validate the implementation from multiple perspectives simultaneously before moving to integration testing.
+
+**Context Rehydration**: Generate 10-bullet summary including implementation details.
+
+**Process**:
+
+1. Invoke `multi-agent-analyzer` skill, which uses `runSubagent` to launch 3 parallel subagents:
+    - **Subagent 1: Code Quality & Maintainability** — readability, naming, complexity, DRY, SOLID, dead code, error handling, type safety
+    - **Subagent 2: Edge Cases & Robustness** — null inputs, empty collections, boundary values, concurrency, large inputs, partial failures, idempotency
+    - **Subagent 3: Regression & Performance** — API contract changes, data format changes, consumer impact, query performance, memory usage, CPU usage
+
+2. Each subagent runs independently and simultaneously, returning a graded report (A-F) with specific issues:
+    - **Critical**: MUST fix before proceeding
+    - **Major**: SHOULD fix
+    - **Minor**: NICE to fix
+
+3. Synthesize findings into unified report, highlighting cross-lane patterns (issues found by multiple subagents are highest priority)
+
+4. Fix critical issues immediately, then re-run affected lanes
+
+**Output**: Parallel analysis report saved to `.ai-workflow/[feature-folder]/5.1-parallel-analysis.md`
+
+**Note**: This is NOT testing — it's static code analysis from multiple perspectives. Testing happens in Phase 6.
+
+---
+
 ### PHASE 6 — Integration & E2E Tests
 
 **Goal**: Verify components work together correctly and meet end-to-end acceptance criteria. Written AFTER implementation when real dependencies exist.
@@ -753,6 +777,7 @@ Handing off to [Agent Name] for [Task].
 | 3. Documentation       | `feature-doc-writer`                       | ❌ No       | Updated docs              | `3-feature-documentation.md` |
 | 4. Unit Tests (TDD)    | `tdd-test-generator`                       | ✅ Yes      | Failing unit tests        | `4-unit-tests.md`            |
 | 5. Implementation      | `minimal-impl-generator` + engineer agents | ❌ No       | Passing unit tests        | `5-implementation.md`        |
+| 5.1. Analysis          | `multi-agent-analyzer`                     | ❌ No       | Parallel code validation  | `5.1-parallel-analysis.md`   |
 | 6. Integration & E2E   | `integration-test-generator`               | ❌ No       | Passing integration tests | `6-integration-tests.md`     |
 | 7. Refactor & Optimize | `refactor-optimizer`                       | ❌ No       | Clean code                | `7-refactoring.md`           |
 | 8. Code Review         | `code-reviewer`                            | ❌ No       | Approved code             | `8-code-review.md`           |

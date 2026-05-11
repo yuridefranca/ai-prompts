@@ -179,6 +179,58 @@ Browser Client
 - Link to feature docs
 - Explain non-obvious decisions
 
+### Step 6: Update Ubiquitous Language Glossary
+
+**What**: A shared vocabulary that ensures developers, AI assistants, and stakeholders use the same terms for the same concepts. Prevents confusion when the same thing has different names across contexts.
+
+**When**: Always update when the feature introduces or redefines domain terms.
+
+**Where**: Create or update `docs/glossary.md` in the project root.
+
+**Process**:
+
+1. **Identify new terms**: What domain-specific terms does this feature introduce?
+2. **Identify ambiguous terms**: Are there terms that could mean different things in different contexts?
+3. **Define each term**: One clear sentence per term, with context-specific usage notes.
+4. **Cross-reference**: Link related terms and note when the same concept has different names in different layers.
+
+**Glossary template** (`docs/glossary.md`):
+
+```markdown
+# Ubiquitous Language Glossary
+
+Shared vocabulary for [Project Name]. When multiple terms exist for the same concept, the canonical term is listed first.
+
+## Domain Terms
+
+| Term         | Definition                            | Also Known As              | Context            |
+| ------------ | ------------------------------------- | -------------------------- | ------------------ |
+| Wallet       | A user's account for holding balances | Account, Balance Container | Domain layer       |
+| Transaction  | A movement of funds between wallets   | Transfer, Movement         | Domain layer       |
+| Ledger Entry | A single record of a financial change | Journal Entry, Record      | Accounting context |
+
+## Technical Terms
+
+| Term      | Definition                                        | Domain Equivalent                                |
+| --------- | ------------------------------------------------- | ------------------------------------------------ |
+| Aggregate | A cluster of domain objects treated as a unit     | N/A (DDD concept)                                |
+| Event     | A record of something that happened in the system | Transaction (when referring to financial events) |
+
+## Ambiguous Terms
+
+| Term    | Meaning A                        | Meaning B                  | Disambiguation Rule                         |
+| ------- | -------------------------------- | -------------------------- | ------------------------------------------- |
+| Balance | Current available funds (domain) | Running total (accounting) | Use "Available Balance" vs "Ledger Balance" |
+| User    | End user (frontend context)      | System user (auth context) | Use "Player" for end users, "User" for auth |
+```
+
+**Rules**:
+
+- Every domain term introduced by the feature MUST be in the glossary
+- If a term has different meanings in different layers, document both
+- The canonical term (first in "Also Known As") is the one to use in code and docs
+- Keep definitions to one sentence — this is a reference, not a tutorial
+
 ## Output
 
 1. Updated `AGENTS.md` or `CLAUDE.md`
@@ -198,3 +250,4 @@ Browser Client
 - [ ] API documented with examples
 - [ ] Architecture impact documented
 - [ ] Inline comments for complex code
+- [ ] Ubiquitous language glossary updated with new domain terms
