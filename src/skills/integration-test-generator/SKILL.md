@@ -20,7 +20,7 @@ Generate integration and end-to-end tests AFTER implementation to verify real co
 **Do NOT use**:
 
 - Before implementation exists
-- For unit tests (use `tdd-test-generator`)
+- For unit tests (use `test-generator`)
 - When dependencies can be mocked (use unit tests instead)
 
 ## Workflow Artifact

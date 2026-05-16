@@ -72,7 +72,7 @@ This skill is invoked as **Phase 6** of the Bug Workflow. It MUST produce an out
 
 ### Step 2: Create/Update Failing Tests
 
-**Invoke `tdd-test-generator` skill** to create:
+**Invoke `test-generator` skill** to create:
 
 1. **Bug reproduction test** (if not exists):
 

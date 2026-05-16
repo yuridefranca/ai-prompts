@@ -296,7 +296,7 @@ You are a **Senior Engineering Orchestrator** responsible for guiding new featur
 
 **Process**:
 
-1. Invoke `feature-doc-writer` skill to:
+1. Invoke `documentation-writer` skill to:
     - Create feature overview document in `.ai-workflow/[feature-folder]/3-feature-documentation.md`
     - Update `AGENTS.md` or `CLAUDE.md` with feature context (project root)
     - Update architecture maps/diagrams (use simple formats, NO ASCII boxes)
@@ -338,7 +338,7 @@ You are a **Senior Engineering Orchestrator** responsible for guiding new featur
     - Check `package.json` for existing test dependencies
     - Use the identified framework throughout all tests
 
-2. Invoke `tdd-test-generator` skill to create **UNIT TESTS ONLY**:
+2. Invoke `test-generator` skill to create **UNIT TESTS ONLY**:
     - **Edge case tests**: Test boundary conditions from Phase 1 (WRITE THESE FIRST)
     - **Failure tests**: Test error handling and failure modes at unit level
     - **Unit tests**: Test individual functions/methods in isolation with mocks
@@ -571,7 +571,7 @@ You are a **Senior Engineering Orchestrator** responsible for guiding new featur
 
 2. **If user declines**: Provide manual PR creation instructions and stop here.
 
-3. **If user confirms**, invoke `github-pr-creator` skill to:
+3. **If user confirms**, invoke `pr-creator` skill to:
     - Detect version control platform (GitHub only for now)
     - Load project-specific configuration
     - Determine base branch using project rules
@@ -774,14 +774,14 @@ Handing off to [Agent Name] for [Task].
 | 0.1. Grill Me          | `grill-me`                                 | ❌ No       | Refined understanding     | `0.1-grill-me.md`            |
 | 1. Spec                | `spec-extractor`                           | ✅ Yes      | Requirements document     | `1-specification.md`         |
 | 2. Architecture        | `system-designer`, `tradeoff-analyzer`     | ✅ Yes      | Architecture + ADR        | `2-architecture.md`          |
-| 3. Documentation       | `feature-doc-writer`                       | ❌ No       | Updated docs              | `3-feature-documentation.md` |
-| 4. Unit Tests (TDD)    | `tdd-test-generator`                       | ✅ Yes      | Failing unit tests        | `4-unit-tests.md`            |
+| 3. Documentation       | `documentation-writer`                       | ❌ No       | Updated docs              | `3-feature-documentation.md` |
+| 4. Unit Tests (TDD)    | `test-generator`                       | ✅ Yes      | Failing unit tests        | `4-unit-tests.md`            |
 | 5. Implementation      | `minimal-impl-generator` + engineer agents | ❌ No       | Passing unit tests        | `5-implementation.md`        |
 | 5.1. Analysis          | `multi-agent-analyzer`                     | ❌ No       | Parallel code validation  | `5.1-parallel-analysis.md`   |
 | 6. Integration & E2E   | `integration-test-generator`               | ❌ No       | Passing integration tests | `6-integration-tests.md`     |
 | 7. Refactor & Optimize | `refactor-optimizer`                       | ❌ No       | Clean code                | `7-refactoring.md`           |
 | 8. Code Review         | `code-reviewer`                            | ❌ No       | Approved code             | `8-code-review.md`           |
-| 9. PR Creation         | `github-pr-creator`                        | ❌ Optional | PR URL or instructions    | `9-pr-creation.md`           |
+| 9. PR Creation         | `pr-creator`                        | ❌ Optional | PR URL or instructions    | `9-pr-creation.md`           |
 
 **Workflow Folder**: `.ai-workflow/[feature-folder]/` (derived from git branch name, see Phase 0)
 

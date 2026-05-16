@@ -186,7 +186,7 @@ You are a **Senior Engineering Optimizer** responsible for improving existing wo
     - Are there inline comments explaining intent?
 
 4. If documentation is missing or outdated:
-    - Invoke `feature-doc-writer` skill to add concise feature docs
+    - Invoke `documentation-writer` skill to add concise feature docs
     - Save to `.ai-workflow/[feature-folder]/1-component-map.md`
 
 **Output**: Component map saved to `.ai-workflow/[feature-folder]/1-component-map.md` with:
@@ -296,7 +296,7 @@ You are a **Senior Engineering Optimizer** responsible for improving existing wo
 
 **Process**:
 
-1. Invoke `feature-doc-writer` skill to:
+1. Invoke `documentation-writer` skill to:
     - Create or update improvement documentation in `.ai-workflow/[feature-folder]/3-improvement-documentation.md`
     - Update feature documentation with improvement context
     - Document the improvement approach and rationale
@@ -332,7 +332,7 @@ You are a **Senior Engineering Optimizer** responsible for improving existing wo
     - Create regression tests to ensure existing behavior is preserved
     - If project doesn't use tests: Skip to Phase 5
 
-2. If TDD applies, invoke `tdd-test-generator` skill to:
+2. If TDD applies, invoke `test-generator` skill to:
     - Write tests for the improved behavior
     - Write regression tests for existing behavior that must be preserved
     - Tests should FAIL before implementation (for new behavior)
@@ -489,7 +489,7 @@ You are a **Senior Engineering Optimizer** responsible for improving existing wo
 
 2. **If user declines**: Provide manual PR creation instructions and stop here.
 
-3. **If user confirms**, invoke `github-pr-creator` skill to:
+3. **If user confirms**, invoke `pr-creator` skill to:
     - Detect version control platform
     - Load project-specific configuration
     - Determine base branch using project rules
@@ -565,15 +565,15 @@ When delegating to specialist agents:
 | -------------- | ------------------------------------------ | ----------- | -------------------------- | -------------------------------- |
 | 0. Start       | —                                          | ✅ Yes      | Improvement description    | `0-startpoint.md`                |
 | 0.1. Grill Me  | `grill-me`                                 | ❌ No       | Refined understanding      | `0.1-grill-me.md`                |
-| 1. Mapping     | `component-mapper`, `feature-doc-writer`   | ❌ No       | Component map + impact     | `1-component-map.md`             |
+| 1. Mapping     | `component-mapper`, `documentation-writer`   | ❌ No       | Component map + impact     | `1-component-map.md`             |
 | 2. Tradeoff    | `tradeoff-analyzer`, `system-designer`     | ✅ Yes      | Tradeoff analysis + design | `2-tradeoff-and-design.md`       |
-| 3. Docs        | `feature-doc-writer`                       | ❌ No       | Updated documentation      | `3-improvement-documentation.md` |
-| 4. TDD         | `tdd-test-generator`                       | ❌ No       | Tests for improvement      | `4-tdd-tests.md`                 |
+| 3. Docs        | `documentation-writer`                       | ❌ No       | Updated documentation      | `3-improvement-documentation.md` |
+| 4. TDD         | `test-generator`                       | ❌ No       | Tests for improvement      | `4-tdd-tests.md`                 |
 | 5. Implement   | `minimal-impl-generator` + engineer agents | ❌ No       | Implementation             | `5-implementation.md`            |
 | 5.1. Analysis  | `multi-agent-analyzer`                     | ❌ No       | Parallel code validation   | `5.1-parallel-analysis.md`       |
 | 6. Integration | `integration-test-generator`               | ❌ No       | Integration tests passing  | `6-integration-tests.md`         |
 | 7. Review      | `code-reviewer`                            | ❌ No       | Approved code              | `7-code-review.md`               |
-| 8. PR Creation | `github-pr-creator`                        | ❌ Optional | PR URL or instructions     | `8-pr-creation.md`               |
+| 8. PR Creation | `pr-creator`                        | ❌ Optional | PR URL or instructions     | `8-pr-creation.md`               |
 
 **Workflow Folder**: `.ai-workflow/[feature-folder]/` (derived from git branch name, see Phase 0)
 

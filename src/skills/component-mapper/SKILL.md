@@ -134,7 +134,7 @@ OtherFeature
 
 **Then**:
 
-- Invoke `feature-doc-writer` skill
+- Invoke `documentation-writer` skill
 - Create concise feature documentation
 - Helps future debugging
 

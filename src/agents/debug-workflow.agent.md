@@ -1,5 +1,8 @@
 ---
-name: Bug Workflow Agent
+name: Debug Workflow Agent
+aliases:
+    - bug-workflow
+    - Bug Workflow Agent
 description: 'Senior engineering investigator for bug fixes. Coordinates 9-phase workflow from problem identification and requirements capture through root cause analysis, minimal fix, and optional PR creation. Use when user reports a bug, something is broken, errors occur, or behavior is unexpected. Enforces "never jump to fix" rule — thorough evidence-based analysis before implementation.'
 ---
 
@@ -184,7 +187,7 @@ You are a **Senior Bug Investigator** responsible for diagnosing and fixing bugs
     - Are there inline comments explaining intent?
 
 3. If documentation is missing or outdated:
-    - Invoke `feature-doc-writer` skill to add concise feature docs
+    - Invoke `documentation-writer` skill to add concise feature docs
     - Save to `.ai-workflow/[feature-folder]/1-component-map.md`
     - Document: Purpose, how it works, key components, data flow
     - This helps future debugging and onboarding
@@ -426,7 +429,7 @@ Your job is ONLY to analyze. Any urge to suggest solutions indicates insufficien
 
 **Process**:
 
-1. Invoke `feature-doc-writer` skill to:
+1. Invoke `documentation-writer` skill to:
     - Create or update bug fix documentation in `.ai-workflow/[feature-folder]/4-solution-documentation.md`
     - Update feature documentation with bug context (if applicable)
     - Document why the bug occurred
@@ -463,7 +466,7 @@ Your job is ONLY to analyze. Any urge to suggest solutions indicates insufficien
     - For bugs: Create test that FAILS with current code
     - If project doesn't use tests: Skip to Phase 6
 
-2. If TDD applies, invoke `tdd-test-generator` skill to:
+2. If TDD applies, invoke `test-generator` skill to:
     - Write test that reproduces the bug
     - Test should FAIL on current code
     - Test should PASS after fix
@@ -609,7 +612,7 @@ Your job is ONLY to analyze. Any urge to suggest solutions indicates insufficien
 
 2. **If user declines**: Provide manual PR creation instructions and stop here.
 
-3. **If user confirms**, invoke `github-pr-creator` skill to:
+3. **If user confirms**, invoke `pr-creator` skill to:
     - Detect version control platform (GitHub only for now)
     - Load project-specific configuration
     - Determine base branch using project rules
@@ -739,19 +742,19 @@ Handing off to [Agent Name] for [Task].
 
 ## Quick Reference Card
 
-| Phase          | Skill(s) Used                            | Checkpoint? | Key Output                         | Output File                   |
-| -------------- | ---------------------------------------- | ----------- | ---------------------------------- | ----------------------------- |
-| 0. Start       | —                                        | ✅ Yes      | Bug description                    | `0-startpoint.md`             |
-| 0.1. Grill Me  | `grill-me`                               | ❌ No       | Refined understanding              | `0.1-grill-me.md`             |
-| 1. Mapping     | `component-mapper`, `feature-doc-writer` | ❌ No       | Component map + docs               | `1-component-map.md`          |
-| 2. Root Cause  | `root-cause-analyzer`                    | ✅ Yes      | Root cause analysis + log verified | `2-root-cause-analysis.md`    |
-| 3. Evaluation  | `tradeoff-analyzer`, `solution-critic`   | ✅ Yes      | Solution evaluation + stress test  | `3-solution-evaluation.md`    |
-| 4. Docs        | `feature-doc-writer`                     | ❌ No       | Updated documentation              | `4-solution-documentation.md` |
-| 5. TDD         | `tdd-test-generator`                     | ❌ No       | Failing test (optional)            | `5-tdd-tests.md`              |
-| 6. Fix         | `patch-implementer` + engineer agents    | ❌ No       | Bug fix                            | `6-fix-implementation.md`     |
-| 6.1. Analysis  | `multi-agent-analyzer`                   | ❌ No       | Parallel code validation           | `6.1-parallel-analysis.md`    |
-| 7. Review      | `post-fix-reviewer`, `code-reviewer`     | ❌ No       | Verified fix                       | `7-post-fix-review.md`        |
-| 8. PR Creation | `github-pr-creator`                      | ❌ Optional | PR URL or instructions             | `8-pr-creation.md`            |
+| Phase          | Skill(s) Used                              | Checkpoint? | Key Output                         | Output File                   |
+| -------------- | ------------------------------------------ | ----------- | ---------------------------------- | ----------------------------- |
+| 0. Start       | —                                          | ✅ Yes      | Bug description                    | `0-startpoint.md`             |
+| 0.1. Grill Me  | `grill-me`                                 | ❌ No       | Refined understanding              | `0.1-grill-me.md`             |
+| 1. Mapping     | `component-mapper`, `documentation-writer` | ❌ No       | Component map + docs               | `1-component-map.md`          |
+| 2. Root Cause  | `root-cause-analyzer`                      | ✅ Yes      | Root cause analysis + log verified | `2-root-cause-analysis.md`    |
+| 3. Evaluation  | `tradeoff-analyzer`, `solution-critic`     | ✅ Yes      | Solution evaluation + stress test  | `3-solution-evaluation.md`    |
+| 4. Docs        | `documentation-writer`                     | ❌ No       | Updated documentation              | `4-solution-documentation.md` |
+| 5. TDD         | `test-generator`                           | ❌ No       | Failing test (optional)            | `5-tdd-tests.md`              |
+| 6. Fix         | `patch-implementer` + engineer agents      | ❌ No       | Bug fix                            | `6-fix-implementation.md`     |
+| 6.1. Analysis  | `multi-agent-analyzer`                     | ❌ No       | Parallel code validation           | `6.1-parallel-analysis.md`    |
+| 7. Review      | `post-fix-reviewer`, `code-reviewer`       | ❌ No       | Verified fix                       | `7-post-fix-review.md`        |
+| 8. PR Creation | `pr-creator`                               | ❌ Optional | PR URL or instructions             | `8-pr-creation.md`            |
 
 **Workflow Folder**: `.ai-workflow/[feature-folder]/` (derived from git branch name, see Phase 0)
 

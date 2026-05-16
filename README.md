@@ -6,10 +6,13 @@ Central repository of AI-powered development tools: orchestrator agents, special
 
 This repository provides a **complete development workflow orchestration system** with:
 
-- **4 Orchestrator Agents**: Workflow router + 3 specialized workflows (bug, improvement, feature)
-- **17 Specialized Skills**: Requirements extraction, architecture design, TDD testing, adversarial grilling, parallel code analysis, code review, and more
+- **5 Workflow Orchestrators**: Entry-point orchestrator + 4 specialized workflows (debug, enhancement, feature, greenfield)
+- **23 Specialized Skills**: Requirements clarification, architecture design, TDD testing, parallel validation, code review, and more
+- **3 Engineer Agents**: Backend, frontend, and documentation specialists
 - **Symlink-Based Distribution**: Single source of truth in `src/`, discoverable by AI tools via symlinks
 - **Versioned Templates**: Langchain-compatible prompt templates in `prompts/`
+
+> 📖 **New to this system?** Read the [Glossary](GLOSSARY.md) for naming conventions, architectural patterns, and quick reference.
 
 ## Quick Start
 
@@ -49,9 +52,9 @@ Replace `~/path/to/your-project` with your actual project path. This makes agent
 
 ### Starting a Workflow
 
-**Any task** (auto-routed):
+**Any task** (auto-routed by orchestrator):
 ```
-@workflow-router Fix null pointer when user has no email
+@orchestrator Fix null pointer when user has no email
 ```
 
 **New Feature**:
@@ -61,15 +64,20 @@ Replace `~/path/to/your-project` with your actual project path. This makes agent
 
 **Bug Fix**:
 ```
-@bug-workflow Fix null pointer when user has no email
+@debug-workflow Fix null pointer when user has no email
 ```
 
-**Improvement**:
+**Code Improvement**:
 ```
 @improvement-workflow Optimize query performance on dashboard
 ```
 
-See [Workflows Documentation](src/workflows/README.md) for detailed usage.
+**New Project**:
+```
+@greenfield-workflow Create a REST API for inventory management
+```
+
+See [Workflows Documentation](src/workflows/README.md) for detailed usage and [Glossary](GLOSSARY.md) for naming conventions.
 
 ---
 
@@ -77,26 +85,30 @@ See [Workflows Documentation](src/workflows/README.md) for detailed usage.
 
 ```
 ai-prompts/
+├── GLOSSARY.md                   # 📖 Naming conventions & architecture guide
+│
 ├── src/                          # Single source of truth (edit here)
-│   ├── agents/                   # Orchestrator and specialist agents
-│   │   ├── workflow-router.agent.md          (Entry point: classifies & delegates)
-│   │   ├── bug-workflow.agent.md             (9-phase bug fix workflow)
-│   │   ├── improvement-workflow.agent.md     (9-phase improvement workflow)
-│   │   ├── feature-workflow.agent.md         (9-phase feature development)
-│   │   ├── backend-engineer.agent.md
-│   │   ├── frontend-engineer.agent.md
-│   │   └── doc-writter.agent.md
+│   ├── agents/                   # Workflow orchestrators & specialist agents
+│   │   ├── orchestrator.agent.md          → orchestrator (entry point)
+│   │   ├── debug-workflow.agent.md             → debug-workflow (9-phase)
+│   │   ├── improvement-workflow.agent.md     → enhancement-workflow (9-phase)
+│   │   ├── feature-workflow.agent.md         (10-phase TDD development)
+│   │   ├── greenfield-workflow.agent.md      (8-phase new projects)
+│   │   ├── backend-engineer.agent.md         (NestJS specialist)
+│   │   ├── frontend-engineer.agent.md        (React specialist)
+│   │   └── documentation-writer.agent.md              → documentation-writer (typo fix)
 │   │
-│   ├── skills/                   # Specialized capabilities
-│   │   ├── grill-me/             (Adversarial spec refinement)
+│   ├── skills/                   # Specialized capabilities (23 skills)
+│   │   ├── grill-me/             → requirements-clarifier
+│   │   ├── btw/                  → quick-answer
 │   │   ├── spec-extractor/       (Requirements extraction)
-│   │   ├── system-designer/      (Architecture design)
+│   │   ├── system-designer/      → architect
 │   │   ├── tradeoff-analyzer/    (Alternative evaluation)
-│   │   ├── feature-doc-writer/   (Documentation updates)
-│   │   ├── tdd-test-generator/   (Test generation)
-│   │   ├── minimal-impl-generator/ (Simple implementation)
-│   │   ├── refactor-optimizer/   (Code improvement)
-│   │   ├── component-mapper/     (Component analysis)
+│   │   ├── documentation-writer/   → documentation-writer
+│   │   ├── test-generator/   → test-generator
+│   │   ├── minimal-impl-generator/ → implementation-generator
+│   │   ├── refactor-optimizer/   → code-optimizer
+│   │   ├── component-mapper/     → component-analyzer
 │   │   ├── root-cause-analyzer/  (Bug investigation)
 │   │   ├── solution-critic/      (Adversarial review)
 │   │   ├── patch-implementer/    (Minimal bug fix)
@@ -149,6 +161,25 @@ ai-prompts/
 
 ---
 
+## 🔄 Naming Evolution
+
+This repository is evolving to adopt **industry-standard naming conventions** aligned with modern AI harnesses (Roo Code, Cursor, Windsurf):
+
+| Current Name | New Name | Status | Reason |
+|--------------|----------|--------|--------|
+| `orchestrator` | `orchestrator` | 📋 Planned | Aligns with Roo Code Orchestrator mode |
+| `debug-workflow` | `debug-workflow` | 📋 Planned | Industry standard (Debug mode) |
+| `improvement-workflow` | `enhancement-workflow` | 📋 Planned | Clearer intent |
+| `grill-me` | `requirements-clarifier` | 📋 Planned | Professional naming |
+| `btw` | `quick-answer` | 📋 Planned | Self-documenting |
+| `documentation-writer` | `documentation-writer` | 🐛 Fix needed | Typo correction |
+
+> 📖 **See the full [Glossary](GLOSSARY.md)** for complete naming conventions, migration guide, and architectural patterns.
+
+**Backward Compatibility**: Old names will be supported via aliases during the transition period.
+
+---
+
 ## Development Workflows
 
 This repository provides three specialized workflows, each with a dedicated orchestrator agent, plus a router for automatic classification:
@@ -158,7 +189,7 @@ This repository provides three specialized workflows, each with a dedicated orch
 **Single entry point** that classifies tasks and delegates to the correct workflow:
 
 ```
-User Request → @workflow-router → Bug? → @bug-workflow
+User Request → @orchestrator → Bug? → @debug-workflow
                                 → Improvement? → @improvement-workflow
                                 → Feature? → @feature-workflow
 ```
@@ -316,7 +347,7 @@ See [Workflows Documentation](src/workflows/README.md) for complete details.
 |-------|---------|
 | [grill-me](src/skills/grill-me/SKILL.md) | Adversarial spec refinement — question assumptions before work begins |
 | [multi-agent-analyzer](src/skills/multi-agent-analyzer/SKILL.md) | Parallel code validation from 3 perspectives (quality, edge cases, regression) |
-| [feature-doc-writer](src/skills/feature-doc-writer/SKILL.md) | Update AGENTS.md, feature docs, architecture docs, ubiquitous language glossary |
+| [documentation-writer](src/skills/documentation-writer/SKILL.md) | Update AGENTS.md, feature docs, architecture docs, ubiquitous language glossary |
 | [code-reviewer](src/skills/code-reviewer/SKILL.md) | Comprehensive security, performance, quality review |
 | [btw](src/skills/btw/SKILL.md) | Ask side questions without polluting workflow context |
 
@@ -327,7 +358,7 @@ See [Workflows Documentation](src/workflows/README.md) for complete details.
 | [spec-extractor](src/skills/spec-extractor/SKILL.md) | Extract requirements, edge cases, acceptance criteria |
 | [system-designer](src/skills/system-designer/SKILL.md) | Design architecture with domain model, APIs, data model |
 | [tradeoff-analyzer](src/skills/tradeoff-analyzer/SKILL.md) | Compare technical alternatives with scoring |
-| [tdd-test-generator](src/skills/tdd-test-generator/SKILL.md) | Generate failing tests (Red phase of TDD) |
+| [test-generator](src/skills/test-generator/SKILL.md) | Generate failing tests (Red phase of TDD) |
 | [minimal-impl-generator](src/skills/minimal-impl-generator/SKILL.md) | Simplest implementation (Green phase of TDD) |
 | [refactor-optimizer](src/skills/refactor-optimizer/SKILL.md) | Code quality improvement (Refactor phase of TDD) |
 | [integration-test-generator](src/skills/integration-test-generator/SKILL.md) | Integration & E2E test generation |
@@ -363,18 +394,16 @@ See [Skills Documentation](src/skills/README.md) for detailed information.
 
 ### Orchestrator Agents (4)
 
-- **[workflow-router](src/agents/workflow-router.agent.md)**: Entry point — classifies tasks as bug/improvement/feature and delegates
-- **[bug-workflow](src/agents/bug-workflow.agent.md)**: 9-phase bug fix workflow with root cause analysis and solution evaluation
+- **[orchestrator](src/agents/orchestrator.agent.md)**: Entry point — classifies tasks as bug/improvement/feature and delegates
+- **[debug-workflow](src/agents/debug-workflow.agent.md)**: 9-phase bug fix workflow with root cause analysis and solution evaluation
 - **[improvement-workflow](src/agents/improvement-workflow.agent.md)**: 9-phase improvement workflow with tradeoff analysis and design
 - **[feature-workflow](src/agents/feature-workflow.agent.md)**: 9-phase feature development workflow with TDD
 
-### Specialist Agents (5)
+### Specialist Agents (3)
 
 - **[backend-engineer](src/agents/backend-engineer.agent.md)**: Backend implementation (NestJS, TypeScript)
 - **[frontend-engineer](src/agents/frontend-engineer.agent.md)**: Frontend implementation (React, TypeScript)
-- **[doc-writter](src/agents/doc-writter.agent.md)**: Documentation generation
-- **[breakdown-task](src/agents/breakdown-task.agent.md)**: Complex problem analysis
-- **[requirements-extractor](src/agents/requirements-extractor.agent.md)**: Requirements extraction
+- **[documentation-writer](src/agents/documentation-writer.agent.md)**: Documentation generation
 
 ---
 
@@ -612,13 +641,13 @@ V
   - Added `multi-agent-analyzer` skill for parallel code validation (quality, edge cases, regression)
   - Added Phase 5.1/6.1 parallel analysis to all workflows (after implementation, before testing)
   - Added `btw` skill for side questions without context pollution
-  - Added ubiquitous language glossary to `feature-doc-writer` skill
+  - Added ubiquitous language glossary to `documentation-writer` skill
   - 17 specialized skills (7 feature, 5 bug, 2 improvement, 5 shared, 1 deployment)
 
 - **v2.0.0** (2025-05-04): Three-workflow architecture
-  - 4 orchestrator agents (workflow-router, bug-workflow, improvement-workflow, feature-workflow)
-  - Split improvement-workflow into bug-workflow (root cause → minimal fix) and improvement-workflow (tradeoff analysis → full implementation)
-  - Added workflow-router for automatic task classification
+  - 4 orchestrator agents (orchestrator, debug-workflow, improvement-workflow, feature-workflow)
+  - Split improvement-workflow into debug-workflow (root cause → minimal fix) and improvement-workflow (tradeoff analysis → full implementation)
+  - Added orchestrator for automatic task classification
   - Added grill-me skill as Phase 0.1 in all workflows
   - Added deploy-to-staging skill for multi-repo deployment
   - Added integration-test-generator skill

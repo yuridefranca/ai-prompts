@@ -12,8 +12,8 @@ Specialized capabilities for development workflows. Each skill focuses on a sing
 | [spec-extractor](spec-extractor/SKILL.md) | Feature | Starting new feature | Requirements, edge cases, acceptance criteria |
 | [system-designer](system-designer/SKILL.md) | Feature, Improvement | After requirements/tradeoff | Domain model, APIs, data model, diagrams |
 | [tradeoff-analyzer](tradeoff-analyzer/SKILL.md) | Feature, Bug, Improvement | Evaluating alternatives | Comparison matrix, recommendation |
-| [feature-doc-writer](feature-doc-writer/SKILL.md) | All | Updating docs | AGENTS.md, feature docs |
-| [tdd-test-generator](tdd-test-generator/SKILL.md) | All | Before implementation | Failing unit/integration tests |
+| [documentation-writer](documentation-writer/SKILL.md) | All | Updating docs | AGENTS.md, feature docs |
+| [test-generator](test-generator/SKILL.md) | All | Before implementation | Failing unit/integration tests |
 | [minimal-impl-generator](minimal-impl-generator/SKILL.md) | Feature, Improvement | After tests written | Simplest working code |
 | [refactor-optimizer](refactor-optimizer/SKILL.md) | Feature | After tests pass | SOLID, DRY, performant code |
 | [integration-test-generator](integration-test-generator/SKILL.md) | Feature, Improvement | After implementation | Integration & E2E tests |
@@ -23,6 +23,7 @@ Specialized capabilities for development workflows. Each skill focuses on a sing
 | [patch-implementer](patch-implementer/SKILL.md) | Bug | After critique approved | Minimal bug fix |
 | [post-fix-reviewer](post-fix-reviewer/SKILL.md) | Bug | After patch | Fix verification, regression check |
 | [code-reviewer](code-reviewer/SKILL.md) | All | Before merge | Security, performance, quality review |
+| [product-manager](product-manager/SKILL.md) | Greenfield, Feature (optional) | After spec approved | Task breakdown, prioritization, milestones |
 
 ---
 
@@ -34,7 +35,7 @@ Specialized capabilities for development workflows. Each skill focuses on a sing
 
 - `grill-me` - Adversarial spec refinement (Phase 0.1 in all workflows)
 - `multi-agent-analyzer` - Parallel code validation from 3 perspectives (Phase 5.1/6.1 in all workflows)
-- `feature-doc-writer` - Documentation updates + ubiquitous language glossary
+- `documentation-writer` - Documentation updates + ubiquitous language glossary
 - `code-reviewer` - Quality assurance
 - `btw` - Side questions without context pollution
 
@@ -45,7 +46,7 @@ Specialized capabilities for development workflows. Each skill focuses on a sing
 **Flow**:
 ```
 grill-me → spec-extractor → system-designer → tradeoff-analyzer → 
-feature-doc-writer → tdd-test-generator → minimal-impl-generator → 
+documentation-writer → test-generator → minimal-impl-generator → 
 integration-test-generator → refactor-optimizer → code-reviewer
 ```
 
@@ -63,7 +64,7 @@ integration-test-generator → refactor-optimizer → code-reviewer
 **Flow**:
 ```
 grill-me → component-mapper → root-cause-analyzer → tradeoff-analyzer + 
-solution-critic → feature-doc-writer → tdd-test-generator → 
+solution-critic → documentation-writer → test-generator → 
 patch-implementer → post-fix-reviewer + code-reviewer
 ```
 
@@ -81,7 +82,7 @@ patch-implementer → post-fix-reviewer + code-reviewer
 **Flow**:
 ```
 grill-me → component-mapper → tradeoff-analyzer + system-designer → 
-feature-doc-writer → tdd-test-generator → minimal-impl-generator → 
+documentation-writer → test-generator → minimal-impl-generator → 
 integration-test-generator → code-reviewer
 ```
 
@@ -91,6 +92,25 @@ integration-test-generator → code-reviewer
 - Impact analysis before changes
 - Preserve existing behavior
 - Full implementation (not minimal patch)
+
+### Greenfield Skills (1 + shared)
+
+**Purpose**: Plan and organize new projects from scratch
+
+**Flow**:
+```
+grill-me → spec-extractor → product-manager → system-designer → 
+tradeoff-analyzer → documentation-writer → test-generator → 
+minimal-impl-generator → integration-test-generator → refactor-optimizer → 
+code-reviewer
+```
+
+**Characteristics**:
+- Start with a project vision
+- Break down into prioritized milestones
+- Architecture before any code
+- Deliver smallest usable product first
+- Hand off remaining milestones to feature-workflow
 
 ### Deployment Skills (1)
 
@@ -113,9 +133,9 @@ system-designer
     ↓
 tradeoff-analyzer
     ↓
-feature-doc-writer (*shared*)
+documentation-writer (*shared*)
     ↓
-tdd-test-generator (*shared*)
+test-generator (*shared*)
     ↓
 minimal-impl-generator
     ↓
@@ -135,9 +155,9 @@ root-cause-analyzer
     ↓
 tradeoff-analyzer + solution-critic
     ↓
-feature-doc-writer (*shared*)
+documentation-writer (*shared*)
     ↓
-tdd-test-generator (*shared*)
+test-generator (*shared*)
     ↓
 patch-implementer
     ↓
@@ -151,9 +171,9 @@ component-mapper
     ↓
 tradeoff-analyzer + system-designer
     ↓
-feature-doc-writer (*shared*)
+documentation-writer (*shared*)
     ↓
-tdd-test-generator (*shared*)
+test-generator (*shared*)
     ↓
 minimal-impl-generator
     ↓
@@ -171,8 +191,8 @@ code-reviewer (*shared*)
 2. **spec-extractor** → Requirements spec
 3. **system-designer** → Consumes spec, produces architecture
 4. **tradeoff-analyzer** → Consumes architecture, produces recommendation
-5. **feature-doc-writer** → Consumes spec + architecture, updates docs
-6. **tdd-test-generator** → Consumes spec, produces failing tests
+5. **documentation-writer** → Consumes spec + architecture, updates docs
+6. **test-generator** → Consumes spec, produces failing tests
 7. **minimal-impl-generator** → Consumes tests, produces implementation
 8. **integration-test-generator** → Consumes implementation, produces integration tests
 9. **refactor-optimizer** → Consumes implementation, produces optimized code
@@ -184,8 +204,8 @@ code-reviewer (*shared*)
 3. **root-cause-analyzer** → Consumes component map, produces root cause analysis
 4. **tradeoff-analyzer** → Evaluates solution approaches
 5. **solution-critic** → Consumes root cause, produces critique
-6. **feature-doc-writer** → Updates docs
-7. **tdd-test-generator** → Produces failing tests
+6. **documentation-writer** → Updates docs
+7. **test-generator** → Produces failing tests
 8. **patch-implementer** → Consumes root cause + critique + tests, produces fix
 9. **post-fix-reviewer** → Consumes fix, verifies it works
 10. **code-reviewer** → Consumes all, produces approval/feedback
@@ -195,8 +215,8 @@ code-reviewer (*shared*)
 2. **component-mapper** → Component map + impact analysis
 3. **tradeoff-analyzer** → Evaluates improvement approaches
 4. **system-designer** → Designs chosen approach with migration strategy
-5. **feature-doc-writer** → Updates docs
-6. **tdd-test-generator** → Produces failing tests
+5. **documentation-writer** → Updates docs
+6. **test-generator** → Produces failing tests
 7. **minimal-impl-generator** → Consumes tests + design, produces implementation
 8. **integration-test-generator** → Produces integration tests
 9. **code-reviewer** → Consumes all, produces approval/feedback
@@ -209,8 +229,8 @@ Skills integrate with orchestrator and specialist agents:
 
 ### Orchestrator Agents
 
-- [workflow-router](../agents/workflow-router.agent.md) - Classifies tasks and delegates to correct workflow
-- [bug-workflow](../agents/bug-workflow.agent.md) - Coordinates bug fix skills
+- [orchestrator](../agents/orchestrator.agent.md) - Classifies tasks and delegates to correct workflow
+- [debug-workflow](../agents/debug-workflow.agent.md) - Coordinates bug fix skills
 - [improvement-workflow](../agents/improvement-workflow.agent.md) - Coordinates improvement skills
 - [feature-workflow](../agents/feature-workflow.agent.md) - Coordinates feature skills
 
@@ -222,8 +242,7 @@ Skills delegate implementation to specialist agents:
 |-------|--------------|----------|
 | minimal-impl-generator | backend-engineer, frontend-engineer | Actual code implementation |
 | patch-implementer | backend-engineer, frontend-engineer | Bug fix implementation |
-| feature-doc-writer | doc-writter | Comprehensive documentation |
-| root-cause-analyzer | breakdown-task | Complex analysis |
+| documentation-writer | documentation-writer | Comprehensive documentation |
 
 **Example**:
 ```markdown
@@ -440,7 +459,7 @@ Some skills invoke others conditionally:
 ## In component-mapper skill:
 
 If documentation is missing:
-- Invoke `feature-doc-writer` skill
+- Invoke `documentation-writer` skill
 - Create concise feature documentation
 ```
 
@@ -457,7 +476,7 @@ system-designer
   ↓ (architecture)
 tradeoff-analyzer
   ↓ (recommendation)
-tdd-test-generator
+test-generator
   ↓ (tests)
 minimal-impl-generator
 ```

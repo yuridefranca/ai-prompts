@@ -6,9 +6,9 @@ Comprehensive orchestration system for new features, bug fixes, and improvements
 
 1. [Overview](#overview)
 2. [Architecture](#architecture)
-3. [Workflow Router](#workflow-router)
+3. [Orchestrator](#orchestrator)
 4. [Workflows](#workflows)
-   - [Bug Workflow](#bug-workflow)
+   - [Debug Workflow](#debug-workflow)
    - [Improvement Workflow](#improvement-workflow)
    - [Feature Workflow](#feature-workflow)
 5. [Skills](#skills)
@@ -50,17 +50,17 @@ This orchestration system implements **three specialized workflows**, each with 
 ```
 User Request
     ↓
-@workflow-router (classifies task type)
+@orchestrator (classifies task type)
     ↓
-    ├─→ Bug → @bug-workflow
+    ├─→ Bug → @debug-workflow
     │              ↓
     │         Coordinates:
     │         - grill-me (Phase 0.1)
     │         - component-mapper
     │         - root-cause-analyzer
     │         - tradeoff-analyzer + solution-critic
-    │         - feature-doc-writer
-    │         - tdd-test-generator
+    │         - documentation-writer
+    │         - test-generator
     │         - patch-implementer
     │         - post-fix-reviewer + code-reviewer
     │
@@ -70,8 +70,8 @@ User Request
     │                - grill-me (Phase 0.1)
     │                - component-mapper
     │                - tradeoff-analyzer + system-designer
-    │                - feature-doc-writer
-    │                - tdd-test-generator
+    │                - documentation-writer
+    │                - test-generator
     │                - minimal-impl-generator
     │                - integration-test-generator
     │                - code-reviewer
@@ -82,39 +82,55 @@ User Request
                  - grill-me (Phase 0.1)
                  - spec-extractor
                  - system-designer + tradeoff-analyzer
-                 - feature-doc-writer
-                 - tdd-test-generator
+                 - documentation-writer
+                 - test-generator
                  - minimal-impl-generator
                  - integration-test-generator
                  - refactor-optimizer
                  - code-reviewer
+
+    └─→ Greenfield → @greenfield-workflow
+                         ↓
+                    Coordinates:
+                    - grill-me (Phase 0.1)
+                    - spec-extractor
+                    - product-manager
+                    - system-designer + tradeoff-analyzer
+                    - documentation-writer
+                    - test-generator
+                    - minimal-impl-generator
+                    - integration-test-generator
+                    - refactor-optimizer
+                    - code-reviewer
 ```
 
 ### Components
 
-**Orchestrator Agents** (4):
-- `workflow-router` - Task classification and delegation
-- `bug-workflow` - Bug fix workflow
+**Orchestrator Agents** (5):
+- `orchestrator` - Task classification and delegation
+- `debug-workflow` - Bug fix workflow
 - `improvement-workflow` - Code improvement workflow
 - `feature-workflow` - New feature development
+- `greenfield-workflow` - New project from scratch
 
-**Specialized Skills** (17):
+**Specialized Skills** (18):
 - 7 feature skills
 - 5 bug skills
 - 2 improvement skills
+- 1 greenfield skill
 - 5 shared skills
 - 1 deployment skill (standalone)
 
 **Engineer Agents** (3):
 - `backend-engineer` - Backend implementation
 - `frontend-engineer` - Frontend implementation
-- `doc-writter` - Documentation
+- `documentation-writer` - Documentation
 
 ---
 
-## Workflow Router
+## Orchestrator
 
-**Agent**: [workflow-router.agent.md](../agents/workflow-router.agent.md)
+**Agent**: [orchestrator.agent.md](../agents/orchestrator.agent.md)
 
 **Use When**: Any task — the router classifies and delegates automatically.
 
@@ -125,6 +141,7 @@ User Request
 | broken, error, crash, null pointer, unexpected, failing, bug | Bug | Never jump to fix |
 | optimize, refactor, improve, enhance, migrate, performance | Improvement | Understand before changing |
 | new, add, create, build, implement, feature | Feature | Design before code |
+| new project, from scratch, greenfield, scaffold, new app, new service | Greenfield | Vision before code |
 
 ### Ambiguous Cases
 
@@ -134,6 +151,8 @@ User Request
 | "Fix the crash on login" | Bug | Something is broken |
 | "Add caching to improve performance" | Improvement | Enhancement to working code |
 | "Add user profile page" | Feature | New functionality |
+| "Build a new SaaS app" | Greenfield | Entirely new project |
+| "Start a new microservice" | Greenfield | New standalone service |
 
 ### Hybrid Requests
 
@@ -143,9 +162,9 @@ If a request contains both bug and improvement signals (e.g., "Fix the login bug
 
 ## Workflows
 
-### Bug Workflow
+### Debug Workflow
 
-**Agent**: [bug-workflow.agent.md](../agents/bug-workflow.agent.md)
+**Agent**: [debug-workflow.agent.md](../agents/debug-workflow.agent.md)
 
 **Use When**: Something is broken, errors occur, behavior is unexpected.
 
@@ -186,12 +205,12 @@ Phase 8: PR Creation (optional)
 | **1. Component Mapping** | `component-mapper` | Identify affected components, dependencies | - | `1-component-map.md` |
 | **2. Root Cause** | `root-cause-analyzer` | Find true root cause (NO FIX) | ✅ After | `2-root-cause-analysis.md` |
 | **3. Solution Evaluation** | `tradeoff-analyzer`<br/>`solution-critic` | Evaluate approaches + adversarial stress-test | ✅ After | `3-solution-evaluation.md` |
-| **4. Documentation** | `feature-doc-writer` | Update project docs | - | `4-solution-documentation.md` |
-| **5. TDD Tests** | `tdd-test-generator` | Create failing tests | - | `5-tdd-tests.md` |
+| **4. Documentation** | `documentation-writer` | Update project docs | - | `4-solution-documentation.md` |
+| **5. TDD Tests** | `test-generator` | Create failing tests | - | `5-tdd-tests.md` |
 | **6. Patch** | `patch-implementer`<br/>+ Engineer agents | Minimal fix addressing critique | - | `6-fix-implementation.md` |
 | **6.1. Analysis** | `multi-agent-analyzer` | Parallel code validation (quality, edge cases, regression) | - | `6.1-parallel-analysis.md` |
 | **7. Post-Fix Review** | `post-fix-reviewer`<br/>`code-reviewer` | Verify fix works, no regressions | - | `7-post-fix-review.md` |
-| **8. PR Creation** | `github-pr-creator` | Create pull request | Optional | `8-pr-creation.md` |
+| **8. PR Creation** | `pr-creator` | Create pull request | Optional | `8-pr-creation.md` |
 
 #### Critical Rule: Never Jump to Fix
 
@@ -249,13 +268,13 @@ Phase 8: PR Creation (optional)
 | **0.1. Grill Me** | `grill-me` | Adversarial spec refinement | - | `0.1-grill-me.md` |
 | **1. Component Mapping** | `component-mapper` | Identify affected components + impact analysis | - | `1-component-map.md` |
 | **2. Tradeoff & Design** | `tradeoff-analyzer`<br/>`system-designer` | Evaluate approaches + design chosen approach | ✅ After | `2-tradeoff-and-design.md` |
-| **3. Documentation** | `feature-doc-writer` | Update project docs | - | `3-improvement-documentation.md` |
-| **4. TDD Tests** | `tdd-test-generator` | Create tests for improvement + regression tests | - | `4-tdd-tests.md` |
+| **3. Documentation** | `documentation-writer` | Update project docs | - | `3-improvement-documentation.md` |
+| **4. TDD Tests** | `test-generator` | Create tests for improvement + regression tests | - | `4-tdd-tests.md` |
 | **5. Implementation** | `minimal-impl-generator`<br/>+ Engineer agents | Full implementation following design | - | `5-implementation.md` |
 | **5.1. Analysis** | `multi-agent-analyzer` | Parallel code validation (quality, edge cases, regression) | - | `5.1-parallel-analysis.md` |
 | **6. Integration Tests** | `integration-test-generator` | Integration & E2E tests | - | `6-integration-tests.md` |
 | **7. Code Review** | `code-reviewer` | Comprehensive quality check | - | `7-code-review.md` |
-| **8. PR Creation** | `github-pr-creator` | Create pull request | Optional | `8-pr-creation.md` |
+| **8. PR Creation** | `pr-creator` | Create pull request | Optional | `8-pr-creation.md` |
 
 #### Critical Rule: Understand Before Changing
 
@@ -319,14 +338,14 @@ Phase 9: PR Creation (optional)
 | **0.1. Grill Me** | `grill-me` | Adversarial spec refinement | - | `0.1-grill-me.md` |
 | **1. Specification** | `spec-extractor` | Extract requirements, edge cases, acceptance criteria | ✅ After | `1-specification.md` |
 | **2. Architecture** | `system-designer`<br/>`tradeoff-analyzer` | Design system, evaluate alternatives | ✅ After | `2-architecture.md` |
-| **3. Documentation** | `feature-doc-writer` | Update project docs | - | `3-feature-documentation.md` |
-| **4. TDD Tests** | `tdd-test-generator` | Create failing tests | ✅ After | `4-unit-tests.md` |
+| **3. Documentation** | `documentation-writer` | Update project docs | - | `3-feature-documentation.md` |
+| **4. TDD Tests** | `test-generator` | Create failing tests | ✅ After | `4-unit-tests.md` |
 | **5. Implementation** | `minimal-impl-generator`<br/>+ Engineer agents | Simplest solution to pass tests | - | `5-implementation.md` |
 | **5.1. Analysis** | `multi-agent-analyzer` | Parallel code validation (quality, edge cases, regression) | - | `5.1-parallel-analysis.md` |
 | **6. Integration & E2E** | `integration-test-generator` | Integration & E2E tests | - | `6-integration-tests.md` |
 | **7. Refactor** | `refactor-optimizer` | Improve code quality | - | `7-refactoring.md` |
 | **8. Code Review** | `code-reviewer` | Final quality check | - | `8-code-review.md` |
-| **9. PR Creation** | `github-pr-creator` | Create pull request | Optional | `9-pr-creation.md` |
+| **9. PR Creation** | `pr-creator` | Create pull request | Optional | `9-pr-creation.md` |
 
 #### Context Rehydration
 
@@ -338,19 +357,87 @@ Before **every phase**, the workflow generates a 10-bullet summary:
 
 ---
 
+### Greenfield Workflow
+
+**Agent**: [greenfield-workflow.agent.md](../agents/greenfield-workflow.agent.md)
+
+**Use When**: Starting a new project from scratch, building a new application or service.
+
+**Philosophy**: **Vision Before Code** — invest in understanding what you're building and break it into deliverable milestones before writing any code.
+
+#### Phases
+
+```
+Phase 0: Starting Point & Vision
+    ↓
+Phase 0.1: Grill Me (vision refinement)
+    ↓
+Phase 1: Specification
+    ↓
+[✓ Checkpoint: Review & Approve Spec]
+    ↓
+Phase 2: Task Breakdown & Prioritization
+    ↓
+[✓ Checkpoint: Approve Milestones]
+    ↓
+Phase 3: Architecture & Design
+    ↓
+[✓ Checkpoint: Approve Architecture]
+    ↓
+Phase 4: Documentation
+    ↓
+Phase 5: Implementation (Milestone 1)
+    ↓
+[✓ Checkpoint: Demo Milestone 1]
+    ↓
+Phase 6: Validation & Refinement
+    ↓
+Phase 7: Code Review
+    ↓
+Phase 8: Next Steps & Handoff
+```
+
+| Phase | Skill | Purpose | Checkpoint | Output File |
+|-------|-------|---------|------------|-------------|
+| **0. Starting Point** | — | Capture project vision | ✅ After | `0-startpoint.md` |
+| **0.1. Grill Me** | `grill-me` | Adversarial vision refinement | - | `0.1-grill-me.md` |
+| **1. Specification** | `spec-extractor` | Extract requirements, edge cases, acceptance criteria | ✅ After | `1-specification.md` |
+| **2. Task Breakdown** | `product-manager` | Epics, stories, MoSCoW prioritization, milestones | ✅ After | `2-task-breakdown.md` |
+| **3. Architecture** | `system-designer`<br/>`tradeoff-analyzer` | Design system, evaluate alternatives, scaffold project | ✅ After | `3-architecture.md` |
+| **4. Documentation** | `documentation-writer` | Create project docs (AGENTS.md, README, glossary) | - | `4-project-documentation.md` |
+| **5. Implementation** | `test-generator`<br/>`minimal-impl-generator`<br/>+ Engineer agents | Implement Milestone 1 stories | ✅ After | `5-milestone-1.md` |
+| **6. Validation** | `multi-agent-analyzer`<br/>`integration-test-generator`<br/>`refactor-optimizer` | Parallel analysis, integration tests, refactoring | - | `6-validation.md` |
+| **7. Code Review** | `code-reviewer` | Comprehensive quality check | - | `7-code-review.md` |
+| **8. Next Steps** | — | Summary, handoff for remaining milestones | - | `8-summary.md` |
+
+#### Key Difference: Task Breakdown Phase
+
+The greenfield workflow adds a **Task Breakdown** phase (Phase 2) between specification and architecture. This ensures:
+
+1. **Milestone-driven delivery** — The project is broken into 2-4 milestones, each delivering usable value
+2. **Prioritization before design** — MoSCoW prioritization ensures architecture focuses on what matters most
+3. **Clear handoff path** — After Milestone 1, remaining milestones can be handled by the feature-workflow
+4. **External tracking** — Optional sync to Notion, GitHub Issues, or Linear via MCP
+
+#### After Greenfield: Continue with Feature Workflow
+
+Once the greenfield workflow completes Milestone 1, the remaining milestones from the task breakdown should be implemented using the **feature-workflow** agent. Each milestone is essentially a feature with its own specification, architecture, and implementation cycle.
+
+---
+
 ## Workflow Comparison
 
-| Aspect | Bug | Improvement | Feature |
-|--------|-----|-------------|---------|
-| **Philosophy** | Never jump to fix | Understand before changing | Design before code |
-| **Starting point** | Something is broken | Working but suboptimal | New capability needed |
-| **Phase 1** | Component mapping | Component mapping + impact | Specification extraction |
-| **Phase 2** | Root cause analysis | Tradeoff analysis + design | Architecture design |
-| **Phase 3** | Solution evaluation | Documentation | Documentation |
-| **Implementation** | Minimal patch (Phase 6) | Full implementation (Phase 5) | Full implementation (Phase 5) |
-| **Unique skills** | root-cause-analyzer, solution-critic, patch-implementer, post-fix-reviewer | tradeoff-analyzer (primary), system-designer (design) | spec-extractor, refactor-optimizer |
-| **Checkpoints** | After root cause, after solution eval | After tradeoff & design | After spec, after architecture, after tests |
-| **Total phases** | 9 (0-8) | 9 (0-8) | 10 (0-9) |
+| Aspect | Bug | Improvement | Feature | Greenfield |
+|--------|-----|-------------|---------|------------|
+| **Philosophy** | Never jump to fix | Understand before changing | Design before code | Vision before code |
+| **Starting point** | Something is broken | Working but suboptimal | New capability needed | New project from scratch |
+| **Phase 1** | Component mapping | Component mapping + impact | Specification extraction | Specification extraction |
+| **Phase 2** | Root cause analysis | Tradeoff analysis + design | Architecture design | Task breakdown & prioritization |
+| **Phase 3** | Solution evaluation | Documentation | Documentation | Architecture & design |
+| **Implementation** | Minimal patch (Phase 6) | Full implementation (Phase 5) | Full implementation (Phase 5) | Milestone 1 only (Phase 5) |
+| **Unique skills** | root-cause-analyzer, solution-critic, patch-implementer, post-fix-reviewer | tradeoff-analyzer (primary), system-designer (design) | spec-extractor, refactor-optimizer | product-manager |
+| **Checkpoints** | After root cause, after solution eval | After tradeoff & design | After spec, after architecture, after tests | After spec, after milestones, after architecture, after milestone 1 |
+| **Total phases** | 9 (0-8) | 9 (0-8) | 10 (0-9) | 8 (0-8) |
 
 ---
 
@@ -362,7 +449,7 @@ Before **every phase**, the workflow generates a 10-bullet summary:
 |-------|---------|------------|
 | [grill-me](../skills/grill-me/SKILL.md) | Adversarial spec refinement (Phase 0.1) | Refined understanding, resolved assumptions |
 | [multi-agent-analyzer](../skills/multi-agent-analyzer/SKILL.md) | Parallel code validation (Phase 5.1/6.1) | 3-lane analysis report (quality, edge cases, regression) |
-| [feature-doc-writer](../skills/feature-doc-writer/SKILL.md) | Documentation updates + ubiquitous language glossary | AGENTS.md, feature docs, architecture docs, glossary |
+| [documentation-writer](../skills/documentation-writer/SKILL.md) | Documentation updates + ubiquitous language glossary | AGENTS.md, feature docs, architecture docs, glossary |
 | [code-reviewer](../skills/code-reviewer/SKILL.md) | Comprehensive quality check | Security, performance, maintainability review |
 | [btw](../skills/btw/SKILL.md) | Side questions without context pollution | Quick answer, no artifacts created |
 
@@ -373,7 +460,7 @@ Before **every phase**, the workflow generates a 10-bullet summary:
 | [spec-extractor](../skills/spec-extractor/SKILL.md) | Extract complete requirements | Functional/non-functional requirements, edge cases, acceptance criteria |
 | [system-designer](../skills/system-designer/SKILL.md) | Design architecture | Domain model, API contracts, data model, simple text diagrams |
 | [tradeoff-analyzer](../skills/tradeoff-analyzer/SKILL.md) | Compare alternatives | Comparison matrix, recommendation, failure scenarios |
-| [tdd-test-generator](../skills/tdd-test-generator/SKILL.md) | Generate failing tests | Unit tests (AAA), integration tests, edge tests |
+| [test-generator](../skills/test-generator/SKILL.md) | Generate failing tests | Unit tests (AAA), integration tests, edge tests |
 | [minimal-impl-generator](../skills/minimal-impl-generator/SKILL.md) | Simplest implementation | YAGNI code, happy path first, edge handling |
 | [integration-test-generator](../skills/integration-test-generator/SKILL.md) | Integration & E2E tests | Integration tests, backward compatibility tests |
 | [refactor-optimizer](../skills/refactor-optimizer/SKILL.md) | Code quality improvement | SOLID, DRY, performance, all tests still green |
@@ -395,6 +482,12 @@ Before **every phase**, the workflow generates a 10-bullet summary:
 | [tradeoff-analyzer](../skills/tradeoff-analyzer/SKILL.md) | Evaluate approaches | Comparison matrix on Feasibility/Impact/Maintainability/Risk |
 | [system-designer](../skills/system-designer/SKILL.md) | Design chosen approach | Migration strategy, backward compatibility plan |
 
+### Greenfield Skills (1)
+
+| Skill | Purpose | Key Output |
+|-------|---------|------------|
+| [product-manager](../skills/product-manager/SKILL.md) | Break down specs into actionable tasks | Epics, stories, MoSCoW prioritization, dependency map, milestones |
+
 ### Deployment Skills (1)
 
 | Skill | Purpose | Key Output |
@@ -408,18 +501,18 @@ Before **every phase**, the workflow generates a 10-bullet summary:
 ### Using the Workflow Router (Recommended)
 
 ```
-@workflow-router Fix null pointer exception when user has no email
+@orchestrator Fix null pointer exception when user has no email
 ```
 
 The router will:
 1. Classify as "Bug" (keywords: fix, null pointer, exception)
-2. Delegate to `@bug-workflow`
+2. Delegate to `@debug-workflow`
 3. Bug workflow takes over from Phase 0
 
 ### Starting Bug Workflow Directly
 
 ```
-@bug-workflow Fix null pointer exception when user has no email
+@debug-workflow Fix null pointer exception when user has no email
 ```
 
 The workflow will:
@@ -475,6 +568,27 @@ The workflow will:
 11. Run integration & E2E tests
 12. Refactor code
 13. Final code review
+
+### Starting Greenfield Workflow Directly
+
+```
+@greenfield-workflow Build a task management SaaS application
+```
+
+The workflow will:
+1. Capture project vision in `0-startpoint.md`
+2. Grill the user on vision and assumptions in `0.1-grill-me.md`
+3. Extract requirements using `spec-extractor`
+4. Ask for confirmation at checkpoint
+5. Break down into epics, stories, and milestones using `product-manager`
+6. Ask for milestone approval at checkpoint
+7. Design architecture with `system-designer` and `tradeoff-analyzer`
+8. Ask for architecture approval at checkpoint
+9. Create project documentation
+10. Implement Milestone 1 (smallest usable product)
+11. Demo Milestone 1 at checkpoint
+12. Validate, refactor, and review
+13. Provide summary and handoff for remaining milestones
 
 ### Checkpoint Example
 
@@ -786,7 +900,7 @@ All tests must:
 
 ### DO
 
-- ✅ Use `@workflow-router` as your entry point for automatic classification
+- ✅ Use `@orchestrator` as your entry point for automatic classification
 - ✅ Follow workflows in order (don't skip phases)
 - ✅ Stop at checkpoints for approval
 - ✅ Write tests before implementation

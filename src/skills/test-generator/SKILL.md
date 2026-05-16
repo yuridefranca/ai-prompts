@@ -1,9 +1,11 @@
 ---
-name: tdd-test-generator
+name: test-generator
+aliases:
+    - tdd-test-generator
 description: Generate unit tests BEFORE implementation following TDD (Test-Driven Development) principles. Creates ONLY unit tests with mocked dependencies that initially fail. Integration and E2E tests come later after implementation. Always use when starting TDD phase before code exists. Tests must be written before code. Keywords TDD, test-driven development, unit tests, test coverage, testing, red-green-refactor, test first, mocking.
 ---
 
-# TDD Test Generator (Unit Tests Only)
+# Test Generator (Unit Tests Only)
 
 Generate comprehensive failing UNIT tests BEFORE implementation to drive design and API boundaries. Follows TDD red-green-refactor cycle. **Does NOT create integration or E2E tests** - those come after implementation.
 

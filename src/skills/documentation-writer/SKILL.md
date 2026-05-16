@@ -1,9 +1,11 @@
 ---
-name: feature-doc-writer
+name: documentation-writer
+aliases:
+    - feature-doc-writer
 description: Update project documentation (AGENTS.md, CLAUDE.md, feature docs) when adding new features, ensuring discoverability and comprehension. Always use when feature is being implemented, documentation needs updating, or new capabilities need to be documented. Integrates with agents-md-generator skill for format consistency. Keywords documentation, AGENTS.md, CLAUDE.md, feature documentation, API documentation, architecture documentation, code documentation.
 ---
 
-# Feature Documentation Writer
+# Documentation Writer
 
 Update project documentation to capture new feature context, ensuring future developers and AI assistants can discover and understand the feature.
 
@@ -241,7 +243,7 @@ Shared vocabulary for [Project Name]. When multiple terms exist for the same con
 ## Delegation
 
 **For AGENTS.md updates**: Invoke `agents-md-generator` skill
-**For comprehensive docs**: Delegate to `doc-writter` agent
+**For comprehensive docs**: Delegate to `documentation-writer` agent
 
 ## Evals
 
