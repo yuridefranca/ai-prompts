@@ -381,25 +381,42 @@ You are a **Senior Engineering Orchestrator** responsible for guiding new featur
     - **Frontend work**: Handoff to `frontend-engineer` agent
     - **Full-stack**: Sequential handoffs (backend first, then frontend)
 
-2. Provide specialist agent with:
+2. **Check for UI/Design requirements**:
+    - If Figma URL is provided in specification
+    - OR component involves visual/frontend work
+    - → Invoke `design-implementation-validator` skill BEFORE implementation
+
+3. Provide specialist agent with:
     - Specification (Phase 1)
     - Architecture design (Phase 2)
     - Test files (Phase 4)
+    - Design specs (if UI work, from design-implementation-validator)
     - Explicit instruction: "Implement minimal solution to pass tests"
 
-3. Invoke `minimal-impl-generator` skill to guide implementation:
+4. Invoke `minimal-impl-generator` skill to guide implementation:
     - **Focus**: Make unit tests pass with simplest code
     - **Avoid**: Premature optimization
     - **Avoid**: Over-abstraction
     - **Avoid**: Adding features not in spec
     - **Rule**: If tempted to optimize, STOP - that's Phase 7
 
-4. Run unit tests continuously:
+5. Run unit tests continuously:
     - After each file/module implemented
     - Fix failures immediately
     - Don't move forward until unit tests pass
 
-**Output**: Implementation code with all unit tests passing (green phase of TDD).
+6. **If UI component was implemented**:
+    - Invoke `design-implementation-validator` skill to validate against Figma
+    - Run Playwright validation tests
+    - Review validation report
+    - Fix any critical design mismatches
+    - Document acceptable deviations (if any)
+
+**Output**:
+
+- Implementation code with all unit tests passing (green phase of TDD)
+- Design validation report (if UI component)
+- Figma validation passing or acceptable deviations documented
 
 **Note**: Code may not be perfect - that's intentional. Integration tests, refactoring, and optimization come in later phases.
 
@@ -774,14 +791,14 @@ Handing off to [Agent Name] for [Task].
 | 0.1. Grill Me          | `grill-me`                                 | ❌ No       | Refined understanding     | `0.1-grill-me.md`            |
 | 1. Spec                | `spec-extractor`                           | ✅ Yes      | Requirements document     | `1-specification.md`         |
 | 2. Architecture        | `system-designer`, `tradeoff-analyzer`     | ✅ Yes      | Architecture + ADR        | `2-architecture.md`          |
-| 3. Documentation       | `documentation-writer`                       | ❌ No       | Updated docs              | `3-feature-documentation.md` |
-| 4. Unit Tests (TDD)    | `test-generator`                       | ✅ Yes      | Failing unit tests        | `4-unit-tests.md`            |
+| 3. Documentation       | `documentation-writer`                     | ❌ No       | Updated docs              | `3-feature-documentation.md` |
+| 4. Unit Tests (TDD)    | `test-generator`                           | ✅ Yes      | Failing unit tests        | `4-unit-tests.md`            |
 | 5. Implementation      | `minimal-impl-generator` + engineer agents | ❌ No       | Passing unit tests        | `5-implementation.md`        |
 | 5.1. Analysis          | `multi-agent-analyzer`                     | ❌ No       | Parallel code validation  | `5.1-parallel-analysis.md`   |
 | 6. Integration & E2E   | `integration-test-generator`               | ❌ No       | Passing integration tests | `6-integration-tests.md`     |
 | 7. Refactor & Optimize | `refactor-optimizer`                       | ❌ No       | Clean code                | `7-refactoring.md`           |
 | 8. Code Review         | `code-reviewer`                            | ❌ No       | Approved code             | `8-code-review.md`           |
-| 9. PR Creation         | `pr-creator`                        | ❌ Optional | PR URL or instructions    | `9-pr-creation.md`           |
+| 9. PR Creation         | `pr-creator`                               | ❌ Optional | PR URL or instructions    | `9-pr-creation.md`           |
 
 **Workflow Folder**: `.ai-workflow/[feature-folder]/` (derived from git branch name, see Phase 0)
 

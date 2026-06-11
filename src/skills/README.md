@@ -9,6 +9,7 @@ Specialized capabilities for development workflows. Each skill focuses on a sing
 | [grill-me](grill-me/SKILL.md) | All (Phase 0.1) | Before any analysis | Refined understanding, resolved assumptions |
 | [multi-agent-analyzer](multi-agent-analyzer/SKILL.md) | All (Phase 5.1/6.1) | After implementation | Parallel code validation (quality, edge cases, regression) |
 | [btw](btw/SKILL.md) | Any | Side question without context impact | Quick answer, no artifacts |
+| [design-implementation-validator](design-implementation-validator/SKILL.md) | Feature (Phase 5), Improvement (Phase 5) | UI component implementation | Figma validation report, Playwright tests, design specs |
 | [spec-extractor](spec-extractor/SKILL.md) | Feature | Starting new feature | Requirements, edge cases, acceptance criteria |
 | [system-designer](system-designer/SKILL.md) | Feature, Improvement | After requirements/tradeoff | Domain model, APIs, data model, diagrams |
 | [tradeoff-analyzer](tradeoff-analyzer/SKILL.md) | Feature, Bug, Improvement | Evaluating alternatives | Comparison matrix, recommendation |
@@ -29,7 +30,7 @@ Specialized capabilities for development workflows. Each skill focuses on a sing
 
 ## Skill Categories
 
-### Shared Skills (5)
+### Shared Skills (6)
 
 **Purpose**: Used across all three workflows
 
@@ -38,6 +39,7 @@ Specialized capabilities for development workflows. Each skill focuses on a sing
 - `documentation-writer` - Documentation updates + ubiquitous language glossary
 - `code-reviewer` - Quality assurance
 - `btw` - Side questions without context pollution
+- `design-implementation-validator` - Figma-to-code validation with Playwright (UI components in Feature & Improvement workflows)
 
 ### Feature Skills (7)
 
@@ -47,6 +49,7 @@ Specialized capabilities for development workflows. Each skill focuses on a sing
 ```
 grill-me → spec-extractor → system-designer → tradeoff-analyzer → 
 documentation-writer → test-generator → minimal-impl-generator → 
+[design-implementation-validator for UI] →
 integration-test-generator → refactor-optimizer → code-reviewer
 ```
 

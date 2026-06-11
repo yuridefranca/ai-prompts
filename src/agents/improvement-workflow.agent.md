@@ -357,34 +357,49 @@ You are a **Senior Engineering Optimizer** responsible for improving existing wo
 
 **Process**:
 
-1. Determine tech stack and delegate:
+1. **Check for UI/Design requirements**:
+    - If component involves visual/frontend changes
+    - OR Figma URL is found in component comments/docs
+    - → Ask user if design validation is needed
+    - → If yes, invoke `design-implementation-validator` skill
+
+2. Determine tech stack and delegate:
     - **Backend work**: Handoff to `backend-engineer` agent
     - **Frontend work**: Handoff to `frontend-engineer` agent
     - **Full-stack**: Sequential handoffs
 
-2. Provide specialist agent with:
+3. Provide specialist agent with:
     - Tradeoff analysis and design (Phase 2)
     - Tests (Phase 4, if applicable)
+    - Design specs (if UI work, from design-implementation-validator)
     - Explicit instruction: "Implement the approved improvement design"
 
-3. Invoke `minimal-impl-generator` skill to guide:
+4. Invoke `minimal-impl-generator` skill to guide:
     - **Focus**: Implement the approved design
     - **Constraint**: Preserve existing behavior
     - **Avoid**: Scope creep beyond the approved improvement
     - **Rule**: Follow the migration strategy from Phase 2
 
-4. Verify implementation:
+5. Verify implementation:
     - Tests pass (if TDD used)
     - Improvement is working as designed
     - Existing behavior is preserved
     - No new errors introduced
+
+6. **If UI component was modified**:
+    - Invoke `design-implementation-validator` skill to validate against Figma
+    - Run Playwright validation tests
+    - Review validation report
+    - Fix any critical design mismatches
+    - Document acceptable deviations (if any)
 
 **Output**: Implementation code saved to `.ai-workflow/[feature-folder]/5-implementation.md` with:
 
 - Changes following approved design
 - Tests passing
 - Existing behavior preserved
-- Documentation updated
+- No new errors introduced
+- Design validation report (if UI component)
 
 ---
 
@@ -565,15 +580,15 @@ When delegating to specialist agents:
 | -------------- | ------------------------------------------ | ----------- | -------------------------- | -------------------------------- |
 | 0. Start       | —                                          | ✅ Yes      | Improvement description    | `0-startpoint.md`                |
 | 0.1. Grill Me  | `grill-me`                                 | ❌ No       | Refined understanding      | `0.1-grill-me.md`                |
-| 1. Mapping     | `component-mapper`, `documentation-writer`   | ❌ No       | Component map + impact     | `1-component-map.md`             |
+| 1. Mapping     | `component-mapper`, `documentation-writer` | ❌ No       | Component map + impact     | `1-component-map.md`             |
 | 2. Tradeoff    | `tradeoff-analyzer`, `system-designer`     | ✅ Yes      | Tradeoff analysis + design | `2-tradeoff-and-design.md`       |
-| 3. Docs        | `documentation-writer`                       | ❌ No       | Updated documentation      | `3-improvement-documentation.md` |
-| 4. TDD         | `test-generator`                       | ❌ No       | Tests for improvement      | `4-tdd-tests.md`                 |
+| 3. Docs        | `documentation-writer`                     | ❌ No       | Updated documentation      | `3-improvement-documentation.md` |
+| 4. TDD         | `test-generator`                           | ❌ No       | Tests for improvement      | `4-tdd-tests.md`                 |
 | 5. Implement   | `minimal-impl-generator` + engineer agents | ❌ No       | Implementation             | `5-implementation.md`            |
 | 5.1. Analysis  | `multi-agent-analyzer`                     | ❌ No       | Parallel code validation   | `5.1-parallel-analysis.md`       |
 | 6. Integration | `integration-test-generator`               | ❌ No       | Integration tests passing  | `6-integration-tests.md`         |
 | 7. Review      | `code-reviewer`                            | ❌ No       | Approved code              | `7-code-review.md`               |
-| 8. PR Creation | `pr-creator`                        | ❌ Optional | PR URL or instructions     | `8-pr-creation.md`               |
+| 8. PR Creation | `pr-creator`                               | ❌ Optional | PR URL or instructions     | `8-pr-creation.md`               |
 
 **Workflow Folder**: `.ai-workflow/[feature-folder]/` (derived from git branch name, see Phase 0)
 
