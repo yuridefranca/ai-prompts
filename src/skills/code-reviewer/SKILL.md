@@ -1,6 +1,18 @@
 ---
 name: code-reviewer
-description: Comprehensive code quality review covering security, performance, maintainability, anti-patterns, and regression risks. Used as final step in both feature and bugfix workflows before merge. Checks SOLID principles, best practices, test coverage, documentation, and prevents technical debt. Keywords code review, quality assurance, security review, performance review, maintainability, SOLID principles, anti-patterns, best practices, regression prevention.
+description: >
+    Comprehensive code quality review covering security, performance, maintainability,
+    anti-patterns, and regression risks. Used as final step in feature and bugfix workflows
+    before merge. Checks SOLID principles, best practices, test coverage, documentation,
+    and prevents technical debt. Dispatches parallel review agents for security, performance,
+    code quality, business logic, and testing. Keywords: code review, quality assurance,
+    security review, performance review, maintainability, SOLID principles, anti-patterns,
+    best practices, regression prevention.
+metadata:
+    author: yuridefranca
+    version: '1.0'
+    created: '2026-06-01'
+    updated: '2026-06-01'
 ---
 
 # Code Reviewer
@@ -15,733 +27,232 @@ description: Comprehensive code quality review covering security, performance, m
 - Pull request review
 - Critical/high-impact changes
 
-## Workflow Artifact
+## Workflow Integration
 
-This skill is invoked in all three workflows:
+See [references/workflow-integration.md](references/workflow-integration.md) for complete details on how this skill integrates with workflows.
 
-- **Feature Workflow Phase 8**: Produces `.ai-workflow/[feature-folder]/8-code-review.md`
-- **Bug Workflow Phase 7**: Contributes to `.ai-workflow/[feature-folder]/7-post-fix-review.md` (alongside post-fix-reviewer)
-- **Improvement Workflow Phase 7**: Produces `.ai-workflow/[feature-folder]/7-code-review.md`
+**Quick Reference:**
 
-**Context**: Read `0-startpoint.md`, `0.1-grill-me.md`, and all prior phase output files for full context of what's being reviewed.
+- **Feature Workflow Phase 8**: Produces `8-code-review.md`
+- **Bug Workflow Phase 7**: Contributes to `7-post-fix-review.md`
+- **Improvement Workflow Phase 7**: Produces `7-code-review.md`
+
+**Context**: Always read `0-startpoint.md`, `0.1-grill-me.md`, and prior phase outputs.
 
 ## Core Principle
 
 **Prevent Future Problems**: Catch issues now that would cause pain later. Balance thoroughness with pragmatism.
 
-## Process
+## Gotchas
 
-### Step 1: Understand the Change
+Environment-specific facts that defy assumptions - add to this list after fixing each mistake:
 
-**Read the context**:
+- TypeScript `any` is often hidden in library types - check return types carefully
+- `Promise.all()` fails fast - one rejection kills all, use `Promise.allSettled()` for better error handling
+- Database transactions in NestJS require explicit `@Transaction()` decorator or manual `queryRunner`
+- React `useEffect` cleanup functions must be idempotent - they run on unmount AND before re-run
+- JWT tokens without expiry checks are security vulnerabilities even if backend validates
+- Soft-deleted records need `WHERE deleted_at IS NULL` in ALL queries or joins return wrong counts
+- Frontend validation is UX, backend validation is security - ALWAYS validate on both
+- Test mocks that return `Promise.resolve(mockData)` don't test error paths
+- Performance issues from N+1 queries are invisible in tests with small datasets
+- GraphQL resolvers without `@Authorized()` are publicly accessible even if other resolvers are protected
+- HTTP 4xx errors should NOT be logged as errors - they're expected client mistakes
+- Async functions without `await` or error handling silently fail
 
-- What's the goal? (feature/bugfix)
-- What's the approach?
-- How complex is it?
+## Tech Stack Detection
 
-**Review scope**:
+Before reviewing, detect the tech stack to load appropriate rules.
 
-- Files changed
-- Lines added/removed
-- Components affected
+See [references/tech-stack-detection.md](references/tech-stack-detection.md) for complete detection patterns and loading strategy.
 
-**Document**:
+**Quick Detection:**
 
-```markdown
-## Change Summary
+1. Check `package.json` dependencies
+2. Look for framework-specific files/directories
+3. Examine imports and decorators in changed files
 
-**Type**: [Feature / Bugfix / Refactoring]
-**Scope**: [Small / Medium / Large]
-**Complexity**: [Low / Medium / High]
+**Always Load** (universal):
 
-**Files Changed**: [N]
+- [Programming Principles](references/rules-programming-principles.md)
+- [Design Patterns](references/rules-design-patterns.md)
+- [Security](references/rules-security.md)
+- [Performance](references/rules-performance.md)
+- [Testing](references/rules-testing.md)
+- [Readability](references/rules-readability.md)
+- [Data Integrity](references/rules-data-integrity.md)
+- [Business Logic](references/rules-business-logic.md)
 
-- `path/file1.ts` (+50, -10)
-- `path/file2.ts` (+120, -30)
+**Load when detected:**
 
-**Purpose**: [Brief description]
-```
+- **NestJS**: [NestJS Rules](references/rules-backend-nestjs.md)
+- **Backend/API**: [Backend Rules](references/rules-backend.md) + [API Design](references/rules-api-design.md)
 
-### Step 2: Security Review
+## Review Process
 
-**Check for vulnerabilities**:
+See [references/review-process.md](references/review-process.md) for the complete detailed process.
 
-#### Input Validation
+### High-Level Overview
 
-- [ ] All user input validated?
-- [ ] Type checking in place?
-- [ ] Length limits enforced?
-- [ ] Format validation (email, URL, etc.)?
+**Step 0: Detect Tech Stack & Load Rules**
 
-#### SQL Injection
+- Scan package.json, file paths, imports
+- Load universal rules + framework-specific rules
+- Document what was detected
 
-```typescript
-// ❌ BAD
-const query = `SELECT * FROM users WHERE id = ${userId}`;
+**Step 1: Dispatch Parallel Review Agents**
 
-// ✅ GOOD
-const query = `SELECT * FROM users WHERE id = $1`;
-db.query(query, [userId]);
-```
+- Create specialized agents for each aspect:
+    - Security Reviewer
+    - Performance Reviewer
+    - Code Quality Reviewer
+    - Business Logic Reviewer
+    - Testing Reviewer
+    - (+ conditionally: Backend, API, Framework-specific)
+- Each agent focuses on ONE aspect using relevant reference files
+- Launch all agents in parallel with `runSubagent`
 
-#### XSS (Cross-Site Scripting)
+**Step 2: Synthesize Review Results**
 
-```typescript
-// ❌ BAD
-element.innerHTML = userInput;
+- Collect findings from all agents
+- De-duplicate overlapping issues
+- Re-prioritize in context of full picture
+- Merge different perspectives
 
-// ✅ GOOD
-element.textContent = userInput;
-// OR
-element.innerHTML = sanitize(userInput);
-```
+**Step 3: Understand Change Context**
 
-#### Authentication & Authorization
+- Read workflow context files
+- Assess scope and complexity
+- Document the change summary
 
-- [ ] Authentication checked?
-- [ ] Authorization enforced?
-- [ ] Permissions validated?
-- [ ] Token validation secure?
+**Step 4: Regression Risk Assessment**
 
-#### Sensitive Data
+- Cross-reference agent findings with affected features
+- Identify high-risk changes
+- Document testing recommendations
 
-- [ ] Passwords hashed (not plain text)?
-- [ ] Secrets not in code?
-- [ ] PII properly handled?
-- [ ] Logs don't expose sensitive data?
+**Step 5: Create Comprehensive Review Report**
 
-#### CSRF Protection
+- Synthesize all findings into coherent review
+- Provide clear recommendation
+- Prioritize action items
+- Include human reviewer guidance
 
-- [ ] State-changing operations protected?
-- [ ] CSRF tokens used?
-- [ ] SameSite cookies configured?
+## Output Format
 
-**Document findings**:
-
-```markdown
-## Security Issues
-
-### Critical
-
-**SEC-CRIT-1**: SQL injection vulnerability
-
-- **Location**: `line 45 in user.service.ts`
-- **Issue**: String concatenation in query
-- **Fix**: Use parameterized queries
-- **Impact**: Database compromise
-
-### High
-
-**SEC-HIGH-1**: Password stored in plain text
-
-- **Location**: `line 120 in auth.service.ts`
-- **Issue**: No bcrypt hashing
-- **Fix**: Hash passwords before storage
-- **Impact**: User account compromise
-```
-
-### Step 3: Performance Review
-
-**Check for performance issues**:
-
-#### Database Queries
-
-```typescript
-// ❌ BAD: N+1 query problem
-for (const user of users) {
-	const posts = await db.query('SELECT * FROM posts WHERE userId = $1', [user.id]);
-}
-
-// ✅ GOOD: Single query with JOIN
-const usersWithPosts = await db.query(`
-  SELECT u.*, p.* 
-  FROM users u 
-  LEFT JOIN posts p ON p.userId = u.id
-`);
-```
-
-- [ ] No N+1 queries?
-- [ ] Proper indexes used?
-- [ ] Query limits in place?
-- [ ] Pagination for large datasets?
-
-#### Algorithms
-
-- [ ] Time complexity reasonable? (avoid O(n²) if possible)
-- [ ] Space complexity acceptable?
-- [ ] Unnecessary loops avoided?
-- [ ] Early returns used?
-
-#### Caching
-
-- [ ] Expensive operations cached?
-- [ ] Cache invalidation handled?
-- [ ] TTL set appropriately?
-
-#### Async Operations
-
-```typescript
-// ❌ BAD: Sequential (slow)
-const user = await getUser(id);
-const posts = await getPosts(userId);
-const comments = await getComments(userId);
-
-// ✅ GOOD: Parallel (fast)
-const [user, posts, comments] = await Promise.all([getUser(id), getPosts(userId), getComments(userId)]);
-```
-
-#### Blocking Operations
-
-- [ ] No blocking I/O on main thread?
-- [ ] Heavy computation offloaded?
-- [ ] Streams used for large files?
-
-**Document findings**:
+Generate output as `[phase]-code-review.md` using this structure:
 
 ```markdown
-## Performance Issues
+# Code Review Report
 
-### High
+## Executive Summary
 
-**PERF-HIGH-1**: N+1 query in user list
+[One paragraph: overall quality, recommendation (approve/needs work/reject), key findings count]
 
-- **Location**: `line 67 in user.controller.ts`
-- **Issue**: Fetching posts in loop
-- **Fix**: Use JOIN or dataloader
-- **Impact**: Slow response (<500ms SLA breach)
+## Tech Stack Detected
 
-### Medium
+[What was detected, which rules were loaded]
 
-**PERF-MED-1**: No pagination
+## Review Results by Category
 
-- **Location**: `line 120 in post.service.ts`
-- **Issue**: Returns all posts (could be 10,000+)
-- **Fix**: Add limit/offset pagination
-- **Impact**: Memory issues, slow responses
-```
+### Security [Critical: N | High: N | Medium: N | Low: N]
 
-### Step 4: Code Quality & Maintainability
+[Top 3-5 most important findings, or "✅ No issues"]
 
-**Check SOLID principles**:
+### Performance [Critical: N | High: N | Medium: N | Low: N]
 
-#### Single Responsibility
+[Top 3-5 most important findings, or "✅ No issues"]
 
-```typescript
-// ❌ BAD: Class does too much
-class UserService {
-  createUser() { ... }
-  sendWelcomeEmail() { ... }
-  generateReport() { ... }
-  logActivity() { ... }
-}
+### Code Quality [Critical: N | High: N | Medium: N | Low: N]
 
-// ✅ GOOD: Separate responsibilities
-class UserService {
-  createUser() { ... }
-}
-class EmailService {
-  sendWelcomeEmail() { ... }
-}
-class ReportService {
-  generateReport() { ... }
-}
-```
+[Top 3-5 most important findings, or "✅ No issues"]
 
-#### Open/Closed Principle
+### Business Logic [Critical: N | High: N | Medium: N | Low: N]
 
-- [ ] Extensible without modification?
-- [ ] Uses interfaces/abstract classes?
-- [ ] Strategy pattern where appropriate?
+[Top 3-5 most important findings, or "✅ No issues"]
 
-#### Liskov Substitution
+### Testing [Critical: N | High: N | Medium: N | Low: N]
 
-- [ ] Subtypes behave like base types?
-- [ ] No broken inheritance?
+[Top 3-5 most important findings, or "✅ No issues"]
 
-#### Interface Segregation
+### [Additional Categories as detected]
 
-- [ ] Interfaces are focused?
-- [ ] No "fat" interfaces?
+[Findings or "✅ No issues"]
 
-#### Dependency Inversion
-
-- [ ] Depends on abstractions, not concretions?
-- [ ] Uses dependency injection?
-
-**Check for DRY violations**:
-
-```typescript
-// ❌ BAD: Duplication
-function validateEmail(email: string) {
-	return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-}
-function validateUserEmail(email: string) {
-	return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-}
-
-// ✅ GOOD: Single source of truth
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-function validateEmail(email: string) {
-	return EMAIL_REGEX.test(email);
-}
-```
-
-**Check for code smells**:
-
-- [ ] No magic numbers (use constants)
-- [ ] No overly long functions (>50 lines)
-- [ ] No deep nesting (>3 levels)
-- [ ] No commented-out code
-- [ ] No TODO/FIXME without tickets
-- [ ] Descriptive variable names
-- [ ] Consistent naming conventions
-
-### Step 5: Error Handling
-
-**Check error handling practices**:
-
-```typescript
-// ❌ BAD: Silent failure
-try {
-	await processPayment();
-} catch (error) {
-	// Ignored
-}
-
-// ✅ GOOD: Proper error handling
-try {
-	await processPayment();
-} catch (error) {
-	logger.error('Payment processing failed', { error, userId });
-	throw new PaymentError('Payment failed', { cause: error });
-}
-```
-
-- [ ] All errors caught?
-- [ ] Errors logged appropriately?
-- [ ] User-friendly error messages?
-- [ ] No sensitive data in error messages?
-- [ ] Proper error types used?
-- [ ] Transactions rolled back on error?
-
-### Step 6: Testing
-
-**Check test coverage**:
-
-- [ ] Unit tests for new code?
-- [ ] Integration tests for API changes?
-- [ ] Edge cases covered?
-- [ ] Error scenarios tested?
-- [ ] Mocks used appropriately?
-- [ ] Tests are deterministic (no flakiness)?
-
-**Test quality**:
-
-```typescript
-// ❌ BAD: Unclear test
-it('works', () => {
-	const result = func(data);
-	expect(result).toBeTruthy();
-});
-
-// ✅ GOOD: Clear test
-it('should return active users when status is "active"', () => {
-	const users = [
-		{ id: 1, status: 'active' },
-		{ id: 2, status: 'inactive' },
-	];
-	const result = filterActiveUsers(users);
-	expect(result).toEqual([{ id: 1, status: 'active' }]);
-});
-```
-
-- [ ] Test names are descriptive?
-- [ ] Tests follow AAA pattern (Arrange, Act, Assert)?
-- [ ] One assertion per test (ideally)?
-- [ ] Tests are independent?
-
-**Coverage metrics**:
-
-- [ ] Coverage >80% for new code?
-- [ ] Critical paths covered?
-- [ ] Edge cases tested?
-
-### Step 7: Documentation
-
-**Check documentation**:
-
-#### Code Comments
-
-```typescript
-// ❌ BAD: Obvious comment
-const total = price + tax; // Add price and tax
-
-// ✅ GOOD: Explains "why"
-// Tax must be calculated before discounts per IRS regulation 2023-45
-const total = price + calculateTax(price);
-```
-
-- [ ] Complex logic explained?
-- [ ] "Why" documented, not "what"?
-- [ ] No outdated comments?
-- [ ] Public APIs documented?
-
-#### Function/Class Documentation
-
-```typescript
-/**
- * Processes payment for an order
- *
- * @param orderId - Unique order identifier
- * @param amount - Payment amount in cents
- * @returns Payment confirmation ID
- * @throws PaymentError if payment fails
- * @throws ValidationError if amount is invalid
- */
-async function processPayment(orderId: string, amount: number): Promise<string>;
-```
-
-#### External Documentation
-
-- [ ] README updated (if needed)?
-- [ ] AGENTS.md updated (if schema/API changed)?
-- [ ] CHANGELOG entry added?
-- [ ] Migration guide (if breaking changes)?
-
-### Step 8: Regression Risk
-
-**Check for regression potential**:
-
-**High-risk changes**:
-
-- Modified shared utilities
-- Changed core business logic
-- Altered database schema
-- Modified authentication/authorization
-- Changed API contracts
-
-**Questions**:
-
-- What features use this code?
-- What could break?
-- Are there tests proving it won't break?
-
-**Document**:
-
-```markdown
 ## Regression Risk Assessment
 
 **Risk Level**: [Low / Medium / High / Critical]
 
 **Affected Features**:
 
-1. User login - \u26a0\ufe0f Modified auth flow
-2. Payment processing - \u26a0\ufe0f Uses changed validation
-3. Reporting - ✅ No impact
+- Feature 1: Impact assessment
+- Feature 2: ✅ No impact / ⚠️ Needs testing
 
-**Mitigations**:
+**Testing Recommendations**:
 
-- \u2705 Comprehensive test suite
-- \u2705 Regression tests added
-- \u26a0\ufe0f Manual testing recommended for auth flow
-```
+- Automated test coverage status
+- Manual testing areas
+- Performance testing needs
 
-### Step 9: Anti-Patterns
+## Positive Observations
 
-**Check for common anti-patterns**:
+[What was done well - highlight good patterns, proper implementations]
 
-#### God Object
+## Action Items (Prioritized)
 
-- [ ] No single class doing everything?
+**Must Fix Before Merge** (Blocking):
 
-#### Premature Optimization
+1. [Critical/High issue with location and fix]
 
-- [ ] Optimization justified by profiling?
-- [ ] Not optimizing for imaginary problems?
+**Should Fix** (Non-blocking):
 
-#### Callback Hell
+1. [Medium issue with location and fix]
 
-```typescript
-// ❌ BAD
-getData((data) => {
-	processData(data, (result) => {
-		saveData(result, (saved) => {
-			notify(saved, () => {
-				// Done
-			});
-		});
-	});
-});
+**Consider for Future** (Technical debt):
 
-// ✅ GOOD
-const data = await getData();
-const result = await processData(data);
-const saved = await saveData(result);
-await notify(saved);
-```
-
-#### Tight Coupling
-
-- [ ] Components loosely coupled?
-- [ ] Dependencies injected?
-- [ ] Interfaces used?
-
-### Step 10: Best Practices
-
-**Language-specific best practices**:
-
-#### TypeScript
-
-- [ ] Strict mode enabled?
-- [ ] No `any` types (unless justified)?
-- [ ] Enums used for string unions?
-- [ ] Null checks in place?
-
-#### Node.js
-
-- [ ] Environment variables for config?
-- [ ] Async/await used (not callbacks)?
-- [ ] Promises handled (.catch or try/catch)?
-- [ ] No blocking operations?
-
-#### React (if applicable)
-
-- [ ] Hooks used correctly?
-- [ ] Keys on list items?
-- [ ] No unnecessary re-renders?
-- [ ] PropTypes or TypeScript types?
-
-## Output Format
-
-````markdown
-# Code Review: [Feature/Issue]
-
-## Executive Summary
-
-**Overall Quality**: [Excellent / Good / Needs Improvement / Poor]
-
-**Recommendation**:
-
-- ✅ **APPROVE** - Ready to merge
-- ⚠️ **APPROVE WITH COMMENTS** - Minor issues, can fix later
-- 🔧 **REQUEST CHANGES** - Issues must be fixed before merge
-- 🛑 **REJECT** - Significant rework needed
-
-**Confidence**: [X]%
-
-## Change Overview
-
-**Type**: Feature
-**Complexity**: Medium
-**Files Changed**: 5
-**Lines**: +230, -45
-
-**Purpose**: Add discount code functionality to checkout
-
-## Issues Found
-
-### 🛑 Critical (Must fix before merge)
-
-1. **SEC-CRIT-1**: SQL injection vulnerability
-    - **File**: `src/checkout.service.ts:45`
-    - **Issue**: Using string concatenation in query
-    - **Fix**: Use parameterized queries
-
-### ⚠️ High Priority (Should fix before merge)
-
-1. **PERF-HIGH-1**: N+1 query problem
-    - **File**: `src/checkout.controller.ts:67`
-    - **Issue**: Loading discounts in loop
-    - **Fix**: Use JOIN or eager loading
-
-### 📌 Medium Priority (Fix soon)
-
-1. **MAINTAIN-MED-1**: Function too long
-    - **File**: `src/discount.service.ts:120-180`
-    - **Issue**: 60-line function with multiple responsibilities
-    - **Fix**: Extract helper functions
-
-### 💡 Low Priority (Nice to have)
-
-1. **STYLE-LOW-1**: Magic number
-    - **File**: `src/discount.service.ts:145`
-    - **Issue**: Hardcoded `30` without explanation
-    - **Fix**: Extract to named constant
-
-## Detailed Analysis
-
-### Security ✅ 1 Critical, 0 High
-
-**SEC-CRIT-1**: SQL Injection Vulnerability
-
-```typescript
-// Line 45 in checkout.service.ts
-const query = `SELECT * FROM discounts WHERE code = '${code}'`;
-```
-````
-
-**Fix**:
-
-```typescript
-const query = 'SELECT * FROM discounts WHERE code = $1';
-const result = await db.query(query, [code]);
-```
-
-### Performance ⚠️ 1 High, 1 Medium
-
-**PERF-HIGH-1**: N+1 Query Problem
-
-- **Impact**: Slow response for users with many items
-- **Current**: 1 query per cart item (up to 50 queries)
-- **Target**: Single query with JOIN
-- **Priority**: HIGH
-
-### Code Quality ✅ Good overall
-
-**Strengths**:
-
-- Clean variable naming
-- Good separation of concerns
-- Proper TypeScript types
-- Error handling present
-
-**Issues**:
-
-- One function too long (60 lines)
-- Minor DRY violation (validation duplicated)
-
-### Testing ⚠️ Needs improvement
-
-**Coverage**: 75% (target: 80%)
-
-**Missing Tests**:
-
-- Edge case: Empty discount code
-- Edge case: Expired discount
-- Error case: Invalid discount format
-
-**Existing Tests**: Well-written, clear naming
-
-### Documentation ✅ Good
-
-- [ x Code comments adequate
-- [x] Function documentation present
-- [x] CHANGELOG updated
-- [x] AGENTS.md updated (discount schema added)
-
-### Regression Risk 🟡 Medium
-
-**Affected Features**:
-
-1. Checkout flow - Modified validation
-2. Cart calculation - Added discount logic
-
-**Mitigations**:
-
-- \u2705 Tests cover happy path
-- ⚠️ Needs tests for edge cases
-- ⚠️ Recommend manual QA for checkout
-
-## Positive Highlights
-
-1. **Excellent error handling** - All error paths covered
-2. **Clean architecture** - Good separation of concerns
-3. **Type safety** - Strong TypeScript usage
-4. **Readable code** - Easy to follow logic
-
-## Action Items
-
-### Must Fix (Blocking)
-
-- [ ] SEC-CRIT-1: Fix SQL injection (checkout.service.ts:45)
-
-### Should Fix (Before merge)
-
-- [ ] PERF-HIGH-1: Fix N+1 query (checkout.controller.ts:67)
-- [ ] Add tests for edge cases (empty/expired discounts)
-
-### Can Fix Later (Create tickets)
-
-- [ ] #1234: Extract long function (discount.service.ts:120-180)
-- [ ] #1235: Extract magic number constant (discount.service.ts:145)
-- [ ] #1236: Improve test coverage to 80%
+1. [Low priority improvement]
 
 ## Recommendation
 
-**🔧 REQUEST CHANGES**
+**[APPROVE / APPROVE WITH CHANGES / NEEDS WORK / REJECT]**
 
-One critical security issue must be fixed before merge. After fixing SEC-CRIT-1, please also address PERF-HIGH-1 to prevent performance issues in production.
+[2-3 sentence justification referencing key findings and overall code quality]
 
-Other issues are minor and can be addressed in follow-up PRs.
+## Human Reviewer Guidance
 
-**Estimated Fix Time**: 30-60 minutes
-
-**Confidence**: 90%
-
+[Specific areas to focus on during human review, non-obvious risks, suggestions for testing]
 ```
 
-## Severity Guidelines
+### Severity Guidelines
 
-**Critical** 🛑:
-- Security vulnerabilities
-- Data loss potential
-- System crashes
-- Production incidents guaranteed
+- **Critical**: Security vulnerabilities, data loss risks, crashes, complete feature breakage
+- **High**: Performance issues, incorrect business logic, missing validation, poor error handling
+- **Medium**: Maintainability issues, readability problems, missing tests, anti-patterns
+- **Low**: Naming improvements, documentation, minor optimizations, style consistency
 
-**High** ⚠️:
-- Performance issues affecting UX
-- Logic errors causing incorrect behavior
-- Missing critical error handling
-- Significant technical debt
+## Reference Files
 
-**Medium** 📌:
-- Code maintainability issues
-- Missing tests for important scenarios
-- Documentation gaps
-- Minor performance concerns
+Load these as needed during the review process:
 
-**Low** 💡:
-- Code style inconsistencies
-- Minor refactoring opportunities
-- Non-critical documentation
-- Optimization suggestions
+**Universal Rules** (always load):
 
-## When to Approve
+- [Programming Principles](references/rules-programming-principles.md)
+- [Design Patterns](references/rules-design-patterns.md)
+- [Security](references/rules-security.md)
+- [Performance](references/rules-performance.md)
+- [Testing](references/rules-testing.md)
+- [Readability](references/rules-readability.md)
+- [Data Integrity](references/rules-data-integrity.md)
+- [Business Logic](references/rules-business-logic.md)
 
-**Approve** ✅ if:
-- Zero critical issues
-- Zero high-priority issues
-- Tests passing
-- Documentation adequate
+**Conditional Rules** (load when detected):
 
-**Approve with Comments** ⚠️ if:
-- Zero critical issues
-- Minor high-priority issues (can fix immediately)
-- Medium/low issues present
-- Overall quality good
+- [Backend Rules](references/rules-backend.md) - when backend framework detected
+- [API Design](references/rules-api-design.md) - when REST/GraphQL detected
+- [NestJS Rules](references/rules-backend-nestjs.md) - when NestJS detected
 
-**Request Changes** 🔧 if:
-- Critical issues present
-- Multiple high-priority issues
-- Significant quality concerns
-- Tests inadequate
+**Process Documentation**:
 
-**Reject** 🛑 if:
-- Multiple critical issues
-- Fundamental design flaws
-- Massive technical debt introduced
-- Requires complete rework
-
-## Evals
-
-- [ ] Security vulnerabilities checked
-- [ ] Performance issues identified
-- [ ] Code quality assessed (SOLID, DRY, KISS)
-- [ ] Error handling reviewed
-- [ ] Test coverage evaluated
-- [ ] Documentation checked
-- [ ] Regression risk assessed
-- [ ] Anti-patterns identified
-- [ ] Clear recommendation provided
-- [ ] Action items prioritized
-```
+- [Complete Review Process](references/review-process.md) - detailed step-by-step process
+- [Tech Stack Detection](references/tech-stack-detection.md) - detection patterns and strategies
+- [Workflow Integration](references/workflow-integration.md) - how skill fits in workflows

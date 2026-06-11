@@ -1,6 +1,18 @@
 ---
 name: spec-extractor
-description: Extract complete feature specifications from user descriptions, converting high-level ideas into structured requirements with edge cases and acceptance criteria. Always use this skill when starting new feature work, when users describe what they want to build, or when requirements need clarification. It captures functional requirements, non-functional requirements, constraints, edge cases, and acceptance criteria. Keywords requirements, specification, feature spec, acceptance criteria, edge cases, constraints, functional requirements, requirements extraction, product requirements.
+description: >
+    Extract complete feature specifications from user descriptions, converting high-level ideas
+    into structured requirements with edge cases and acceptance criteria. Always use this skill
+    when starting new feature work, when users describe what they want to build, or when requirements
+    need clarification. It captures functional requirements, non-functional requirements, constraints,
+    edge cases, and acceptance criteria. Keywords: requirements, specification, feature spec,
+    acceptance criteria, edge cases, constraints, functional requirements, requirements extraction,
+    product requirements.
+metadata:
+    author: yuridefranca
+    version: '1.0'
+    created: '2026-06-01'
+    updated: '2026-06-01'
 ---
 
 # Specification Extractor
@@ -23,6 +35,23 @@ This skill is invoked as **Phase 1** of the Feature Workflow. It MUST produce an
 
 **Context**: Read `0-startpoint.md` for the user's initial requirements and `0.1-grill-me.md` for refined understanding before extracting the specification.
 
+## Gotchas
+
+Environment-specific facts that defy assumptions - add to this list after fixing each mistake:
+
+- "Fast" without a number is useless - always specify response times in milliseconds
+- Functional requirements without acceptance criteria can't be tested
+- Edge cases with "should handle errors gracefully" are too vague - specify exact error responses
+- Missing non-functional requirements lead to performance/security issues in production
+- Confidence below 70% means STOP - assumptions lead to rework later
+- Acceptance criteria without Given-When-Then structure are hard to verify
+- Forgetting to ask "what happens when X fails?" leads to missing error handling requirements
+- "Scalable" without numbers (users, TPS, data volume) is not a requirement
+- Assumptions not documented become hidden dependencies
+- Edge cases for concurrent operations (race conditions) often forgotten
+- Missing integration failure scenarios (external API down) cause production incidents
+- Requirements like "user-friendly" or "intuitive" are not testable - need specific criteria
+
 ## Process
 
 ### Step 1: Understand the Feature Goal
@@ -36,146 +65,31 @@ Ask clarifying questions to understand:
 
 ### Step 2: Extract Functional Requirements
 
-Identify explicit and implicit **what the system must do**:
+See [references/requirement-types.md](references/requirement-types.md#functional-requirements) for detailed guidance.
 
-**Questions to answer**:
-
-- What user actions must be supported?
-- What data must be created/read/updated/deleted?
-- What business rules must be enforced?
-- What integrations are required?
-- What outputs/responses are expected?
-
-**Format each requirement**:
-
-```
-REQ-[N]: [Action] [Object] [Condition]
-Example: REQ-1: User can create a new order with valid payment method
-```
-
-**Requirements should be**:
-
-- **Specific**: No ambiguous language
-- **Measurable**: Can determine if satisfied
-- **Testable**: Can write automated test
-- **Independent**: Not duplicating other requirements
+**Quick guide**: Identify what the system must do - user actions, data operations, business rules, integrations, expected outputs.
 
 ### Step 3: Extract Non-Functional Requirements (NFRs)
 
-Identify quality attributes and constraints:
+See [references/requirement-types.md](references/requirement-types.md#non-functional-requirements-nfrs) for detailed guidance.
 
-**Performance Requirements**:
-
-- Response time targets (e.g., "API responds in <200ms")
-- Throughput targets (e.g., "handles 1000 req/sec")
-- Resource limits (e.g., "uses <512MB RAM")
-
-**Security Requirements**:
-
-- Authentication needs (who can access?)
-- Authorization rules (what can they do?)
-- Data sensitivity (PII, financial, etc.)
-- Compliance needs (GDPR, HIPAA, etc.)
-
-**Reliability Requirements**:
-
-- Uptime targets (e.g., "99.9% availability")
-- Failure handling (what happens when things break?)
-- Data integrity (how to prevent data corruption?)
-
-**Scalability Requirements**:
-
-- Expected growth (users, data, traffic)
-- Scaling approach (horizontal/vertical)
-- Load patterns (steady/spiky)
-
-**Usability Requirements**:
-
-- User experience expectations
-- Accessibility standards
-- Internationalization needs
+**Categories**: Performance, Security, Reliability, Scalability, Usability
 
 ### Step 4: Identify Constraints
 
-Document limitations that restrict implementation choices:
+See [references/requirement-types.md](references/requirement-types.md#constraints) for detailed guidance.
 
-**Technical Constraints**:
-
-- Technology stack (must use X framework)
-- Existing architecture (must integrate with Y)
-- Infrastructure limitations (on-prem, specific cloud)
-- Browser/device support requirements
-
-**Business Constraints**:
-
-- Budget limits
-- Timeline requirements
-- Resource availability (team size, skills)
-- Legal/regulatory constraints
-
-**Operational Constraints**:
-
-- Deployment windows
-- Maintenance windows
-- Support requirements
-- Monitoring/observability needs
+**Categories**: Technical, Business, Operational
 
 ### Step 5: Identify Edge Cases
 
-Think through **boundary conditions and unusual scenarios**:
+See [references/edge-case-guide.md](references/edge-case-guide.md) for complete edge case categories.
 
-**Data Edge Cases**:
-
-- Empty inputs (null, "", [])
-- Extreme values (very large, very small, negative)
-- Invalid formats (malformed data)
-- Special characters (unicode, emojis, SQL injection attempts)
-- Missing required fields
-
-**Timing Edge Cases**:
-
-- Race conditions (concurrent requests)
-- Timeouts (slow external services)
-- Out-of-order events
-- Duplicate requests
-
-**State Edge Cases**:
-
-- Resource doesn't exist (404 scenarios)
-- Resource already exists (conflict scenarios)
-- Unauthorized access attempts
-- Expired sessions/tokens
-
-**Volume Edge Cases**:
-
-- Pagination with zero results
-- Pagination with millions of results
-- Bulk operations (1 item vs 10,000 items)
-- Rate limiting scenarios
-
-**Integration Edge Cases**:
-
-- External service down
-- External service returns unexpected data
-- Network failures
-- Partial failures
-
-**Format each edge case**:
-
-```
-EDGE-[N]: [Scenario] → [Expected Behavior]
-Example: EDGE-1: User submits order with invalid payment → Return 400 error with clear message
-```
+**Quick checklist**: Data, Timing, State, Volume, Integration edge cases
 
 ### Step 6: Define Acceptance Criteria
 
-Create testable criteria for verifying the feature works:
-
-**Each criterion should be**:
-
-- **Observable**: Can see/measure the outcome
-- **Binary**: Pass or fail (no ambiguity)
-- **Complete**: Covers functional + NFRs + edge cases
+Create testable criteria for verifying the feature works.
 
 **Format using Given-When-Then**:
 
@@ -184,32 +98,19 @@ AC-[N]:
 Given [precondition/context]
 When [action taken]
 Then [expected result]
-
-Example:
-AC-1:
-Given a user has valid authentication credentials
-When they submit an order with valid payment method
-Then the order is created with status "pending" and user receives confirmation email within 5 seconds
 ```
 
-**Ensure coverage of**:
+**Each criterion should be**:
 
-- Happy path scenarios (normal use)
-- Error scenarios (validation failures, conflicts)
-- Edge cases (from Step 5)
-- Non-functional requirements (performance, security)
+- **Observable**: Can see/measure the outcome
+- **Binary**: Pass or fail (no ambiguity)
+- **Complete**: Covers functional + NFRs + edge cases
+
+See [references/examples.md](references/examples.md#acceptance-criteria) for good vs poor examples.
 
 ### Step 7: Document Assumptions
 
 List all assumptions you're making:
-
-**Common assumption categories**:
-
-- User behavior assumptions
-- Data availability assumptions
-- Infrastructure assumptions
-- Integration assumptions
-- Security assumptions
 
 **Format**:
 
@@ -222,21 +123,12 @@ Example: ASSUMPTION-1: Users have stable internet connection with >1Mbps bandwid
 
 Assess how confident you are in the completeness and correctness of the spec:
 
-**Confidence calculation**:
+**Confidence levels**:
 
 - **90-100%**: All requirements clear, no critical gaps, comprehensive edge cases
 - **80-89%**: Most requirements clear, minor gaps, good edge case coverage
 - **70-79%**: Core requirements clear, some gaps, basic edge case coverage
-- **60-69%**: Requirements somewhat clear, multiple gaps, limited edge cases
-- **<60%**: Significant ambiguity, major gaps, insufficient information
-
-**Factors that lower confidence**:
-
-- Ambiguous feature description
-- Missing context about users/business goals
-- Unclear technical constraints
-- No existing similar features for reference
-- Complex integrations with unknown systems
+- **<70%**: 🛑 **STOP** - Insufficient information to proceed
 
 ### Step 9: Identify Missing Information
 
@@ -446,28 +338,10 @@ Evaluate specification quality using these criteria:
 ❌ **High confidence with low information**: Be honest about what you don't know
 ❌ **Proceeding below 70% confidence**: Stop and request clarification
 
-## Examples
+See [references/examples.md](references/examples.md) for detailed good vs poor examples.
 
-### Good Requirement
+## Reference Files
 
-✅ REQ-1: User can upload profile image in JPG/PNG format, max 5MB, which is resized to 512x512px and stored in S3
-
-### Poor Requirement
-
-❌ REQ-1: User can upload profile picture
-
-### Good Edge Case
-
-✅ EDGE-1: User uploads 10MB image → Return 400 error: "Image must be under 5MB"
-
-### Poor Edge Case
-
-❌ EDGE-1: User uploads large image → Show error
-
-### Good Acceptance Criterion
-
-✅ AC-1: Given a logged-in user with no profile image, When they upload a 3MB PNG file, Then the image is resized to 512x512px, stored in S3, and profile page displays the image within 2 seconds
-
-### Poor Acceptance Criterion
-
-❌ AC-1: User can upload image and see it on their profile
+- [Requirement Types](references/requirement-types.md) - Detailed guidance on functional, non-functional requirements and constraints
+- [Edge Case Guide](references/edge-case-guide.md) - Comprehensive edge case categories (data, timing, state, volume, integration)
+- [Examples](references/examples.md) - Good vs poor requirements, edge cases, and acceptance criteria

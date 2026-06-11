@@ -1,6 +1,16 @@
 ---
 name: integration-test-generator
-description: Generate integration and E2E tests AFTER implementation to verify components work together correctly. Tests use real dependencies (databases, APIs) not mocks. Always use after implementation is complete and unit tests pass. Validates architecture design and acceptance criteria end-to-end. Keywords integration tests, E2E tests, end-to-end, acceptance testing, system testing, component integration, real dependencies.
+description: >
+    Generate integration and E2E tests AFTER implementation to verify components work together 
+    correctly. Tests use real dependencies (databases, APIs) not mocks. Always use after 
+    implementation is complete and unit tests pass. Validates architecture design and acceptance 
+    criteria end-to-end. Keywords: integration tests, E2E tests, end-to-end, acceptance testing, 
+    system testing, component integration, real dependencies.
+metadata:
+    author: yuridefranca
+    version: '1.0'
+    created: '2026-06-01'
+    updated: '2026-06-01'
 ---
 
 # Integration & E2E Test Generator
@@ -31,6 +41,23 @@ This skill is invoked in multiple workflows:
 - **Improvement Workflow Phase 6**: Produces `.ai-workflow/[feature-folder]/6-integration-tests.md`
 
 **Context**: Read `0-startpoint.md`, `0.1-grill-me.md`, and the relevant prior phase outputs before generating integration tests.
+
+## Gotchas
+
+Environment-specific facts that defy assumptions - add to this list after fixing each mistake:
+
+- Integration tests need real database cleanup between tests - forgetting this causes random failures
+- Docker containers for test databases must be stopped AND removed, not just stopped
+- Test database migrations must run before tests, not during - race conditions cause flaky tests
+- `NODE_ENV=test` doesn't automatically use test database - must explicitly configure
+- Parallel test execution breaks with shared test database - use `--runInBand` or separate DB per worker
+- `beforeAll` database setup can timeout - increase Jest timeout to 30000ms for integration tests
+- Mock external APIs (Stripe, SendGrid) but not internal services - integration tests verify internal integrations
+- Test isolation failures: Previous test's data affects next test - always clean ALL tables in beforeEach
+- Port conflicts: Test server already running from previous test run - use random ports or kill stale processes
+- Transaction tests: Some ORMs auto-commit unless explicitly wrapped - verify transaction behavior
+- Async cleanup: `afterAll` can finish before async operations complete - use `await` on all cleanup
+- CI environment: Database connection strings differ from local - use environment variables
 
 ## Integration vs Unit Tests
 
@@ -88,85 +115,19 @@ Use the same testing framework identified in Phase 4:
 
 ### Step 3: Setup Test Environment
 
-**Real dependencies require setup**:
+See [references/test-patterns.md](references/test-patterns.md) for detailed setup examples.
 
-```typescript
-// Example: Database setup
-import { setupTestDatabase, teardownTestDatabase } from './test-helpers';
+**Quick setup checklist**:
 
-describe('User Registration Integration', () => {
-	beforeAll(async () => {
-		// Setup real test database
-		await setupTestDatabase();
-	});
-
-	afterAll(async () => {
-		// Cleanup
-		await teardownTestDatabase();
-	});
-
-	beforeEach(async () => {
-		// Clear data between tests
-		await clearAllTables();
-	});
-
-	it('should create user in database and send welcome email', async () => {
-		// Test uses REAL database connection
-		const userService = new UserService(realDatabase, realEmailService);
-
-		const newUser = await userService.register({
-			email: 'test@example.com',
-			password: 'secure123',
-		});
-
-		// Verify in actual database
-		const dbUser = await realDatabase.users.findOne({ email: 'test@example.com' });
-		expect(dbUser).toBeDefined();
-		expect(dbUser.id).toEqual(newUser.id);
-	});
-});
-```
-
-**Common setup patterns**:
-
-- Test databases (PostgreSQL, MongoDB, Redis)
+- Real test database (PostgreSQL, MongoDB, Redis)
 - Test API servers (start/stop in beforeAll/afterAll)
-- Test message queues (RabbitMQ, Kafka test instances)
-- Mock external APIs only (use nock, msw)
-- File system fixtures
+- Mock only external APIs (use nock, msw)
+- File system fixtures if needed
+- Environment variables for test config
 
 ### Step 4: Generate Component Integration Tests
 
-**Test real interactions between your components**:
-
-```typescript
-describe('Order Checkout Integration', () => {
-	it('should process complete checkout flow', async () => {
-		// Real services with real dependencies
-		const inventoryService = new InventoryService(realDatabase);
-		const paymentService = new PaymentService(realPaymentGateway);
-		const orderService = new OrderService(realDatabase, inventoryService, paymentService);
-
-		// Test actual workflow
-		const order = await orderService.checkout({
-			userId: testUserId,
-			items: [{ productId: 123, quantity: 2 }],
-			payment: { method: 'credit_card', token: 'test_token' },
-		});
-
-		// Verify side effects in real systems
-		expect(order.status).toBe('completed');
-
-		// Check inventory actually decreased
-		const product = await inventoryService.getProduct(123);
-		expect(product.stock).toBe(originalStock - 2);
-
-		// Check payment actually processed
-		const payment = await paymentService.getPayment(order.paymentId);
-		expect(payment.status).toBe('captured');
-	});
-});
-```
+Test real interactions between components. See [references/test-patterns.md](references/test-patterns.md#component-integration-tests) for detailed examples.
 
 **Test patterns**:
 
@@ -178,141 +139,26 @@ describe('Order Checkout Integration', () => {
 
 ### Step 5: Generate API/HTTP Integration Tests
 
-**Test actual HTTP endpoints**:
+Test actual HTTP endpoints. See [references/test-patterns.md](references/test-patterns.md#api-http-integration-tests) for detailed examples.
 
-```typescript
-import request from 'supertest';
-import { app } from '../app';
-
-describe('API Integration Tests', () => {
-	it('should create user via POST /api/users', async () => {
-		const response = await request(app).post('/api/users').send({
-			email: 'newuser@example.com',
-			name: 'New User',
-		});
-
-		expect(response.status).toBe(201);
-		expect(response.body).toMatchObject({
-			email: 'newuser@example.com',
-			name: 'New User',
-		});
-
-		// Verify user exists via GET
-		const getResponse = await request(app).get(`/api/users/${response.body.id}`);
-
-		expect(getResponse.status).toBe(200);
-		expect(getResponse.body.email).toBe('newuser@example.com');
-	});
-
-	it('should return 400 for invalid email', async () => {
-		const response = await request(app).post('/api/users').send({
-			email: 'invalid-email',
-			name: 'Test',
-		});
-
-		expect(response.status).toBe(400);
-		expect(response.body.error).toBeDefined();
-	});
-});
-```
+**Use supertest or similar** to make real HTTP requests to your API.
 
 ### Step 6: Generate Database Integration Tests
 
-**Test actual database operations**:
+Test actual database operations. See [references/test-patterns.md](references/test-patterns.md#database-integration-tests) for detailed examples.
 
-```typescript
-describe('Database Integration', () => {
-	it('should handle concurrent user creation', async () => {
-		const email = 'concurrent@example.com';
+**Focus on**:
 
-		// Simulate concurrent requests
-		const promises = [userService.create({ email, name: 'User 1' }), userService.create({ email, name: 'User 2' })];
-
-		// One should succeed, one should fail (unique constraint)
-		const results = await Promise.allSettled(promises);
-
-		const successful = results.filter((r) => r.status === 'fulfilled');
-		const failed = results.filter((r) => r.status === 'rejected');
-
-		expect(successful).toHaveLength(1);
-		expect(failed).toHaveLength(1);
-		expect(failed[0].reason.message).toContain('unique constraint');
-	});
-
-	it('should rollback transaction on error', async () => {
-		const userId = 123;
-
-		try {
-			await database.transaction(async (trx) => {
-				await trx.users.update(userId, { status: 'active' });
-				await trx.orders.create({ userId, total: 100 });
-				throw new Error('Simulated error');
-			});
-		} catch (error) {
-			// Expected error
-		}
-
-		// Verify rollback - user status unchanged
-		const user = await database.users.findOne(userId);
-		expect(user.status).toBe('inactive'); // Original status
-	});
-});
-```
+- Concurrent operations (race conditions)
+- Transaction rollbacks
+- Unique constraints
+- Foreign key relationships
 
 ### Step 7: Generate E2E Tests
 
-**Test complete user workflows**:
+Test complete user workflows. See [references/test-patterns.md](references/test-patterns.md#e2e-tests) for detailed examples.
 
-```typescript
-describe('E2E: User Registration and First Purchase', () => {
-	it('should complete full user journey', async () => {
-		// 1. Register
-		const registerResponse = await request(app).post('/api/auth/register').send({
-			email: 'e2e@example.com',
-			password: 'secure123',
-			name: 'E2E User',
-		});
-
-		expect(registerResponse.status).toBe(201);
-		const { token, userId } = registerResponse.body;
-
-		// 2. Login
-		const loginResponse = await request(app).post('/api/auth/login').send({
-			email: 'e2e@example.com',
-			password: 'secure123',
-		});
-
-		expect(loginResponse.status).toBe(200);
-
-		// 3. Browse products
-		const productsResponse = await request(app).get('/api/products').set('Authorization', `Bearer ${token}`);
-
-		expect(productsResponse.status).toBe(200);
-		const productId = productsResponse.body[0].id;
-
-		// 4. Add to cart
-		const cartResponse = await request(app).post('/api/cart').set('Authorization', `Bearer ${token}`).send({ productId, quantity: 1 });
-
-		expect(cartResponse.status).toBe(200);
-
-		// 5. Checkout
-		const checkoutResponse = await request(app)
-			.post('/api/checkout')
-			.set('Authorization', `Bearer ${token}`)
-			.send({
-				payment: { method: 'credit_card', token: 'test_token' },
-			});
-
-		expect(checkoutResponse.status).toBe(200);
-		expect(checkoutResponse.body.order.status).toBe('completed');
-
-		// 6. Verify order in database
-		const order = await database.orders.findOne({ userId });
-		expect(order).toBeDefined();
-		expect(order.status).toBe('completed');
-	});
-});
-```
+**E2E tests simulate real user journeys** from start to finish.
 
 ### Step 8: Run and Verify Integration Tests
 
@@ -339,53 +185,28 @@ npm run test:e2e
 
 ## Output Format
 
-**Integration test file structure**:
+See [references/test-patterns.md](references/test-patterns.md#integration-test-file-structure-template) for complete file structure template.
 
-```typescript
-import request from 'supertest';
-import { setupTestDatabase, teardownTestDatabase } from './test-helpers';
-import { app } from '../app';
-import { database } from '../database';
+**Integration test files should include**:
 
-describe('Feature Integration Tests', () => {
-	// Setup real dependencies
-	beforeAll(async () => {
-		await setupTestDatabase();
-		await app.listen(0); // Random port
-	});
+- Real dependency setup in beforeAll/afterAll
+- Data cleanup in beforeEach
+- Organized test suites (Happy Path, Error Scenarios, Performance)
+- Tests that verify actual database/API state
 
-	afterAll(async () => {
-		await app.close();
-		await teardownTestDatabase();
-	});
+**File naming conventions**:
 
-	beforeEach(async () => {
-		await database.clearAll();
-	});
+- `*.integration.spec.ts` or `*.integration.test.ts`
+- `*.e2e.spec.ts` or `*.e2e.test.ts`
 
-	describe('Happy Path Integration', () => {
-		it('should complete workflow end-to-end', async () => {
-			// Test with real dependencies
-		});
-	});
+**Directory structure**:
 
-	describe('Error Scenarios Integration', () => {
-		it('should handle errors across boundaries', async () => {
-			// Test error propagation
-		});
-	});
-
-	describe('Performance and Concurrency', () => {
-		it('should handle concurrent operations', async () => {
-			// Test race conditions
-		});
-	});
-});
-```
+- `test/integration/` or `__tests__/integration/`
+- `e2e/` or `test/e2e/`
 
 ## Test Coverage Goals
 
-**Integration coverage**:
+**Integration coverage checklist**:
 
 - [ ] All component boundaries tested
 - [ ] All database operations verified
@@ -405,54 +226,6 @@ describe('Feature Integration Tests', () => {
 - Tests can run in CI/CD environment
 - Test setup is automated
 
-## Common Integration Test Patterns
-
-### Pattern 1: Repository Integration
-
-```typescript
-it('should save and retrieve entity', async () => {
-	const repository = new UserRepository(realDatabase);
-
-	const user = await repository.save({ email: 'test@example.com' });
-	const retrieved = await repository.findById(user.id);
-
-	expect(retrieved).toEqual(user);
-});
-```
-
-### Pattern 2: Service Layer Integration
-
-```typescript
-it('should orchestrate multiple repositories', async () => {
-	const orderService = new OrderService(realDb);
-
-	const order = await orderService.createOrder({
-		userId: 1,
-		items: [{ productId: 10, quantity: 2 }],
-	});
-
-	expect(order.total).toBe(expectedTotal);
-
-	// Verify inventory decreased
-	const product = await realDb.products.findOne(10);
-	expect(product.stock).toBe(originalStock - 2);
-});
-```
-
-### Pattern 3: API Endpoint Integration
-
-```typescript
-it('should handle authentication flow', async () => {
-	const loginResponse = await request(app).post('/api/auth/login').send({ email: 'user@test.com', password: 'pass' });
-
-	const { token } = loginResponse.body;
-
-	const protectedResponse = await request(app).get('/api/profile').set('Authorization', `Bearer ${token}`);
-
-	expect(protectedResponse.status).toBe(200);
-});
-```
-
 ## Uncertainty Handling
 
 **Integration test gaps**: Document external dependencies that can't be tested in CI/CD (e.g., third-party APIs)
@@ -460,6 +233,10 @@ it('should handle authentication flow', async () => {
 **Confidence level**: % of architecture contracts verified
 
 **If confidence < 80%**: List missing integration scenarios
+
+## Reference Files
+
+- [Test Patterns and Examples](references/test-patterns.md) - Detailed code examples for all integration test patterns
 
 ## Evals
 

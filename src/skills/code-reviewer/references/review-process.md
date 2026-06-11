@@ -1,0 +1,318 @@
+# Code Review Process
+
+## Overview
+
+The code review process uses **parallel specialized review agents** for speed and thoroughness, then synthesizes findings into a comprehensive report.
+
+## Process Steps
+
+### Step 0: Load Appropriate Rules
+
+See [tech-stack-detection.md](./tech-stack-detection.md) to identify tech stack and load relevant rule sets.
+
+### Step 1: Dispatch Parallel Review Agents
+
+Create specialized sub-agents for each focus area:
+
+#### Core Review Agents (Always)
+
+1. **Security Reviewer**
+    - References: [rules-security.md](./rules-security.md), [rules-data-integrity.md](./rules-data-integrity.md)
+    - Aspects: Input validation, SQL injection, XSS, CSRF, auth, secrets, PII
+
+2. **Performance Reviewer**
+    - References: [rules-performance.md](./rules-performance.md)
+    - Aspects: Database queries, N+1, caching, async ops, algorithm complexity
+
+3. **Code Quality Reviewer**
+    - References: [rules-programming-principles.md](./rules-programming-principles.md), [rules-design-patterns.md](./rules-design-patterns.md), [rules-readability.md](./rules-readability.md)
+    - Aspects: SOLID, DRY, KISS, naming, complexity, nesting, anti-patterns
+
+4. **Business Logic Reviewer**
+    - References: [rules-business-logic.md](./rules-business-logic.md)
+    - Aspects: Domain models, value objects, invariants, state machines, edge cases
+
+5. **Testing Reviewer** (if tests present)
+    - References: [rules-testing.md](./rules-testing.md)
+    - Aspects: Coverage, AAA pattern, mocking, assertions, edge cases
+
+#### Conditional Review Agents
+
+Add based on detected tech stack:
+
+- **Backend detected** → Backend Architecture Reviewer ([rules-backend.md](./rules-backend.md))
+- **API endpoints detected** → API Design Reviewer ([rules-api-design.md](./rules-api-design.md))
+- **NestJS detected** → NestJS Reviewer ([rules-backend-nestjs.md](./rules-backend-nestjs.md))
+
+#### Agent Instructions Template
+
+````markdown
+You are the [Agent Name]. Review code changes focusing ONLY on [Focus Area].
+
+**Reference Materials**: Read and apply rules from:
+- [List reference files]
+
+**Task**:
+1. Read reference files to understand rules
+2. Review ONLY changed code (not entire codebase)
+3. Focus exclusively on [Aspects]
+4. For each issue, document:
+   - Severity: Critical / High / Medium / Low
+   - Location: File and line number
+   - Issue: What's wrong
+   - Fix: Specific recommendation
+   - Rule: Which principle/pattern violated
+
+**Output Format**:
+```markdown
+## [Focus Area] Review Results
+
+### Critical Issues
+[List or "None found"]
+
+### High Priority Issues
+[List or "None found"]
+
+### Medium Priority Issues
+[List or "None found"]
+
+### Low Priority Issues
+[List or "None found"]
+
+### Positive Observations
+[What was done well]
+```
+````
+
+**Launch Agents in Parallel**:
+
+Use `runSubagent` with Explore agent for fast read-only reviews. Wait for all to complete.
+
+### Step 2: Synthesize Review Results
+
+**Aggregate findings:**
+
+1. Collect all Critical issues from all agents
+2. Collect all High, Medium, Low priority issues
+3. Collect positive observations
+
+**De-duplicate:**
+
+- If multiple agents report same issue → keep most detailed explanation
+- Merge different perspectives into comprehensive finding
+- Note which rules violated from different angles
+
+**Re-prioritize:**
+
+- Multiple agents flagging same code → elevate priority
+- Security + Performance in same code → Critical
+- Consider impact × likelihood
+
+### Step 3: Understand Change Context
+
+**Read context from workflow artifacts:**
+
+- `0-startpoint.md` - Original problem/requirement
+- `0.1-grill-me.md` - Clarifying questions/decisions
+- Prior phase outputs - Implementation approach
+
+**Document:**
+
+```markdown
+## Change Summary
+
+**Type**: [Feature / Bugfix / Refactoring]
+**Scope**: [Small / Medium / Large]
+**Complexity**: [Low / Medium / High]
+
+**Files Changed**: [N]
+- `path/file1.ts` (+50, -10)
+- `path/file2.ts` (+120, -30)
+
+**Purpose**: [Brief description]
+```
+
+### Step 4: Regression Risk Assessment
+
+**Assess based on findings:**
+
+**High-risk indicators:**
+- Modified shared utilities/components
+- Changed core business logic
+- Altered database schema/migrations
+- Modified auth/authz
+- Changed API contracts
+- Updated critical dependencies
+
+**Questions:**
+- What features use this code?
+- What could break?
+- Are there tests proving it won't break?
+- Is manual testing recommended?
+
+**Document:**
+
+```markdown
+## Regression Risk Assessment
+
+**Risk Level**: [Low / Medium / High / Critical]
+
+**Affected Features**:
+1. [Feature] - [Impact]
+2. [Feature] - ✅ No impact / ⚠️ Needs testing
+
+**Mitigations**:
+- ✅ Test coverage: [X]%
+- ⚠️ Manual testing: [areas]
+- ⚠️ Performance testing: [endpoints]
+```
+
+### Step 5: Create Comprehensive Review Report
+
+**Structure:** See template below
+
+#### Report Template
+
+````markdown
+# Code Review: [Feature/Issue]
+
+> **⚠️ AI-Assisted Review Notice**  
+> This review was generated by an AI code reviewer to assist human reviewers. It analyzes code against established best practices and common patterns, but **should not be trusted blindly**. Human judgment is essential for:
+> - Understanding business context and requirements
+> - Evaluating architectural decisions
+> - Assessing trade-offs and priorities
+> - Making final approval decisions
+>
+> Use this review as a **guide and checklist**, not as a replacement for human expertise.
+
+## PR Summary & Approach
+
+**What This PR Does**:
+[2-3 sentence summary - what problem solved, what feature added]
+
+**How It Solves It**:
+[Key architectural decisions, main components changed, overall strategy]
+
+**Key Files & Changes**:
+- `file.ts` (+X, -Y) - [Purpose]
+
+## Reviewer Guidance
+
+**Focus Areas for Human Review**:
+1. [Area] - [Why important]
+2. [Area] - [Why important]
+
+**What to Watch For**:
+- [Specific concern]
+- [Edge case to consider]
+
+## Executive Summary
+
+**Overall Quality**: [Excellent / Good / Needs Improvement / Poor]
+
+**Recommendation**:
+- ✅ **APPROVE** - Ready to merge
+- ⚠️ **APPROVE WITH COMMENTS** - Minor issues, fix later
+- 🔧 **REQUEST CHANGES** - Must fix before merge
+- 🛑 **REJECT** - Significant rework needed
+
+**Confidence**: [X]%
+
+## Change Overview
+
+**Type**: [Feature/Bugfix/Refactoring]
+**Complexity**: [Low/Medium/High]
+**Files Changed**: [N]
+**Lines**: +X, -Y
+**Scope**: [Domain area]
+
+## Issues Found
+
+### 🛑 Critical (Must fix before merge)
+
+1. **[ID]**: [Issue title]
+   - **File**: `path:line`
+   - **Issue**: [What's wrong]
+   - **Fix**: [How to fix]
+
+### ⚠️ High Priority (Should fix before merge)
+
+### 📌 Medium Priority (Fix soon)
+
+### 💡 Low Priority (Nice to have)
+
+## Detailed Analysis
+
+### Security [Emoji X Critical, Y High]
+[Details]
+
+### Performance [Emoji X High, Y Medium]
+[Details]
+
+### Code Quality [Emoji X Medium, Y Low]
+[Details]
+
+### Testing [Status]
+[Coverage analysis, missing tests]
+
+### Documentation [Status]
+[Missing docs, outdated comments]
+
+## Regression Risk Analysis
+
+[From Step 4]
+
+## Positive Observations
+
+- [What was done well]
+- [Good practices followed]
+
+## Next Steps
+
+**Before Merge**:
+- [ ] Fix all Critical issues
+- [ ] Fix all High priority issues
+- [ ] Update tests if needed
+- [ ] Address security concerns
+
+**After Merge** (can defer):
+- [ ] Medium priority refactoring
+- [ ] Documentation improvements
+- [ ] Low priority cleanups
+
+## Summary for Developer
+
+[Concise 3-5 bullet summary of main takeaways]
+````
+
+## Review Quality Checklist
+
+Before finalizing review:
+
+- [ ] All loaded rule sets were applied
+- [ ] Each issue has specific file/line location
+- [ ] Each issue has actionable fix recommendation
+- [ ] Issues are properly prioritized (Critical → Low)
+- [ ] No duplicate findings from multiple agents
+- [ ] Regression risks are identified and assessed
+- [ ] Positive observations are included
+- [ ] Human reviewer guidance provided
+- [ ] AI notice prominently displayed
+- [ ] Recommendation is clear (Approve/Changes/Reject)
+
+## Common Review Anti-Patterns to Avoid
+
+❌ **Vague feedback**: "This function is too long"
+✅ **Specific**: "Function at line 120 is 60 lines - extract helper functions for validation (lines 125-140) and calculation (lines 145-165)"
+
+❌ **Nitpicking style**: "Use single quotes"
+✅ **Meaningful**: Focus on substance over style unless it impacts readability
+
+❌ **Demanding perfection**: Blocking merge for every Low priority issue
+✅ **Pragmatic**: Block on Critical/High, defer Medium/Low with tracking
+
+❌ **Missing context**: "This violates SOLID"
+✅ **Educational**: "This violates Single Responsibility (SOLID) - service handles both validation AND persistence. Split into ValidatorService and RepositoryService."
+
+❌ **No alternatives**: "Don't do this"
+✅ **Constructive**: "Instead of X, use Y because Z"

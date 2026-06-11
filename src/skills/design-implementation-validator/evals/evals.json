@@ -1,0 +1,45 @@
+{
+  "skill_name": "design-implementation-validator",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I have a Figma design at https://figma.com/file/abc123 for a UserCard component. Can you implement it with pixel-perfect accuracy for mobile, tablet, and desktop?",
+      "expected_output": "Complete validation pipeline: extract Figma specs for all breakpoints, map to design system, generate responsive code, validate with Playwright, provide validation report.",
+      "files": [
+        "evals/files/figma-usercard-export.json"
+      ],
+      "assertions": [
+        "Design specs extracted for mobile, tablet, desktop breakpoints",
+        "Design system mapping created with correct token mappings",
+        "Component code generated with responsive breakpoints",
+        "Playwright validation executed successfully",
+        "Validation report includes pass/fail for each breakpoint",
+        "Mobile-first approach applied in generated code"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Can you check if my Button component at src/components/Button.tsx matches the Figma design? The Figma link is https://figma.com/file/xyz789/design#button",
+      "expected_output": "Validation-only flow: extract Figma specs, compare to existing implementation, report differences, provide fix suggestions if needed.",
+      "assertions": [
+        "Figma specs extracted from provided URL",
+        "Existing component code analyzed and styles extracted",
+        "Differences identified and reported with specific property names",
+        "Fix suggestions provided if differences found",
+        "Tolerance for sub-pixel rendering applied appropriately"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Update the Header component to match the new Figma design. Auto-detect the design system and handle any deviations.",
+      "expected_output": "Full update workflow: extract new specs, detect design system (Tailwind/Styled Components), update code, validate, handle deviations gracefully.",
+      "assertions": [
+        "Design system auto-detected correctly",
+        "Code updated to match new Figma specs",
+        "Validation performed with appropriate adapter",
+        "Acceptable deviations documented if any",
+        "Impossible-to-match scenarios flagged with explanations"
+      ]
+    }
+  ]
+}
