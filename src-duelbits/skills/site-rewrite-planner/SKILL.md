@@ -75,6 +75,10 @@ All artifacts are organized under an **epic folder** with **feature subfolders**
 - CSS-in-JS libraries (styled-components, emotion) may need migration to new patterns
 - Legacy repo may have dead code that looks active — verify with git blame and import tracing
 - Figma component names rarely match code component names — map both directions
+- Figma auto-layout values may not directly translate to CSS — document the intent (e.g., "gap: 16px" not just "16")
+- Figma may show different values at different zoom levels — always use the actual pixel values from inspect panel
+- Responsive specs in Figma are often incomplete — if only mobile and desktop exist, flag tablet and wide as gaps rather than guessing
+- Design tokens may be defined at the file level but overridden per-component — always check for local overrides
 - Requirements in Jira may reference outdated designs — always verify design version matches
 
 ## Process
@@ -152,21 +156,63 @@ If Atlassian MCP is unavailable:
 
 **Important**: Do NOT skip or delay the workflow because MCP is unavailable. The manual path produces the same output format with explicit gaps flagged.
 
-### Step 2: Inspect Figma Designs
+### Step 2: Inspect Figma Designs → Implementation Specs
 
 **Primary**: Use the Figma MCP to inspect design files referenced in Jira tickets.
 
 **Fallback**: If Figma MCP is not available, ask the user to provide design information manually (see fallback instructions below).
 
-1. **Collect all Figma URLs** from Jira tickets and any additional links provided
-2. **For each design page/frame**:
-    - List all components and their variants
-    - Identify breakpoints (mobile, tablet, desktop, wide)
-    - Note design tokens (colors, spacing, typography)
-    - Flag missing states (loading, error, empty, disabled)
-3. **Produce `figma-inventory.md`** using the template in [assets/figma-inventory-template.md](assets/figma-inventory-template.md)
+The goal is to produce **implementation-ready specs** — not just an inventory of components, but precise measurements, tokens, and responsive rules that a developer can code against and a reviewer can validate against.
 
-**Validation**: Every Figma URL from Jira MUST be inspected. Missing states MUST be flagged.
+1. **Collect all Figma URLs** from Jira tickets and any additional links provided
+2. **For each design page/frame**, extract detailed specs per component:
+    - **Layout**: container width, height, padding, margin, gap, flex/grid direction, alignment, wrap behavior
+    - **Grid specifics**: column/row templates, grid areas, auto-fill vs auto-fit, minmax values, explicit cell placement
+    - **Typography**: font family, size (px/rem), weight, line-height, letter-spacing, text alignment, text overflow rules
+    - **Spacing**: all padding and margin values (top/right/bottom/left), gap between children
+    - **Colors**: background, text, border, shadow — as design tokens or hex values
+    - **Borders & Effects**: border width, style, radius; box-shadow values; opacity
+    - **Icons & Images**: size, color (for icons), aspect ratio, object-fit, placeholder behavior
+    - **Interactive states**: default, hover, focus, active, disabled, pressed — with exact property changes for each
+    - **Transitions & Animations**: duration, easing, which properties animate, keyframes, stagger delays
+    - **Z-index & Stacking**: z-index values, stacking context boundaries, overlay/modal/dropdown layer ordering
+    - **Overflow & Clipping**: overflow behavior (visible/hidden/scroll/auto), text truncation (ellipsis, line-clamp), scroll containers, clipping masks
+    - **Scroll behavior**: sticky/fixed elements, scroll snap, virtual scroll areas, scroll-triggered animations
+    - **Content constraints**: min/max content width, text character limits, min/max items in lists, image aspect ratio enforcement, empty content fallback behavior
+    - **Cursor & Touch targets**: cursor types per element, minimum touch target sizes (44×44px), hit area expansion beyond visual bounds
+    - **Accessibility**: focus order (tab index), ARIA roles and labels, keyboard navigation patterns, screen reader-only text, color contrast ratios (WCAG level)
+    - **Dark mode / Theme variants**: if designs include dark mode or multiple themes, document all token overrides per theme
+3. **Capture responsive behavior across breakpoints**:
+    - For each component, document how it changes at each breakpoint (mobile, tablet, desktop, wide)
+    - Note layout direction changes (e.g., column → row), visibility toggles, reordering, size scaling
+    - Record exact values per breakpoint — not just "smaller" but "padding: 16px → 24px → 32px"
+    - Identify container queries vs viewport breakpoints
+4. **Document page-level layout**:
+    - Overall page grid structure (sidebar + content, header + body + footer)
+    - Max-width containers and centering behavior per breakpoint
+    - Sidebar collapse/expand rules and widths
+    - Page gutter and margin values
+    - Fixed vs scrolling regions (sticky headers, fixed navbars)
+5. **Document component composition**:
+    - Parent-child relationships and nesting depth
+    - Slot/fill patterns (where content is dynamic)
+    - Shared layout patterns across components (e.g., "all cards use the same grid cell sizing")
+6. **Map design tokens to CSS custom properties**:
+    - For each token extracted, define the CSS variable name (e.g., `--color-primary` → `var(--color-primary)`)
+    - Group tokens by category (color, spacing, typography, effects, z-index)
+    - Note any tokens that differ per theme (light/dark) or per breakpoint
+    - This mapping becomes the bridge between Figma specs and the codebase's token system
+7. **Flag missing specs**:
+    - Components without all breakpoints defined
+    - States without design specs (loading, error, empty, disabled)
+    - Inconsistent values that may be errors vs intentional variation
+    - Responsive gaps (e.g., mobile and desktop exist but tablet is missing)
+    - Missing z-index hierarchy for overlays/modals/dropdowns
+    - Missing accessibility specs (focus indicators, ARIA labels, keyboard nav)
+    - Missing dark mode / theme variants if the project uses them
+8. **Produce `figma-inventory.md`** using the template in [assets/figma-inventory-template.md](assets/figma-inventory-template.md)
+
+**Validation**: Every Figma URL from Jira MUST be inspected. Every component MUST have specs for at least mobile and desktop breakpoints. Missing states MUST be flagged. All numeric values MUST include units (px, rem, %, etc.).
 
 #### Fallback: Manual Design Input
 
@@ -178,7 +224,7 @@ If Figma MCP is unavailable:
     - Provide screenshots of the designs with annotations
     - Describe the components, layouts, and states in freeform text
 2. **Extract what you can** — identify components, variants, breakpoints, and tokens from the provided input
-3. **Flag gaps** — any design information that cannot be extracted (missing states, unclear breakpoints, unknown tokens) should be flagged in figma-inventory.md
+3. **Flag gaps** — any design information that cannot be extracted (missing states, unclear breakpoints, unknown tokens, missing measurements) should be flagged in figma-inventory.md
 4. **Proceed** — continue with the same figma-inventory.md template, filling in what's available and flagging what's not
 
 **Important**: Do NOT skip or delay the workflow because MCP is unavailable. The manual path produces the same output format with explicit gaps flagged.
@@ -335,15 +381,15 @@ Synthesize all artifacts into an actionable migration plan.
 
 All output files go in `<OUTPUT_ROOT>/<EPIC_NAME>/` (default: `./docs/<epic-name>/`):
 
-| File                      | Step | Location          | Purpose                                  |
-| ------------------------- | ---- | ----------------- | ---------------------------------------- |
-| `contract.md`             | 1    | Epic root         | Jira requirements as structured contract |
-| `figma-inventory.md`      | 2    | Epic root         | Design components and states             |
-| `component-inventory.md`  | 3    | Feature subfolder | Component classification across repos    |
-| `flow-comparison.md`      | 4    | Feature subfolder | User flow and data flow diff             |
-| `api-mapping.md`          | 5    | Feature subfolder | API call comparison                      |
-| `gaps-and-assumptions.md` | 6    | Epic root         | Unclear points and assumptions           |
-| `migration-plan.md`       | 7    | Epic root         | Phased migration plan                    |
+| File                      | Step | Location          | Purpose                                                                    |
+| ------------------------- | ---- | ----------------- | -------------------------------------------------------------------------- |
+| `contract.md`             | 1    | Epic root         | Jira requirements as structured contract                                   |
+| `figma-inventory.md`      | 2    | Epic root         | Implementation-ready design specs with sizes, tokens, and responsive rules |
+| `component-inventory.md`  | 3    | Feature subfolder | Component classification across repos                                      |
+| `flow-comparison.md`      | 4    | Feature subfolder | User flow and data flow diff                                               |
+| `api-mapping.md`          | 5    | Feature subfolder | API call comparison                                                        |
+| `gaps-and-assumptions.md` | 6    | Epic root         | Unclear points and assumptions                                             |
+| `migration-plan.md`       | 7    | Epic root         | Phased migration plan                                                      |
 
 ## Progress Checklist
 
