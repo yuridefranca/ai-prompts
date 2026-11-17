@@ -18,12 +18,12 @@ Ask a question, get an answer, and keep it out of the workflow. This skill answe
 
 - The question is directly related to the current workflow phase → just ask normally
 - The answer should be documented → use the appropriate workflow phase
-- The question changes the scope of work → update the startpoint instead
+- The question changes the scope of work → raise it at the next gate
 
 ## Rules
 
 1. **No artifacts**: Do NOT create any files in `.ai-workflow/`
-2. **No context update**: Do NOT add this Q&A to the context rehydration summary
+2. **No context update**: Do NOT add this Q&A to `INDEX.md`, `FINDINGS.md`, or any phase artifact
 3. **No workflow impact**: Do NOT change the workflow state, phase, or decisions
 4. **Keep it brief**: Answer concisely. If the answer needs deep exploration, suggest starting a separate conversation.
 5. **Stay focused**: Answer the question, then remind the user what phase they were in
@@ -46,4 +46,4 @@ Ask a question, get an answer, and keep it out of the workflow. This skill answe
 > - **Transaction Outbox**: Writes to an outbox table in the same DB transaction as the business operation, then a relay publishes to a message broker. Good for "at-least-once" delivery guarantees.
 > - Key difference: Saga is about coordination; Outbox is about reliable publishing. They're often used together.
 >
-> _Back to Phase 2 (Tradeoff Analysis) — we were evaluating the caching approach._
+> _Back to phase 3.4 (Tradeoffs) — we were evaluating the caching approach._

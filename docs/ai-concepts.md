@@ -80,8 +80,8 @@ A practical guide for software engineers getting started with AI-assisted develo
 
 **Types in this repository**:
 
-- **Orchestrator Agents** (orchestrator, debug-workflow, improvement-workflow, feature-workflow): Coordinate multi-phase workflows, invoke skills, manage checkpoints
-- **Specialist Agents** (backend-engineer, frontend-engineer, documentation-writer): Handle domain-specific implementation
+- **Orchestrator Agents** (orchestrator, feature-workflow, debug-workflow, improvement-workflow, greenfield-workflow): Coordinate multi-phase flows, spawn subagents, manage gates
+- **Subagents** (architect, implementer, reviewer, …): Stateless, one bounded task each — read exact files, apply a skill, write one artifact
 
 **Key insight**: Agents are not magic — they're structured processes that leverage LLM capabilities with appropriate guardrails. The structure is what makes them reliable.
 
@@ -93,7 +93,7 @@ A practical guide for software engineers getting started with AI-assisted develo
 - **Single responsibility**: Each skill does one thing well → easier to test and maintain
 - **Precise triggering**: Clear descriptions mean the right skill activates for the right task
 - **Composability**: Skills can be combined in different sequences for different workflows
-- **Reusability**: The same skill (e.g., `code-reviewer`) works across all workflows
+- **Reusability**: The same skill (e.g., `code-review`) works across all workflows
 
 **Skill anatomy**:
 ```
@@ -273,7 +273,7 @@ AI changes the TDD cycle but doesn't eliminate it:
 
 **Why it's bad**: AI can produce code that compiles but has logical errors, security vulnerabilities, or performance issues.
 
-**What to do instead**: Always run tests. Use the code-reviewer skill. Verify the output does what you expect.
+**What to do instead**: Always run tests. Use the code-review skill. Verify the output does what you expect.
 
 #### 4. The "Lost Context" Trap
 

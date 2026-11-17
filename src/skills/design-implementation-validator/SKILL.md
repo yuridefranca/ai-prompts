@@ -40,10 +40,8 @@ Validates frontend implementations match Figma designs through a 5-phase process
 
 - Implementing new UI components from Figma
 - Validating existing components against designs
-- Frontend Engineer agent is invoked
 - User provides Figma URL
-- Phase 7 (Implementation) of Feature Workflow for UI
-- Phase 3/4 of Improvement Workflow for UI updates
+- Phase 8.3, UI branch (`qa-automator`) — any flow whose change has a Figma design
 
 ❌ **Do NOT use:**
 
@@ -160,29 +158,24 @@ Auto-detection checks:
 - **Parent constraints** can make specs impossible to match - flag and document these cases
 - **Breakpoint variants** must be explicitly defined in Figma or auto-detection may miss them
 
-## Integration with Workflows
+## Parameters
 
-### Feature Workflow (Phase 7)
+Read `{{phase}}` and `{{output}}` from a [skill-params block](../../schemas/skill-params.md).
 
-```yaml
-frontend-implementation:
-    - Check if task involves UI components
-    - If yes and Figma URL provided:
-          - Invoke design-implementation-validator
-          - Wait for validation report
-          - Review acceptable deviations
-          - Proceed only after validation passes
-```
+## Where this runs
 
-### Improvement Workflow (Phase 3/4)
+Phase 8.3, the UI branch of [`qa-automator`](../../agents/qa-automator.agent.md), when the change has a Figma design.
 
-```yaml
-ui-update-check:
-    - If component exists with Figma link:
-          - Ask: 'Should I validate against Figma design?'
-          - Default: Yes (unless --skip-design-validation)
-          - Invoke design-implementation-validator
-```
+### Environment contract — from `.ai-rules/project.md`, never guessed
+
+| Needs | Source |
+|---|---|
+| Dev server command + ready pattern | `Run.dev`, `Run.ready_pattern` |
+| Base URL | `Browser.base_url` |
+| Selector convention | `Browser.selectors` (data-testid required) |
+| Viewports/breakpoints | `Browser.viewports` |
+
+If any of these is missing from project.md, **stop and ask**. Never auto-detect a dev command from `package.json` and never default to `http://localhost:3000`. See [project-md-schema.md](../../schemas/project-md-schema.md).
 
 ## Output Artifacts
 
@@ -262,16 +255,11 @@ Skill:
 
 ## Configuration (Optional)
 
-Create `.design-validation.config.js` in project root:
+Dev server, base URL, selectors, and viewports come from `.ai-rules/project.md` (see [Environment contract](#environment-contract--from-ai-rulesprojectmd-never-guessed)). Validation tuning can go in `.design-validation.config.js` in the project root:
 
 ```javascript
 module.exports = {
 	designSystem: 'tailwind', // auto-detect if omitted
-	breakpoints: {
-		mobile: { width: 375, height: 667 },
-		tablet: { width: 768, height: 1024 },
-		desktop: { width: 1440, height: 900 },
-	},
 	tolerance: {
 		spacing: 1, // ±1px
 		colors: 0, // exact match
@@ -281,11 +269,6 @@ module.exports = {
 		enabled: true,
 		requireApproval: true,
 		maxIterations: 3,
-	},
-	devServer: {
-		command: 'npm run dev',
-		url: 'http://localhost:3000',
-		readyPattern: 'ready in',
 	},
 	responsiveStrategy: 'mobile-first',
 };
@@ -313,7 +296,6 @@ Required MCP servers:
 
 ## Related Skills
 
-- `frontend-engineer.agent.md` - Often invokes this skill
+- [`qa-automator`](../../agents/qa-automator.agent.md) - Invokes this skill at phase 8.3
 - `minimal-impl-generator` - Generates implementation
-- `refactor-optimizer` - Runs after validation
-- `code-reviewer` - Final review after validation
+- `code-review` - Phase 7 review

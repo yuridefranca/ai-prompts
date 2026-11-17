@@ -1,11 +1,11 @@
 ---
 name: patch-implementer
 description: >
-    Implement minimal bug fixes after critique phase, addressing identified issues and edge cases.
-    Follows TDD approach: create failing test then minimal fix, then refactor. Always use after
-    solution-critic provides feedback. Integrates with engineer agents for implementation. Keywords:
-    bug fix implementation, patch, minimal fix, TDD, failing test, edge case handling, critique
-    feedback, engineer handoff.
+    Implement a minimal bug fix for one debug-flow task, addressing the root cause and every open
+    finding from the phase 6.0 stress test. Turns the phase 5 failing tests (C1 is always the repro)
+    green with the simplest fix that handles all edge cases. Use in the debug flow's task loop
+    (phases 6.1..n). Keywords: bug fix implementation, patch, minimal fix, TDD, failing test, edge
+    case handling, critique feedback, root cause.
 metadata:
     author: yuridefranca
     version: '1.0'
@@ -15,13 +15,13 @@ metadata:
 
 # Patch Implementer
 
-Implement **minimal bug fix** that addresses critic feedback. TDD approach: failing test → minimal fix → refactor.
+Implement a **minimal bug fix** that addresses the root cause and the open findings. TDD approach: failing test (already written at phase 5) → minimal fix → refactor.
 
 ## Gotchas
 
 Environment-specific facts that defy assumptions - add to this list after fixing each mistake:
 
-- Engineers agents don't create/modify files unless explicitly told to use `replace_string_in_file` or `create_file`
+- Code that only exists in chat is not a fix — edit the real files
 - "Minimal fix" doesn't mean incomplete - must handle all edge cases from critique
 - Tests passing locally doesn't mean they run in CI - check test setup in CI config
 - Fixing the reported bug without handling edge cases leads to new bug reports
@@ -41,13 +41,13 @@ Environment-specific facts that defy assumptions - add to this list after fixing
 - Ready to implement bug fix
 - Have tests demonstrating bug
 
-## Workflow Artifact
+## Parameters
 
-This skill is invoked as **Phase 6** of the Bug Workflow. It MUST produce an output file in the workflow folder.
+Read `{{phase}}` and `{{output}}` from a [skill-params block](../../schemas/skill-params.md).
 
-**Output File**: `.ai-workflow/[feature-folder]/6-fix-implementation.md`
+## Where this runs
 
-**Context**: Read `0-startpoint.md`, `0.1-grill-me.md`, `2-root-cause-analysis.md`, `3-solution-evaluation.md`, and `5-tdd-tests.md` before implementing the fix.
+Backs [`implementer`](../../agents/implementer.agent.md) task mode at phases 6.1..n in the **debug flow** — one fix task per spawn. Reads `2.5-root-cause.md`, the `5-contract.md` clauses named for this task (`C1` is always the repro), `6-solution.md` §T{n}, and open findings in `FINDINGS.md` (the 6.0 stress test's findings are the "critique" this skill addresses). Writes code plus an append to `6-solution.md` §T{n}.
 
 ## Core Principle
 
@@ -57,32 +57,24 @@ This skill is invoked as **Phase 6** of the Bug Workflow. It MUST produce an out
 
 See [references/implementation-patterns.md](references/implementation-patterns.md) for detailed patterns, templates, and code examples.
 
-### Step 0: CRITICAL - Create/Modify Files
+### Step 0: CRITICAL - Modify the Actual Files
 
-**⚠️ ENGINEER AGENTS MUST MODIFY ACTUAL FILES** - Do NOT just output code in chat.
-
-When delegating to engineer agents:
-
-- Explicitly instruct them to use `replace_string_in_file` or `create_file` tools
-- Specify exact file paths where fixes should be applied
-- Verify files are modified in the workspace after delegation
+**⚠️ EDIT REAL FILES** - Do NOT just output code in chat. Touch only the files in this task's scope (`6-solution.md` §T{n}), and verify the changes are in the workspace.
 
 ### Step 1: Review Critique Feedback
 
-Analyze solution-critic findings and prioritize. See [references/implementation-patterns.md](references/implementation-patterns.md#implementation-checklist-template) for checklist format.
+Read the open findings in `FINDINGS.md` (from the 6.0 stress test) that this task must address, and prioritize them. See [references/implementation-patterns.md](references/implementation-patterns.md#implementation-checklist-template) for checklist format.
 
-### Step 2: Create/Update Failing Tests
+### Step 2: Confirm the Failing Tests
 
-Invoke `test-generator` skill to create bug reproduction test, edge case tests, and regression tests. All tests should FAIL before fix.
+The repro test (`C1`) and the other contract tests already exist from phase 5 and must still FAIL. Add **one regression test per bug class** this task touches, not just the specific bug instance — citing the clause it covers.
 
 ### Step 3: Implement Minimal Fix
-
-Delegate to engineer agent (backend-engineer or frontend-engineer) with explicit file modification instructions.
 
 **Minimal fix criteria**:
 
 - Fixes the reported bug
-- Handles all edge cases from critique
+- Handles all edge cases from the open findings
 - Addresses performance concerns
 - Addresses security concerns
 - Simplest solution that works
@@ -93,21 +85,21 @@ See [references/implementation-patterns.md](references/implementation-patterns.m
 
 Run full test suite. All tests (new and existing) must pass.
 
-### Step 5: Address Critique Concerns
+### Step 5: Address the Open Findings
 
-Verify each concern from solution-critic is addressed:
+Verify each open finding this task owns is addressed, and say so in your return summary:
 
 - Performance: Benchmark if needed
 - Security: Test attack vectors
 - Edge cases: Verify all handled
 
-### Step 6: Minimal Refactoring (If Needed)
+### Step 6: Refactor (If Needed)
 
-If code is messy after fix, refactor while keeping tests green. Don't over-engineer.
+If code is messy after the fix, apply `refactor-optimizer` within this task's scope, keeping tests green. Don't over-engineer.
 
 ### Step 7: Document the Fix
 
-See [references/implementation-patterns.md](references/implementation-patterns.md#fix-documentation-template) for documentation template.
+Append to `6-solution.md` §T{n}. See [references/implementation-patterns.md](references/implementation-patterns.md#fix-documentation-template) for the template.
 
 ## Output Format
 
@@ -134,10 +126,9 @@ See [references/implementation-patterns.md](references/implementation-patterns.m
 
 [Checklist of what was verified]
 
-## Next Steps
+## Deviations from Plan
 
-1. Post-fix review (invoke `post-fix-reviewer` skill)
-2. Code review (invoke `code-reviewer` skill)
+[Plan said → actually did]
 ```
 
 ## Reference Files

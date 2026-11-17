@@ -15,14 +15,13 @@ This skill designs comprehensive system architecture for new features, covering 
 - Planning system changes
 - Need to evaluate technical approaches
 
-## Workflow Artifact
+## Parameters
 
-This skill is invoked in multiple workflows:
+Read `{{phase}}` and `{{output}}` from a [skill-params block](../../schemas/skill-params.md) (default: phase `3.1`, output `3.1-architecture.md`).
 
-- **Feature Workflow Phase 2**: Produces `.ai-workflow/[feature-folder]/2-architecture.md`
-- **Improvement Workflow Phase 2**: Contributes to `.ai-workflow/[feature-folder]/2-tradeoff-and-design.md` (design section)
+## Where this runs
 
-**Context**: Read `0-startpoint.md`, `0.1-grill-me.md`, and `1-specification.md` (Feature) or `1-component-map.md` (Improvement) before designing.
+Backs [`architect`](../../agents/architect.agent.md) at phase 3.1, one of three parallel analysts. Reads `2-prd.md` and `3.0-component-map.md`; writes `3.1-architecture.md`. Diagrams are Mermaid, per [visual-standards.md](../../templates/visual-standards.md). State a recommendation and its reasoning — conflicts with the other analysts are surfaced by `synthesizer` at 3.4, not resolved here.
 
 ## Input Requirements
 

@@ -119,8 +119,11 @@ async function ensureDevServer(
     return existingServer;
   }
   
-  // 2. Detect dev server command
-  const command = config?.command || await detectDevCommand();
+  // 2. Dev server command comes from .ai-rules/project.md (Run.dev) — never guessed
+  if (!config?.command || !config?.url) {
+    throw new Error('Run.dev / Browser.base_url missing from .ai-rules/project.md — stop and ask the dev.');
+  }
+  const command = config.command;
   
   // 3. Start dev server
   console.log(`Starting dev server: ${command}`);
@@ -133,34 +136,13 @@ async function ensureDevServer(
   
   // 4. Wait for server to be ready
   const serverInfo = await waitForServer({
-    url: config?.url || 'http://localhost:3000',
-    readyPattern: config?.readyPattern || /ready|compiled|started/i,
+    url: config.url,
+    readyPattern: config.readyPattern,
     timeout: 60000,
     terminalId: terminal.id,
   });
   
   return serverInfo;
-}
-
-async function detectDevCommand(): Promise<string> {
-  // Check package.json scripts
-  const packageJson = await readJSON('package.json');
-  const scripts = packageJson.scripts || {};
-  
-  if (scripts.dev) return 'npm run dev';
-  if (scripts.start) return 'npm start';
-  if (scripts['dev:vite']) return 'npm run dev:vite';
-  
-  // Check for common frameworks
-  if (packageJson.dependencies?.next || packageJson.devDependencies?.next) {
-    return 'npm run dev'; // Next.js
-  }
-  
-  if (packageJson.dependencies?.vite || packageJson.devDependencies?.vite) {
-    return 'vite'; // Vite
-  }
-  
-  throw new Error('Cannot detect dev server command. Please specify in config.');
 }
 
 async function waitForServer(options: WaitOptions): Promise<ServerInfo> {
@@ -229,7 +211,7 @@ ${generateInteractionTests(componentPath, figmaSpecs, options)}
     ? `${options.testOutputDir}/design-validation.spec.ts`
     : '.ai-workflow/design-validation.spec.ts';
   
-  await create_file({
+  await writeFile({
     filePath: testFile,
     content: testCode,
   });
@@ -703,8 +685,8 @@ function getComponentUrl(componentPath: string): string {
   // - Direct: http://localhost:3000/components/user-card
   // - Test page: http://localhost:3000/test-components/user-card
   
-  // This should be configurable or auto-detected
-  return `http://localhost:3000/components/${kebabCase(componentPath)}`;
+  // Base URL from .ai-rules/project.md (Browser.base_url) — never a hardcoded host
+  return `${projectMd.browser.base_url}/components/${kebabCase(componentPath)}`;
 }
 
 function parsePixels(value: string): number {

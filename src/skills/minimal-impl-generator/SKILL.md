@@ -10,18 +10,17 @@ Implement the **simplest possible solution** that makes tests pass. This is the 
 ## When to Use
 
 - After tests are written (TDD approach)
-- Implementation phase of feature workflow
+- Each implementation task (phases 6.1..n)
 - Need to make tests pass
 - Following red-green-refactor cycle
 
-## Workflow Artifact
+## Parameters
 
-This skill is invoked in multiple workflows:
+Read `{{phase}}` and `{{output}}` from a [skill-params block](../../schemas/skill-params.md).
 
-- **Feature Workflow Phase 5**: Produces `.ai-workflow/[feature-folder]/5-implementation.md`
-- **Improvement Workflow Phase 5**: Produces `.ai-workflow/[feature-folder]/5-implementation.md`
+## Where this runs
 
-**Context**: Read `0-startpoint.md`, `0.1-grill-me.md`, and the relevant prior phase outputs (spec, design, tests) before implementing.
+Backs [`implementer`](../../agents/implementer.agent.md) task mode at phases 6.1..n — **one task per spawn**. Reads the `5-contract.md` clauses named for this task, `6-solution.md` §T{n}, and open findings in `FINDINGS.md`. Writes code plus an append to `6-solution.md` §T{n}. The failing tests to turn green already exist from phase 5.
 
 ## Core Principle: YAGNI
 
@@ -32,19 +31,16 @@ This skill is invoked in multiple workflows:
 - Don't create abstractions for one use case
 - Don't make it "flexible" without requirements
 
-**If tempted to optimize**: STOP. That's Phase 6 (refactoring).
+**If tempted to optimize**: STOP. That's the refactor step (`refactor-optimizer`), after the tests are green.
 
 ## Process
 
 ### Step 0: CRITICAL - Create Implementation Files
 
-**⚠️ ENGINEER AGENTS MUST CREATE ACTUAL FILES** - Do NOT just output code in chat.
+**⚠️ CREATE REAL FILES** - Do NOT just output code in chat.
 
-**When delegating to engineer agents**:
-
-- Explicitly instruct them to use `create_file` or `replace_string_in_file` tools
-- Specify exact file paths where code should be created
-- Verify files are created in the workspace after delegation
+- Touch only the files in this task's scope (`6-solution.md` §T{n})
+- Verify the files exist in the workspace
 - Code must be runnable and testable
 
 **Why this matters**: Implementation that only exists in chat history cannot be tested or deployed.
@@ -139,7 +135,7 @@ npm test
 - ❌ "Let me cache this" → Not in tests
 - ❌ "This could be more efficient" → Not in tests
 - ❌ "What if we need to support X?" → Not in tests
-- ❌ "Let me refactor this" → Not yet, Phase 6
+- ❌ "Let me refactor this" → Not yet, refactor step
 
 **Remember**: Premature optimization is the root of all evil
 
@@ -192,7 +188,7 @@ npm test
 - [ ] Code is simple and understandable
 - [ ] No added functionality beyond tests
 
-**Next step**: Phase 6 (Refactoring)
+**Next step**: the refactor step (`refactor-optimizer`), same task, tests stay green
 
 ## Examples
 

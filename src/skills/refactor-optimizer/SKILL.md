@@ -15,13 +15,13 @@ Improve code quality and performance **after tests pass**. This is the "Refactor
 - Architecture alignment required
 - Technical debt reduction
 
-## Workflow Artifact
+## Parameters
 
-This skill is invoked as **Phase 7** of the Feature Workflow. It MUST produce an output file in the workflow folder.
+Read `{{phase}}` and `{{output}}` from a [skill-params block](../../schemas/skill-params.md).
 
-**Output File**: `.ai-workflow/[feature-folder]/7-refactoring.md`
+## Where this runs
 
-**Context**: Read `0-startpoint.md`, `0.1-grill-me.md`, `2-architecture.md`, and `5-implementation.md` before refactoring.
+Backs [`implementer`](../../agents/implementer.agent.md) as the last step of each task at phases 6.1..n — **after** the task's tests are green, **within the same task's scope**. No separate artifact: record what was refactored (and what was deliberately left alone) in the task's `6-solution.md` §T{n} append. Anything worth refactoring outside the task's scope is reported as an open question, never done.
 
 ## Core Principle
 

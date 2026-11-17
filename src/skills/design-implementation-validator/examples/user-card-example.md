@@ -604,13 +604,6 @@ No design system updates needed.
 
 ---
 
-## Workflow Integration
+## Where This Runs
 
-This validation runs automatically during:
-- **Feature Workflow, Phase 7** (Implementation)
-- **Improvement Workflow, Phase 3/4** (UI Updates)
-
-Triggered when:
-- Figma URL is provided in requirements
-- Component involves UI/visual changes
-- User hasn't opted out with `--skip-design-validation`
+Phase 8.3, UI branch (`qa-automator`), when the change has a Figma design and the dev hasn't opted out with `--skip-design-validation`.

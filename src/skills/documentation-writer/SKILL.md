@@ -17,16 +17,15 @@ Update project documentation to capture new feature context, ensuring future dev
 - When feature behavior changes
 - Missing documentation discovered
 
-## Workflow Artifact
+## Parameters
 
-This skill is invoked in multiple phases across all three workflows:
+Read `{{phase}}` and `{{output}}` from a [skill-params block](../../schemas/skill-params.md).
 
-- **Feature Workflow Phase 3**: Produces `.ai-workflow/[feature-folder]/3-feature-documentation.md`
-- **Bug Workflow Phase 4**: Produces `.ai-workflow/[feature-folder]/4-solution-documentation.md`
-- **Improvement Workflow Phase 1**: Contributes to `.ai-workflow/[feature-folder]/1-component-map.md` (if docs missing)
-- **Improvement Workflow Phase 3**: Produces `.ai-workflow/[feature-folder]/3-improvement-documentation.md`
+## Where this runs
 
-**Context**: Read `0-startpoint.md` and `0.1-grill-me.md` for initial requirements. Read the relevant phase output files for context about what's being documented.
+**`{{output}}` defaults to the repo's own docs, not a `.ai-workflow/` artifact.**
+
+Backs [`doc-writer`](../../agents/doc-writer.agent.md) at phase 6.y, reading `2-prd.md` + `3.4-tradeoffs.md` + `5-contract.md` + `6-solution.md` + the diff, and writing directly into the paths named by `.ai-rules/project.md` §Docs (README sections, `AGENTS.md`, architecture docs, glossary). It runs *before* phase 7 review, so the reviewer can check the docs match what actually shipped, not just the original plan.
 
 ## Process
 
@@ -36,8 +35,7 @@ This skill is invoked in multiple phases across all three workflows:
 
 **Required actions**:
 
-- Use `create_file` tool to create new documentation files
-- Use `replace_string_in_file` tool to update existing files
+- Create new documentation files and edit existing ones with your file tools
 - Verify files are created in the workspace
 - Never just display documentation content without creating files
 
@@ -117,9 +115,9 @@ Browser Client
 
 ### Step 3: Create Feature-Specific Documentation
 
-**⚠️ Use `create_file` tool** to create new doc file (e.g., `docs/features/feature-name.md`):
+**⚠️ Create a real file** in the location `.ai-rules/project.md` §Docs names for feature docs:
 
-**File path**: `docs/features/[feature-name].md` (create directory if needed)
+**File path**: `{Docs.features}/[feature-name]/README.md` (default `docs/features/[feature-name]/README.md`). Phase 9 promotes the flow's knowledge artifacts into the same folder, so the README is their entry point.
 
 **Content template**:
 
@@ -242,8 +240,7 @@ Shared vocabulary for [Project Name]. When multiple terms exist for the same con
 
 ## Delegation
 
-**For AGENTS.md updates**: Invoke `agents-md-generator` skill
-**For comprehensive docs**: Delegate to `documentation-writer` agent
+**For AGENTS.md updates**: Invoke the `agents-md-generator` skill
 
 ## Evals
 

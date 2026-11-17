@@ -1,6 +1,6 @@
 ---
 name: root-cause-analyzer
-description: Deeply analyze bugs to identify true root cause through evidence-based investigation. Reproduces issues, traces state/data flow, checks race conditions, and validates assumptions. CRITICAL RULE Never propose fixes in this phase - only analyze. Always use when debugging issues after component mapping. Builds on debug-issue skill methodology. Keywords root cause analysis, debugging, bug investigation, evidence-based analysis, reproduction, state tracing, assumption validation, deep debugging.
+description: Deeply analyze bugs to identify true root cause through evidence-based investigation. Reproduces issues, traces state/data flow, checks race conditions, and validates assumptions. CRITICAL RULE Never propose fixes in this phase - only analyze. Always use when debugging issues after component mapping. Keywords root cause analysis, debugging, bug investigation, evidence-based analysis, reproduction, state tracing, assumption validation, deep debugging.
 ---
 
 # Root Cause Analyzer
@@ -15,13 +15,13 @@ description: Deeply analyze bugs to identify true root cause through evidence-ba
 - Need evidence-based understanding
 - Before proposing any solution
 
-## Workflow Artifact
+## Parameters
 
-This skill is invoked as **Phase 2** of the Bug Workflow. It MUST produce an output file in the workflow folder.
+Read `{{phase}}` and `{{output}}` from a [skill-params block](../../schemas/skill-params.md) (default: phase `2.5`, output `2.5-root-cause.md`).
 
-**Output File**: `.ai-workflow/[feature-folder]/2-root-cause-analysis.md`
+## Where this runs
 
-**Context**: Read `0-startpoint.md`, `0.1-grill-me.md`, and `1-component-map.md` for the affected components before analyzing root cause.
+Debug flow only, as [`rca-analyst`](../../agents/rca-analyst.agent.md) at phase 2.5, reading the mini-PRD/repro contract (`2-prd.md`) and `3.0-component-map.md`. The no-fixes rule below is strictly enforced — the **deep** debug tier gates on this artifact before any solution work begins. See [debug-flow.md](../../flows/debug-flow.md#phase-25--root-cause-analysis-new).
 
 ## Core Principle
 

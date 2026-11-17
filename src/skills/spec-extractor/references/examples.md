@@ -46,7 +46,7 @@
 
 ### Good Acceptance Criterion
 
-✅ AC-1: Given a logged-in user with no profile image, When they upload a 3MB PNG file, Then the image is resized to 512x512px, stored in S3, and profile page displays the image within 2 seconds
+✅ AC1: Given a logged-in user with no profile image, When they upload a 3MB PNG file, Then the image is resized to 512x512px, stored in S3, and profile page displays the image within 2 seconds
 
 **Why it's good**:
 - Clear precondition (logged-in, no existing image)
@@ -56,7 +56,7 @@
 
 ### Poor Acceptance Criterion
 
-❌ AC-1: User can upload image and see it on their profile
+❌ AC1: User can upload image and see it on their profile
 
 **Why it's poor**:
 - No preconditions specified

@@ -3,15 +3,20 @@ name: grill-me
 description: Interview the user relentlessly about a plan or design until reaching shared understanding, resolving each branch of the decision tree. Use when user wants to stress-test a plan, get grilled on their design, or mentions "grill me".
 ---
 
-## Workflow Artifact
+## Parameters
 
-This skill is invoked as **Phase 0.1** in all three workflows:
+Read `{{phase}}` and `{{output}}` from a [skill-params block](../../schemas/skill-params.md) — this skill never runs standalone, so there are no defaults.
 
-- **Bug Workflow Phase 0.1**: Produces `.ai-workflow/[feature-folder]/0.1-grill-me.md`
-- **Improvement Workflow Phase 0.1**: Produces `.ai-workflow/[feature-folder]/0.1-grill-me.md`
-- **Feature Workflow Phase 0.1**: Produces `.ai-workflow/[feature-folder]/0.1-grill-me.md`
+## Where this runs
 
-**Context**: Read `0-startpoint.md` for the user's initial description before grilling.
+The interview is folded **inline** into whichever artifact is being produced — there is no standalone grill-me artifact:
+
+| Caller | Phase | `{{output}}` |
+|---|---|---|
+| [`prd-writer`](../../agents/prd-writer.agent.md) (PRD mode) | 2 | `2-prd.md` |
+| [`quiz-master`](../../agents/quiz-master.agent.md) | 4 | `4-quiz.md` |
+
+The grilling and its resolution live inside the phase artifact they informed.
 
 ---
 

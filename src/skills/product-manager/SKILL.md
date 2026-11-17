@@ -9,32 +9,30 @@ Break down approved specifications into an actionable, prioritized task plan. Th
 
 ## When to Use This Skill
 
-- After specification extraction (spec is approved)
-- After architecture design is approved
+- Greenfield phase 2.1, after the PRD gate passes
 - Breaking epics into implementable stories
 - Prioritizing work for a sprint or milestone
 - Setting up project tracking (Notion, GitHub Issues, etc.)
 - When the user asks "what should we build first?" or "how do we break this down?"
 
-## Workflow Artifact
+## Parameters
 
-This skill is invoked in multiple workflows:
+Read `{{phase}}` and `{{output}}` from a [skill-params block](../../schemas/skill-params.md) (default: phase `2.1`, output `2.1-roadmap.md`).
 
-- **Greenfield Workflow Phase 2**: Produces `.ai-workflow/[project-folder]/2-task-breakdown.md`
-- **Feature Workflow** (optional): Produces `.ai-workflow/[feature-folder]/2.1-task-breakdown.md`
+## Where this runs
 
-**Context**: Read `0-startpoint.md`, `0.1-grill-me.md`, and `1-specification.md` before breaking down tasks. If architecture exists (`2-architecture.md`), read it for technical context on dependencies.
+Backs [`roadmap-planner`](../../agents/roadmap-planner.agent.md) at phase 2.1 of the [greenfield flow](../../flows/greenfield-flow.md#phase-21--roadmap--gate-new). The phases after it build **Milestone 1 only**, so Milestone 1 must be the smallest usable product — not "set up the foundations."
 
 ## Process
 
 ### Step 1: Load Context
 
-Read all prior workflow artifacts:
+Read the flow artifacts:
 
-- `0-startpoint.md` — original goal and constraints
-- `0.1-grill-me.md` — refined understanding
-- `1-specification.md` — approved requirements
-- `2-architecture.md` — if available, for technical dependency info
+- `1-overview.md` — the vision: what, why, who, constraints
+- `2-prd.md` — approved requirements, each with an `AC*` ID
+
+Every story you write cites the `AC*` IDs it delivers, so phase 5 can turn Milestone 1's stories straight into contract clauses.
 
 ### Step 2: Identify Epics
 
@@ -145,12 +143,12 @@ If the user wants to sync tasks to an external tool (Notion, GitHub Issues, Line
 
 ## Output
 
-Save to `.ai-workflow/[folder]/2-task-breakdown.md` (or `2.1-task-breakdown.md` for feature workflow):
+Save to `{{output}}` (default `.ai-workflow/[project]/2.1-roadmap.md`), tagged `[knowledge]`:
 
 ```markdown
 # Task Breakdown: [Project/Feature Name]
 
-**Source Spec**: 1-specification.md
+**Source Spec**: 2-prd.md
 **Total Stories**: [N]
 **Estimated Effort**: [X] days (with buffer: [Y] days)
 

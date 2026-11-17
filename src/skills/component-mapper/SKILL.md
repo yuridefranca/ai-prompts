@@ -1,6 +1,6 @@
 ---
 name: component-mapper
-description: Map affected components, dependencies, and data flow when debugging issues or improving existing code. Always use when starting bugfix workflow, investigating issues, or understanding code impact. Traces dependencies bidirectionally and identifies relevant documentation. Keywords component mapping, dependency tracing, impact analysis, code navigation, data flow, affected components, debugging preparation.
+description: Map affected components, dependencies, and data flow when debugging issues or improving existing code. Always use at phase 3.0 of every flow, when investigating issues, or understanding code impact. Traces dependencies bidirectionally and identifies relevant documentation. Keywords component mapping, dependency tracing, impact analysis, code navigation, data flow, affected components, debugging preparation.
 ---
 
 # Component Mapper
@@ -9,20 +9,22 @@ Identify what components are affected by a bug or improvement request, trace dep
 
 ## When to Use
 
-- Starting bugfix workflow
+- Phase 3.0 of every flow, and phase 3.2 behind data-flow-analyst
 - Investigating reported issue
 - Understanding code impact
 - Before making changes to existing code
 - Documentation is unclear
 
-## Workflow Artifact
+## Parameters
 
-This skill is invoked in multiple workflows:
+Read `{{phase}}` and `{{output}}` from a [skill-params block](../../schemas/skill-params.md).
 
-- **Bug Workflow Phase 1**: Produces `.ai-workflow/[feature-folder]/1-component-map.md`
-- **Improvement Workflow Phase 1**: Produces `.ai-workflow/[feature-folder]/1-component-map.md`
+## Where this runs
 
-**Context**: Read `0-startpoint.md` and `0.1-grill-me.md` for the user's problem/improvement description before mapping components.
+Two invocations:
+
+- **Phase 3.0**, standalone (every flow): produces `3.0-component-map.md`, feeding all three phase-3 analysts — see [feature-flow.md § Phase 3](../../flows/feature-flow.md#phase-3--analysis-parallel). Reads `2-prd.md`.
+- **Phase 3.2**, backing [`data-flow-analyst`](../../agents/data-flow-analyst.agent.md): the data-flow view (sequence diagrams), reading `3.0-component-map.md` as ground truth.
 
 ## Process
 

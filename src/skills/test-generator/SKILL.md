@@ -2,47 +2,38 @@
 name: test-generator
 aliases:
     - tdd-test-generator
-description: Generate unit tests BEFORE implementation following TDD (Test-Driven Development) principles. Creates ONLY unit tests with mocked dependencies that initially fail. Integration and E2E tests come later after implementation. Always use when starting TDD phase before code exists. Tests must be written before code. Keywords TDD, test-driven development, unit tests, test coverage, testing, red-green-refactor, test first, mocking.
+description: Write the phase 5 behavior contract and its failing tests BEFORE implementation (TDD red phase). Every behavior gets a C* clause ID, a test level (unit, integration, or e2e) picked from the clause kind, a test that cites the ID, and pasted red evidence. Reads the test framework and per-level commands from .ai-rules/project.md. Use when starting the TDD phase, before code exists. Keywords TDD, test-driven development, behavior contract, contract clauses, unit tests, integration tests, e2e, red-green-refactor, test first, mocking, phase 5.
 ---
 
-# Test Generator (Unit Tests Only)
+# Test Generator
 
-Generate comprehensive failing UNIT tests BEFORE implementation to drive design and API boundaries. Follows TDD red-green-refactor cycle. **Does NOT create integration or E2E tests** - those come after implementation.
+Write the **behavior contract** (`5-contract.md`) and the **failing tests** that pin it down, BEFORE implementation. Every test exists to prove one contract clause, at the level that clause needs.
 
 ## When to Use
 
-- Before implementing feature (TDD approach)
-- After architecture approved, BEFORE any code written
-- Need to drive API design through tests
-- Implementing critical functionality
-- Want to define component boundaries
+- Phase 5 of every flow (backs [`tdd-engineer`](../../agents/tdd-engineer.agent.md))
+- After the PRD/analysis is approved, BEFORE any code is written
+- Driving API design and component boundaries through tests
 
-**Do NOT use for**:
+**Do NOT use for**: testing existing code after the fact (tests come first), or the phase 8.3 Playwright specs written from the real DOM (that's `qa-automator`).
 
-- Integration tests (use `integration-test-generator` after implementation)
-- E2E tests (use `integration-test-generator` after implementation)
-- Testing existing code (tests should come first)
+## Parameters
 
-## Workflow Artifact
+Read `{{phase}}`, `{{output}}`, and `{{inputs}}` from a [skill-params block](../../schemas/skill-params.md) (default: phase `5`, output `5-contract.md`).
 
-This skill is invoked in multiple phases across all three workflows:
+## Where this runs
 
-- **Feature Workflow Phase 4**: Produces `.ai-workflow/[feature-folder]/4-unit-tests.md`
-- **Bug Workflow Phase 5**: Produces `.ai-workflow/[feature-folder]/5-tdd-tests.md`
-- **Improvement Workflow Phase 4**: Produces `.ai-workflow/[feature-folder]/4-tdd-tests.md`
-
-**Context**: Read `0-startpoint.md`, `0.1-grill-me.md`, and the relevant prior phase outputs for what needs to be tested.
+Phase 5. Reads `2-prd.md` (the `AC*` IDs) plus `3.4-tradeoffs.md` when phase 3 ran (in the debug flow, also `2.5-root-cause.md`). Writes `5-contract.md` per [contract-ids.md](../../schemas/contract-ids.md) — `[knowledge]` tier — and the test files themselves into the repo.
 
 ## TDD Philosophy
 
-**Red-Green-Refactor-Integration Cycle**:
+**Red → Green → Refactor**:
 
-1. **Red**: Write failing UNIT test (this skill)
-2. **Green**: Write minimal code to pass (implementation phase)
-3. **Integration**: Write integration tests (after implementation)
-4. **Refactor**: Improve code quality (refactoring phase)
+1. **Red**: write failing tests for every contract clause (this skill, phase 5)
+2. **Green**: minimal code to pass (`minimal-impl-generator`, phases 6.1..n)
+3. **Refactor**: improve while green (`refactor-optimizer`, end of each task)
 
-**This skill handles "Red" phase** - writing unit tests that fail because no implementation exists yet.
+Integration and e2e tests are written **now**, in the red phase, when a clause's level calls for them — not after implementation. A side effect "tested" with a mocked emitter tests the mock.
 
 ## Process
 
@@ -52,46 +43,40 @@ This skill is invoked in multiple phases across all three workflows:
 
 **Required actions**:
 
-- Use `create_file` tool to create test files
-- Follow project's test file naming conventions (e.g., `*.spec.ts`, `*.test.ts`)
-- Place tests in appropriate directories (e.g., `test/`, `__tests__/`, `src/**/*.spec.ts`)
+- Create the test files with your file-writing tool
+- Follow the per-level `location` globs in `.ai-rules/project.md` §Test
 - Verify files are created in the workspace
 - Tests must be runnable with project's test command
 
 **Why this matters**: Tests that only exist in chat history cannot be run. They must be committed to the repository.
 
-### Step 1: Identify Testing Framework
+### Step 1: Read the Test Setup from `.ai-rules/project.md`
 
-**⚠️ ALWAYS CONFIRM TESTING TOOL BEFORE WRITING TESTS**
+Read the framework, per-level command, file location, and mocking policy from `.ai-rules/project.md` §Test — **never ask**. See [project-md-schema.md](../../schemas/project-md-schema.md).
 
-**Ask user or check project configuration**:
+- If project.md was declined for this run, inspect `package.json` and existing tests instead, and **say explicitly that the framework is a guess** before proceeding.
+- Use the same framework at every level unless §Test names a different runner for that level.
 
-- Which testing framework should be used?
-    - **Node.js native**: `node:test` API (Node 18+)
-    - **Bun native**: Bun's built-in test runner
-    - **Jest**: Popular testing framework with mocking
-    - **Vitest**: Fast Vite-native test runner
-    - **Other**: Mocha, AVA, Tape, etc.
+### Step 2: Write the Contract Clauses
 
-**Discovery methods**:
+Turn the PRD into the clause table in [contract-ids.md](../../schemas/contract-ids.md#clause-table-schema-5-contractmd):
 
-1. Check `package.json` for test dependencies
-2. Look for existing test files and their imports
-3. Check test scripts in `package.json`
-4. If unclear, **ASK THE USER**
+- Each `AC*` acceptance criterion → one or more clauses
+- Each edge case, failure scenario, and business rule → a clause
+- Debug flow: **`C1` is always the repro** — "given the repro steps, the system does X, not Y"
 
-**Use the confirmed framework consistently** across all generated tests.
+For each clause pick `Kind`, then the default `Level` from [the kind → level table](../../schemas/contract-ids.md#clause-kind--default-level):
 
-### Step 2: Extract Test Scenarios
+| Kind | Level | How to test |
+|---|---|---|
+| Pure logic, calculation, validation, error mapping | unit | Steps 3–5 below: everything external mocked |
+| Side effect (event emitted, row written, cache invalidated) | integration | Step 6: real dependencies |
+| Cross-boundary contract (status code, response shape) | integration (API) | Step 6: real HTTP requests |
+| User-visible flow | e2e | Step 6: drive the UI |
 
-**From specification**:
+Overriding a default needs a one-line reason on the clause. A level the repo has no runner for is **downgraded with a note**, never silently dropped.
 
-- Each acceptance criterion = test(s)
-- Each edge case = test
-- Each failure scenario = test
-- Each business rule = test
-
-### Step 3: Generate Edge Case & Failure Tests FIRST
+### Step 3: Unit Clauses — Edge Cases & Failures FIRST
 
 **⚠️ CRITICAL: Write edge cases and failures BEFORE happy path**
 
@@ -223,20 +208,48 @@ const mockUserId = 123;
 const mockDatabaseResponse = { id: mockUserId, ...validUser };
 ```
 
-### Step 6: Verify Tests Fail
+### Step 6: Integration and E2E Clauses
 
-**Run test suite** - all tests should FAIL:
+For clauses at `integration` or `e2e` level, test **real interactions**. See [references/integration-test-patterns.md](references/integration-test-patterns.md) for setup and examples.
 
-```bash
-npm test
-# Expected: X failing tests (red phase)
+- **Component integration**: services calling services, read-after-write, transaction rollback, error propagation, event publishing
+- **API**: real HTTP requests to the app (supertest or similar)
+- **Database**: concurrent operations, rollbacks, unique constraints, foreign keys
+- **E2E**: a complete user journey, using the selector convention in `.ai-rules/project.md` §Browser
+
+Mock only **external** APIs (Stripe, SendGrid — use nock/msw). Internal services stay real; that's what the test is for.
+
+**Integration gotchas** — add to this list after fixing each mistake:
+
+- Clean ALL tables between tests (`beforeEach`), or one test's data leaks into the next
+- Run migrations before the suite, not during it — racing them makes tests flaky
+- `NODE_ENV=test` doesn't automatically use the test database — configure it explicitly
+- A shared test database breaks parallel runs — use `--runInBand` or one database per worker
+- `beforeAll` database setup can time out — raise the timeout for integration suites
+- Some ORMs auto-commit unless explicitly wrapped — verify transaction behavior
+- `await` every async cleanup in `afterAll`, or it finishes before the work does
+- Port conflicts from a stale test server — use random ports
+- Docker test databases must be stopped AND removed
+
+### Step 7: Cite the Clause in Every Test
+
+Every test names the clause it asserts, in the test name or a leading comment — phase 6.x's contract diff greps for it:
+
+```ts
+// C2
+it('rejects duplicate currency with 409', async () => { ... });
 ```
 
-**If tests pass**: Tests are wrong or feature already exists
+A citing test with zero assertions counts as **uncited**.
 
-**Why tests must fail initially**: Confirms tests are actually testing something. If they pass before implementation exists, the tests are broken.
+### Step 8: Run the Suite and Paste Red Evidence
 
-## Output Format
+Run each level's command from `.ai-rules/project.md` §Test. Every clause must fail, and you paste the **actual failure output** into its `Red evidence` column — not a description of what you expect to fail.
+
+- **A clause with no red evidence means phase 5 did not complete.**
+- **If a test passes before implementation**, the test is wrong (a tautology) or the behavior already exists — fix the test or drop the clause, and say which.
+
+## Unit Test File Shape
 
 **Test file structure**:
 
@@ -290,47 +303,34 @@ describe('FeatureName', () => {
 - Edge cases tested before happy path
 - Mocks configured in beforeEach or individual tests
 
-## Test Coverage Goals
+## Coverage Goals
 
-**Minimum coverage** (unit level):
+- [ ] Every `AC*` in the PRD maps to at least one clause
+- [ ] Every edge case, error scenario, and business rule has a clause
+- [ ] Every clause has a test at its declared level, citing its ID
+- [ ] Unit tests mock every external dependency; integration tests use real ones
 
-- [ ] All acceptance criteria have unit tests
-- [ ] All edge cases covered at unit level
-- [ ] All error scenarios have tests
-- [ ] All business rules validated in isolation
-- [ ] All external dependencies are mocked
-
-**Quality indicators**:
-
-- Edge cases and error handling written before happy path (drives robust design)
-- All external dependencies properly mocked
-- Tests are isolated (testing ONE unit only)
-- Tests are independent (no interdependencies)
-- Tests are deterministic (no randomness)
-- Tests are fast (<100ms for unit tests)
-- Test names describe expected behavior
-- Tests use AAA pattern (Arrange-Act-Assert)
-- Mock setup is clear and understandable
+**Quality indicators**: edge cases before happy path, tests isolated and independent, deterministic, unit tests fast (<100ms), descriptive names, Arrange-Act-Assert.
 
 ## Uncertainty Handling
 
-**Test coverage gaps**: Document scenarios that can't be tested at unit level (save for integration tests)
-**Confidence level**: % of requirements covered by unit tests
+**Clauses you couldn't test at their level**: list them in `5-contract.md` with the reason (missing runner, missing test environment).
+**Confidence level**: % of `AC*` IDs covered by clauses with red evidence.
 
-**If confidence < 70%**: List missing test scenarios
-
-**Note**: Some scenarios can only be tested with integration tests after implementation. That's OK - document them for Phase 6.
+**If confidence < 70%**: list the missing scenarios as open questions in the return summary.
 
 ## Evals
 
-- [ ] Testing framework identified and confirmed (node:test, Bun, Jest, Vitest, etc.)
-- [ ] All functional requirements have unit tests
-- [ ] All edge cases covered at unit level
-- [ ] Error scenarios tested
-- [ ] **All external dependencies are mocked** (databases, APIs, file system, etc.)
+- [ ] Framework and commands read from `.ai-rules/project.md` (or the guess stated explicitly)
+- [ ] Every clause has `Kind`, `Level`, and pasted red evidence
+- [ ] Level overrides carry a one-line reason
+- [ ] Every test cites its `C*` ID and has at least one real assertion
+- [ ] Debug flow: `C1` is the repro
+- [ ] Unit tests mock all external dependencies; integration tests mock only third-party APIs
 - [ ] Edge cases and failures written BEFORE happy path tests
-- [ ] Tests fail initially (red phase)
-- [ ] Test names are descriptive
-- [ ] Tests are fast (<100ms each)
-- [ ] No integration or E2E tests created (those come in Phase 6)
-- [ ] Tests are independent
+- [ ] Test files exist in the repo, not just in chat
+
+## Related
+
+- [../../schemas/contract-ids.md](../../schemas/contract-ids.md) — clause schema, levels, the 6.x contract diff
+- [../../agents/tdd-engineer.agent.md](../../agents/tdd-engineer.agent.md)

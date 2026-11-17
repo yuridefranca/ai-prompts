@@ -1,10 +1,10 @@
 ---
 name: solution-critic
 description: >
-    Adversarially stress-test proposed bug fixes before implementation. Finds failure modes,
-    edge cases, performance issues, and security holes. MUST find at least 2 potential problems
-    with any solution. Always use after root cause analysis and before implementing fix. Prevents
-    premature solutions and incomplete fixes. Keywords: solution critique, adversarial review,
+    Adversarially stress-test a proposed solution or fix before implementation, and re-attack
+    open findings against shipped code. Finds failure modes, edge cases, performance issues, and
+    security holes, and records them in FINDINGS.md — or states why the solution is robust. Use at
+    phase 6.0 (solution plan) and phase 7 (review). Prevents premature solutions and incomplete fixes. Keywords: solution critique, adversarial review,
     failure mode analysis, stress testing, edge cases, security review, performance analysis,
     fix validation.
 metadata:
@@ -16,23 +16,26 @@ metadata:
 
 # Solution Critic
 
-**Adversarial stress-testing of proposed bug fixes**. Your job is to find what could go wrong.
+**Adversarial stress-testing of proposed solutions and fixes**. Your job is to find what could go wrong.
 
 ## When to Use
 
-- After root cause analysis complete
-- Before implementing any fix
-- Evaluating proposed solutions
-- Critical/high-impact bugs
-- Production incident fixes
+- Phase 6.0: before any code is written
+- Phase 7: against the real, shipped code
+- Critical/high-impact bugs and production incident fixes
 
-## Workflow Artifact
+## Parameters
 
-This skill is invoked as **Phase 3** (Part B) of the Bug Workflow. It contributes to the solution evaluation document.
+Read `{{phase}}`, `{{output}}`, and `{{findings}}` from a [skill-params block](../../schemas/skill-params.md).
 
-**Output File**: `.ai-workflow/[feature-folder]/3-solution-evaluation.md` (stress test section)
+## Where this runs
 
-**Context**: Read `0-startpoint.md`, `0.1-grill-me.md`, `1-component-map.md`, and `2-root-cause-analysis.md` before critiquing solutions.
+Two distinct invocations:
+
+- **Phase 6.0** ([`solution-planner`](../../agents/solution-planner.agent.md)): the stress-test half of the solution plan, attacking `6-solution.md` before any code is written.
+- **Phase 7** ([`reviewer`](../../agents/reviewer.agent.md), solution-critic mode): re-attacks findings still `open` since 6.0 against the real, shipped code.
+
+Every invocation writes to `{{findings}}` (`FINDINGS.md`) with a stable `F*` ID, or a robustness statement if nothing was found — see [findings.md § No quotas](../../schemas/findings.md#no-quotas).
 
 ## Core Principle
 
@@ -93,15 +96,11 @@ Does fix address the actual root cause, or just hide symptoms? See [references/c
 
 For each issue found, suggest how to prevent it, what to add/change, or alternative approaches.
 
-## Minimum Requirements
+## No quotas
 
-**Must find at least**:
+There is **no minimum number of findings**. A quota pushes the critic to manufacture weak findings that bury the real ones.
 
-- 2 potential failure modes
-- 1 edge case concern
-- 1 performance or security consideration
-
-**If can't find issues**: Document explicitly that thorough review found none, explain why solution is robust, still provide at least 2 "what if" scenarios.
+**Cover every step above.** For each step that turns up nothing, say what you checked. If the whole review finds nothing, write a **robustness statement** instead: what you attacked, and why the solution holds. See [findings.md § No quotas](../../schemas/findings.md#no-quotas).
 
 ## Mindset
 

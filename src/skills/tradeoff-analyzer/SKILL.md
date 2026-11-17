@@ -15,15 +15,16 @@ Systematically analyze and compare different technical approaches to help make i
 - Evaluating technology choices
 - Risk vs reward assessment
 
-## Workflow Artifact
+## Parameters
 
-This skill is invoked in multiple workflows:
+Read `{{phase}}` and `{{output}}` from a [skill-params block](../../schemas/skill-params.md).
 
-- **Feature Workflow Phase 2**: Contributes to `.ai-workflow/[feature-folder]/2-architecture.md` (tradeoff section)
-- **Bug Workflow Phase 3**: Contributes to `.ai-workflow/[feature-folder]/3-solution-evaluation.md` (solution comparison)
-- **Improvement Workflow Phase 2**: Contributes to `.ai-workflow/[feature-folder]/2-tradeoff-and-design.md` (primary output)
+## Where this runs
 
-**Context**: Read `0-startpoint.md`, `0.1-grill-me.md`, and the relevant Phase 1 output before analyzing tradeoffs.
+Two distinct roles — **not interchangeable**:
+
+- **Phase 3.4** ([`synthesizer`](../../agents/synthesizer.agent.md)): merges `3.1`/`3.2`/`3.3` into `3.4-tradeoffs.md`, explicitly surfacing analyst conflicts (escalated to `FINDINGS.md` if unresolved). Adjudicates between three independent analyses.
+- **Phase 6.0** ([`solution-planner`](../../agents/solution-planner.agent.md)): evaluates implementation-approach tradeoffs within `6-solution.md`. Evaluates the chosen plan's own tradeoffs, not competing analyses.
 
 ## Process
 

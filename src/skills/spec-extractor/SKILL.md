@@ -27,13 +27,13 @@ This skill converts a user's high-level feature idea or description into a compl
 - Need to validate understanding before design
 - Converting product requests into engineering specs
 
-## Workflow Artifact
+## Parameters
 
-This skill is invoked as **Phase 1** of the Feature Workflow. It MUST produce an output file in the workflow folder.
+Read `{{phase}}` and `{{output}}` from a [skill-params block](../../schemas/skill-params.md).
 
-**Output File**: `.ai-workflow/[feature-folder]/1-specification.md`
+## Where this runs
 
-**Context**: Read `0-startpoint.md` for the user's initial requirements and `0.1-grill-me.md` for refined understanding before extracting the specification.
+Backs [`prd-writer`](../../agents/prd-writer.agent.md) at phase 1 (overview mode, `1-overview.md`, no acceptance criteria yet) and phase 2 (PRD mode, `2-prd.md`).
 
 ## Gotchas
 
@@ -93,8 +93,10 @@ Create testable criteria for verifying the feature works.
 
 **Format using Given-When-Then**:
 
+**Number every criterion `AC1..ACn`** — phase 7's Business Logic Review checks each ID individually against the implementation, so an unnumbered criterion can't be tracked to a pass/fail. See [PLAN.md § Business Logic Awareness in Review](../../PLAN.md#business-logic-awareness-in-review).
+
 ```
-AC-[N]:
+AC[N]:
 Given [precondition/context]
 When [action taken]
 Then [expected result]
@@ -213,11 +215,11 @@ Produce a structured specification document:
 
 ## Acceptance Criteria
 
-- AC-1:
+- AC1:
   Given [precondition]
   When [action]
   Then [result]
-- AC-2:
+- AC2:
   Given [precondition]
   When [action]
   Then [result]
