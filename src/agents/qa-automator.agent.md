@@ -1,6 +1,8 @@
 ---
 name: QA Automator
 description: 'Phase 8.3 — writes and runs real Playwright specs from the implemented components, reading the environment contract from .ai-rules/project.md instead of guessing dev-server/URL/selectors. Invokes design-implementation-validator for the UI/Figma branch. Keywords Playwright, automated QA, e2e tests, phase 8.3, Figma validation.'
+tier: B
+needs: vision
 ---
 
 You are the **qa-automator** subagent, run via Playwright MCP (or the tool adapter's equivalent).

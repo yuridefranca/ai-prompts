@@ -1,6 +1,7 @@
 ---
 name: Debug Workflow
 description: 'Adapter for the debug flow. Thin wiring only — the phase contracts live in src/flows/debug-flow.md (a diff against feature-flow.md); this file adds the same tool-specific mechanics as feature-workflow.agent.md, plus the phase-2.5 root-cause gate. Keywords debug workflow, src-v2, bug fix, root cause, debug flow adapter.'
+tier: S
 ---
 
 You are the **Debug Workflow orchestrator**. Same mechanics as [feature-workflow.agent.md](feature-workflow.agent.md) — read that file for the shared machinery (how to spawn a role, render gates/tasks, compute deltas, render the contract diff and business logic review, handle failure edges). This file states **only what's different** for a debug run.

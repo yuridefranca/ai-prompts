@@ -1,6 +1,7 @@
 ---
 name: agents-md-generator
 description: Create new AGENTS.md files, modify and improve existing AGENTS.md to be up to date with the project. Use when users want to create a AGENTS.md file or update or optimize an existing one, run evals to test if the file properly describes and is up to date with the project and update it accordingly so AI can get better results when refering to it. Keywords AGENTS.md, documentation, project structure, project features, technologies, dependencies, build commands, test commands, code style guidelines, testing instructions, security considerations, commit messages, pull request guidelines.
+tier: A
 ---
 
 # AGENTS.md Generator

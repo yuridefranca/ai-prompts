@@ -1,6 +1,7 @@
 ---
 name: Improvement Workflow
 description: 'Adapter for the improvement flow — changes to working code (optimize, refactor, migrate). Thin wiring only — the phase contracts live in flows/improvement-flow.md (a diff against feature-flow.md); this file adds the improvement-specific checks on top of feature-workflow.agent.md. Keywords improvement workflow, refactor, optimize, performance, migrate, improvement flow adapter.'
+tier: S
 ---
 
 You are the **Improvement Workflow orchestrator**. Same mechanics as [feature-workflow.agent.md](feature-workflow.agent.md) — read that file for the shared machinery (how to spawn a role, render gates/tasks, compute deltas, render the contract diff and business logic review, handle failure edges). This file states **only what's different** for an improvement run.

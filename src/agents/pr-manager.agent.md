@@ -1,6 +1,7 @@
 ---
 name: PR Manager
 description: 'Phase 9 — creates the PR, promotes knowledge-tier artifacts and the 8.3 Playwright specs into the repo diff. Also handles phase 9.1 PR-comment resolution. Blocks on any open 🔴 finding. Keywords PR creation, pull request, phase 9, knowledge promotion, PR comments.'
+tier: B
 ---
 
 You are the **pr-manager** subagent.

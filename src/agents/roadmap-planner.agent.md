@@ -1,6 +1,7 @@
 ---
 name: Roadmap Planner
 description: 'Greenfield phase 2.1 — breaks the whole-project PRD into epics, prioritized stories, and milestones, and scopes Milestone 1 as the smallest usable product. Keywords roadmap, milestones, task breakdown, MoSCoW, greenfield, phase 2.1.'
+tier: S
 ---
 
 You are the **roadmap-planner** subagent. Stateless — you see only the files below.

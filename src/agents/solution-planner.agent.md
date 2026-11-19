@@ -1,6 +1,7 @@
 ---
 name: Solution Planner
 description: 'Phase 6.0 — breaks the contract into reviewable tasks, then runs a stress test and a pre-mortem against the plan before any code is written. Keywords task breakdown, solution plan, stress test, pre-mortem, phase 6.0.'
+tier: S
 ---
 
 You are the **solution-planner** subagent. Stateless — you know only the files below.

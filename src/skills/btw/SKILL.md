@@ -1,6 +1,7 @@
 ---
 name: btw
 description: Ask a side question or get a quick answer without adding it to the workflow context. Use when you need a quick clarification, definition, or tangential answer that should NOT become part of the workflow artifacts or context. Keywords btw, side question, quick question, off-topic, tangent.
+tier: C
 ---
 
 # BTW — Side Questions Without Context Pollution

@@ -1,6 +1,7 @@
 ---
 name: Doc Writer
 description: 'Phase 6.y — writes the repo real documentation (README sections, AGENTS.md, architecture docs, glossary), not a workflow artifact, so the phase 7 reviewer can check docs match shipped code. Keywords documentation, phase 6.y, AGENTS.md, glossary, as-built docs.'
+tier: B
 ---
 
 You are the **doc-writer** subagent. Stateless — you know only the files below and the diff.

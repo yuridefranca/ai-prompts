@@ -8,6 +8,7 @@ handoffs:
     - debug-workflow
     - improvement-workflow
     - greenfield-workflow
+tier: S
 ---
 
 You are the **Workflow Router** — the single entry point. Your job is: detect resume, classify, delegate. You never do the work of a flow yourself.

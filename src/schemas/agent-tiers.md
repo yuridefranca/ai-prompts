@@ -1,80 +1,81 @@
-# Schema (Draft): Agent Cost Tiers
+# Schema: Agent Model Tiers
 
-> **Status: draft, not wired in.** No flow manifest, template, or agent file references this yet — `feature-flow.md`/`debug-flow.md`'s phase tables have no `Tier` column, `feature-workflow.agent.md`'s "How to spawn a role" doesn't read it, and `project-md-schema.md` doesn't have the `## Agents` section this proposes. This file exists so the design isn't lost, not to be treated as implemented. Wiring it in is future work, not part of any current slice.
+**Used by**: every agent file (`tier:` frontmatter), every standalone skill that carries a `tier:`, the per-company model lists in [contexts/](../contexts/), and the install step that writes `model:` into agent files.
 
-## Problem
+## Purpose
 
-Once planning/exploration is done (analysis, synthesis, solution design), a lot of what's left is mechanical: implementing a task 6.0 already specified in detail, writing docs from a diff, running a QA spec against a written plan. Those don't obviously need the same reasoning depth as the phases that produced the plan — but the flow manifests are tool-agnostic by design ([Architecture § Three-Layer Separation](../PLAN.md#three-layer-separation)), and *which* cheaper agent/model exists, and under what name, differs per tool and per repo. Hardcoding a model name into a manifest would break portability the same way a hardcoded dev-server URL did before `.ai-rules/project.md` existed.
+Run the expensive, best-reasoning models where judgment decides the outcome — planning, the ADR, stress tests, review, rules — and cheap models where the work is already decided and only needs doing — implementing a task `6-solution.md` specified, writing docs from a diff, translating a QA plan into Playwright specs.
 
-## Design sketch
+**Tiers name a job, not a model.** Which concrete model is "S" depends on which company you're working for (which provider key you have) and which tool runs the agents. Agent files therefore carry a tier, never a model name; the model is resolved from the company's `models.md` when the agents are installed into a project. This keeps the agent files and flow manifests tool-agnostic.
 
-### 1. A `Tier` field per phase, default `reasoning`
+## The tiers
 
-Every phase in [feature-flow.md](../flows/feature-flow.md) / [debug-flow.md](../flows/debug-flow.md) would carry a `Tier: reasoning | execution` alongside its existing `Role`/`Input`/`Task`/`Output` columns. Default is `reasoning` — a phase is only ever marked `execution` deliberately, never by omission, so a new phase added later doesn't silently get downgraded.
+| Tier | Job | Pick a model that is… |
+|---|---|---|
+| **S** | Planning, adjudicating, setting rules — work whose mistakes every later phase inherits | the best reasoning model available, regardless of price |
+| **A** | Independent analysis and structured writing that a gate or reviewer will check | strong at reasoning and code, noticeably cheaper than S |
+| **B** | Executing a decided plan: code for a specified task, docs from a diff, specs from a written plan | good at code and tool use, fast and cheap |
+| **C** | Trivial: side questions, summaries, formatting | the cheapest model that follows instructions |
 
-**Proposed defaults**, based on what each phase actually does:
+A model is classified by **capability first, price second**: S is "best available," not "most expensive."
 
-| Phase | Role | Tier | Why |
+## Default tier per agent
+
+The tier lives on the **agent**, because the agent is the job: the same skill can run at different tiers in different phases (`grill-me` is S inside `prd-writer` at phase 2 and A inside `quiz-master` at phase 4). Skills inside the flows carry no tier.
+
+| Agent | Phase(s) | Tier | Why |
 |---|---|---|---|
-| 1 | `prd-writer` (overview) | reasoning | Judgment about business framing |
-| 2 | `prd-writer` (PRD) | reasoning | Grilling requires real interrogation |
-| 3.0 | `component-mapper` | execution | Mechanical repo inspection |
-| 3.1–3.3 | `architect`/`data-flow-analyst`/`feature-analyst` | reasoning | Independent expert judgment |
-| 3.4 | `synthesizer` | reasoning | The single most judgment-heavy step in the flow — see [feature-flow.md § Phase 3](../flows/feature-flow.md#phase-3--analysis-parallel) |
-| 4 | `quiz-master` | reasoning | Writing a non-mechanical "why" question is itself judgment |
-| 5 | `tdd-engineer` | reasoning | Deciding clause kind/level is a judgment call, even though the test *code* is mechanical |
-| 6.0 | `solution-planner` | reasoning | Stress test + pre-mortem are adversarial reasoning |
-| 6.1..n | `implementer` (task) | **execution, conditionally** | See §2 — only once a task is narrow enough |
-| 6.x | `implementer` (reconciliation) | execution | The contract diff is explicitly mechanical — see [contract-ids.md](contract-ids.md#the-contract-diff-phase-6x-mechanical) |
-| 6.y | `doc-writer` | execution | Transcribing decisions already made into docs |
-| 7 | `reviewer` | reasoning | Business-logic judgment, not a linter |
-| 8.1 | `qa-planner` | reasoning | Adversarial scenario design |
-| 8.3 | `qa-automator` | execution | Writing specs from a plan + real DOM is mechanical translation |
-| 9 | `pr-manager` | execution | Assembling a PR from already-decided content |
+| `orchestrator` + the four `*-workflow` adapters | all | **S** | Gates, tier proposals, failure-edge decisions, the 9.5 rule harvest (`.ai-rules/review.md` additions). Cheap to run at S: the orchestrator only ever reads Layer 1 summaries |
+| `prd-writer` | 1, 2 | **S** | The PRD and its grilling define what everything after it builds |
+| `roadmap-planner` | 2.1 (greenfield) | **S** | Scopes Milestone 1 — a planning decision |
+| `rca-analyst` | 2.5 (debug) | **S** | A wrong root cause wastes every phase after it |
+| `synthesizer` | 3.4 | **S** | The most judgment-heavy step: adjudicates three conflicting analyses into the ADR |
+| `solution-planner` | 6.0 | **S** | Task plan + stress test + pre-mortem |
+| `reviewer` | 7 | **S** | Business-logic judgment and the re-attack of open findings |
+| `task-explainer` | 0.5 + updates | **A** | Plain-language alternatives and watch-outs; the dev checks it at the 0.5 gate |
+| `architect`, `data-flow-analyst`, `feature-analyst` | 3.1–3.3 | **A** | Independent analyses; `synthesizer` (S) reconciles them |
+| `quiz-master` | 4 | **A** | Decision questions, answered by the dev |
+| `tdd-engineer` | 5 | **A** | Clause kind/level is judgment; the test code is mechanical |
+| `qa-planner` | 8.1 | **A** | Adversarial scenario design |
+| `implementer` | 6.1..n, 6.x, 3.5 | **B** | Implements a task 6.0 already specified; reconciliation is a mechanical diff |
+| `doc-writer` | 6.y | **B** | Transcribes decisions already made |
+| `qa-automator` | 8.3 | **B** | Plan + real DOM → specs |
+| `pr-manager` | 9, 9.1 | **B** | Assembles already-decided content |
+| `repo-mapper` | bootstrap | **B** | Inspection; every fact carries a `verify:` command |
 
-### 2. Task-level override for 6.1..n (the ambiguous case)
+Phase 3.0 (`component-mapper`, run standalone by the adapter) runs at **B**.
 
-A single fixed tier for "implementation" doesn't hold — some tasks are truly mechanical (rename a field, wire a already-designed function) and some aren't (a task that turns out to need a design decision `6.0` didn't anticipate). Two options, **undecided**:
+## Standalone skills
 
-- **(a) `solution-planner` classifies each task at 6.0.** It has the most context to judge how mechanical a task will turn out — add an `Execution-safe: yes/no` flag per task in `6-solution.md`, next to size (S/M/L).
-- **(b) The orchestrator decides per-spawn**, using task size as a proxy (S → execution, M/L → reasoning) with no upfront classification step.
+Skills used **outside** the flows may carry a `tier:` in their frontmatter (`btw` → C, `agents-md-generator` → A). Only Claude Code can honor it: the install step turns it into `model:` + `context: fork` (a skill whose model differs from the session's should run in its own context). Copilot and Cursor have no per-skill model and ignore the field.
 
-(a) is more accurate but adds a judgment call to an already-loaded phase; (b) is cheaper to implement but a worse proxy (an S task can still be conceptually hard). Leaning toward (a), not confirmed.
+## Rules
 
-**Escalation, either way**: if an execution-tier spawn produces a bad result, the existing [per-task review rejection](../flows/feature-flow.md#failure-edges) loop applies — same task re-spawned with feedback — with one addition: the re-spawn note may say "escalate to reasoning tier," and that choice is logged in `INDEX.md`'s decision log so a pattern of escalations is visible, not silently repeated.
+1. **Gate artifacts are produced at S or A, never B/C.** Every agent that writes a ⛔ artifact is S except `task-explainer` (A, 0.5 mini-gate) and `pr-manager` (B) — the phase 9 gate is the dev approving a PR assembled from S/A artifacts, which is acceptable.
+2. **Escalation, not retry at the same tier.** When the dev rejects a B/C agent's output at per-task review (or a QA failure loops back to 6.1), the re-spawn runs **one tier up**, via the escalation twin `<agent>-up` that the install step generates for every B/C agent (e.g. `implementer-up` at A). The adapter logs the escalation in `INDEX.md`'s decision log. A second rejection follows the normal [failure edges](../flows/feature-flow.md#failure-edges).
+3. **The tier shows in the packet.** Task and gate packets note the tier that produced the artifact (`spawned at B · implementer`), so a reviewer knows what to expect and a pattern of escalations is visible.
+4. **Capabilities filter the pick.** An agent that declares `needs: vision` (`task-explainer` for screenshots, `qa-automator` for the UI branch) gets the first model in its tier with ✅ in the **Vision** column, not just the first row.
+5. **A tier with no model falls up.** If a company's `models.md` has no B model for a tool, B agents use that tool's A model, and so on up to S. Never down.
+6. **A repeated escalation is a gotcha.** If the same kind of task escalates in two runs, the 9.5 harvest proposes a tier change for that agent or a sharper task template in 6.0 — so the defaults above self-correct.
 
-### 3. Repo-side mapping — proposed `.ai-rules/project.md` §Agents (not yet in [project-md-schema.md](project-md-schema.md))
+## Resolving a tier to a model
 
-The schema doesn't know what "cheap" means in a given tool — that's exactly the kind of repo/tool fact `.ai-rules/project.md` already exists to hold (see [project-md-schema.md](project-md-schema.md)). A new, optional section, same `verify:`-where-possible discipline as every other section:
-
-````markdown
-## Agents (optional — cost-tier routing)
-reasoning: {tool-specific model or agent identifier, e.g. "opus" or "@architect-strong"}
-execution: {tool-specific model or agent identifier, e.g. "sonnet" or "@architect-fast"}
+```
+agent file  tier: B
+    ↓  install step, given --company and --tool
+contexts/<company>/models.md  →  row for tier B, column for that tool
+    ↓
+installed agent file  model: <exact model ID for that tool>
 ```
 
-- **Absent section → every phase runs at `reasoning`.** No section means no downgrading; this key must be opted into, the same way a missing `Browser` section doesn't make phase 8.3 invent a URL.
-- The values are opaque strings from the schema's point of view — the tool adapter (`feature-workflow.agent.md`'s "How to spawn a role" step, if this were wired in) is what interprets them into an actual invocation. The schema only says *when* to look the value up, never *how* to use it, keeping the manifest itself tool-agnostic.
-- A resolved tier should be visible in the rendered packet (e.g. a task packet footer noting "spawned at execution tier") so a dev reviewing output can tell which tier produced it — auditability, not just cost savings.
+- Each company's model list lives in its context pack: [contexts/duelbits/models.md](../contexts/duelbits/models.md), [contexts/clair/models.md](../contexts/clair/models.md).
+- Use the **exact model ID** each tool expects, not the display name — Cursor silently falls back to the parent's model on an unknown ID, and Copilot BYOK models have provider-qualified IDs.
+- Lists are refreshed with [scripts/models_refresh.py](../scripts/models_refresh.py): it pulls the provider's current models and prices, flags what's new, removed, or repriced, and suggests a tier. **A person confirms every tier change**; the script never writes one on its own.
 
-## Open questions (why this isn't wired in yet)
-
-1. Per-phase fixed tier vs. per-task dynamic classification for 6.1..n (§2) — undecided, needs a couple of real flows to see which one the 6.0 planner can actually judge well.
-2. Should a downgrade ever apply to a ⛔ gate artifact? Current lean: no — gate artifacts (`2-prd.md`, `4-quiz.md`, `6-solution.md`, `9-pr-notes.md`) always run at `reasoning`, full stop, regardless of §Agents. Not yet stated as a hard rule anywhere because the whole mechanism is unconfirmed.
-3. Worth tracking tier mix in `INDEX.md` (e.g. "6 tasks at execution tier, 2 at reasoning") as a cost-visibility delta, the way [gate-packet-template.md](../templates/gate-packet-template.md) already tracks findings/deviations? Nice-to-have, not required for a first version.
-4. Does a bad `reasoning`/`execution` split just become a `FINDINGS.md`-style gotcha harvested at 9.5 (see [Keeping It Accurate](../PLAN.md#keeping-it-accurate)'s trigger-count pattern), so the default table above self-corrects per repo over time? Plausible, not designed.
-
-## What it would take to actually wire this in
-
-1. Add the `Tier` column to every phase table in `feature-flow.md`/`debug-flow.md`, and to `debug-flow.md`'s phase-2.5 addition.
-2. Add the `## Agents` section to [project-md-schema.md](project-md-schema.md) and [templates/project-template.md](../templates/project-template.md).
-3. Add a "resolve tier → concrete agent" step to `feature-workflow.agent.md`'s "How to spawn a role" and `debug-workflow.agent.md`.
-4. Resolve the open questions above against at least one real dry run (see [VERIFICATION.md](../VERIFICATION.md)) before trusting the default tier table.
-
-None of this has been done. This file is the parking spot for the idea, not a changelog of work completed.
+**Not yet built**: the install step (`scripts/install-agents`) that writes `model:` into agent files and generates the `-up` twins. Until it exists, set `model:` by hand when linking agents into a project. It waits on confirming that Copilot honors a BYOK (OpenRouter) model in an agent file's `model:` field, and whether a subagent keeps its own model when spawned.
 
 ## Related
 
-- [project-md-schema.md](project-md-schema.md) — the schema this proposes extending
-- [../flows/feature-flow.md](../flows/feature-flow.md) — the manifest this proposes extending
-- [contract-ids.md](contract-ids.md) — the existing mechanical/judgment split (contract diff) this design generalizes
+- [../agents/README.md](../agents/README.md) — the roster, with tiers
+- [../flows/feature-flow.md § Failure Edges](../flows/feature-flow.md#failure-edges) — where escalation plugs in
+- [../contexts/](../contexts/) — per-company model lists

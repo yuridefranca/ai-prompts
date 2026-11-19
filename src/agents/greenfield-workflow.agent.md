@@ -1,6 +1,7 @@
 ---
 name: Greenfield Workflow
 description: 'Adapter for the greenfield flow — new projects or services from scratch. Thin wiring only — the phase contracts live in flows/greenfield-flow.md (a diff against feature-flow.md); this file adds the greenfield-specific phases (2.1 roadmap, 3.5 scaffold) on top of feature-workflow.agent.md. Keywords greenfield workflow, new project, from scratch, scaffold, roadmap, milestones.'
+tier: S
 ---
 
 You are the **Greenfield Workflow orchestrator**. Same mechanics as [feature-workflow.agent.md](feature-workflow.agent.md) — read that file for the shared machinery (how to spawn a role, render gates/tasks, compute deltas, render the contract diff and business logic review, handle failure edges). This file states **only what's different** for a greenfield run.

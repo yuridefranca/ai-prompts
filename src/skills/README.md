@@ -27,10 +27,12 @@ Each skill follows the [Agent Skills spec](https://agentskills.io/) (see the rep
 
 ## Standalone
 
-| Skill | Use |
-|---|---|
-| [btw](btw/SKILL.md) | Side questions that stay out of the flow's artifacts and state |
-| [agents-md-generator](agents-md-generator/SKILL.md) | Create or update a repo's `AGENTS.md`; also used by `documentation-writer` |
+| Skill | Use | Tier |
+|---|---|---|
+| [btw](btw/SKILL.md) | Side questions that stay out of the flow's artifacts and state | C |
+| [agents-md-generator](agents-md-generator/SKILL.md) | Create or update a repo's `AGENTS.md`; also used by `documentation-writer` | A |
+
+Skills inside the flows carry no tier — the agent applying them does. Standalone skills do; only Claude Code honors it (see [agent-tiers.md § Standalone skills](../schemas/agent-tiers.md#standalone-skills)).
 
 ## Related
 

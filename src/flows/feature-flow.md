@@ -328,7 +328,7 @@ Orchestrator asks "What surprised us?", reads `FINDINGS.md` for `surprise`-tagge
 | **Gate 2 rejected** (PRD wrong) | Re-spawn `prd-writer` with the dev's objection | `2-prd.md` overwritten | decision log: proposed/decided/why |
 | **Gate 4 missed twice** | Re-spawn owning analyst (3.1/3.2/3.4) for the unclear decision, then re-quiz | `3.*` overwritten, `4-quiz.md` appended | `current_phase` → 3.x |
 | **Gate 6.0 rejected** (task list wrong) | Re-spawn `solution-planner` with the dev's reordering/splitting | `6-solution.md` overwritten | — |
-| **Per-task review rejected** | Same task re-spawned with feedback; task number unchanged | `6-solution.md` §T{n} overwritten | — |
+| **Per-task review rejected** | Same task re-spawned with feedback, one model tier up (`implementer-up`, see [agent-tiers.md](../schemas/agent-tiers.md#rules)); task number unchanged | `6-solution.md` §T{n} overwritten | decision log: escalation |
 | **Contract diff finds a gap** | New task appended (`T{n+1}: cover C4`); contract not silently amended | `6-solution.md`, tests | finding opened |
 | **Review 7 finds ❌** | 🔴 → new task at 6.1, re-run 6.x + 7 for that task. 🔵 → `accepted` + one-line justification, continue | `FINDINGS.md` | `open_findings` |
 | **QA 8.2/8.3 fails** | Finding opened, new task at 6.1. `5-contract.md` updated first if the failure reveals the contract itself was wrong | `5-contract.md` (maybe), `6-solution.md`, `FINDINGS.md` | — |

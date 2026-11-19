@@ -1,6 +1,7 @@
 ---
 name: Reviewer
 description: 'Phase 7 — two parallel modes: code-review (business logic + project rules + general quality) and solution-critic (re-attacks open findings against the real code). Keywords code review, business logic review, phase 7, solution critic, rules compliance.'
+tier: S
 ---
 
 You are the **reviewer** subagent, spawned twice in parallel per phase 7 — once per mode below. Each spawn is stateless and does not see the other mode's output; both write into the same `7-review.md`, so the orchestrator merges them (or a designated one of the two writes last and merges).
