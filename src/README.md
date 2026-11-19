@@ -17,8 +17,8 @@ src/
 ├── templates/        fillable artifact templates (Layer 1/2, INDEX.md, FINDINGS.md, ...)
 ├── agents/           orchestrator + 4 flow adapters + 18 subagents
 ├── skills/           every skill the subagents apply, plus 2 standalone ones
-├── contexts/         per-org template overrides (duelbits/)
-└── scripts/          manifest-lint.sh — the automated portability check
+├── contexts/         per-company packs: model lists (duelbits/, clair/), Duelbits PR conventions
+└── scripts/          manifest-lint.sh (portability check), models_refresh.py (model list refresh)
 ```
 
 ## Status
@@ -45,6 +45,7 @@ Everything the plan specifies is written, and the manifest lint passes. **Not ye
 | [index-frontmatter.md](schemas/index-frontmatter.md) | `INDEX.md`'s YAML state record and the resume procedure |
 | [artifact-status.md](schemas/artifact-status.md) | The `draft`/`complete` header every phase artifact carries, and why a `draft` artifact is re-run, never patched |
 | [findings.md](schemas/findings.md) | `FINDINGS.md`'s table schema, status enum, update-not-duplicate rule, and robustness statements instead of finding quotas |
+| [agent-tiers.md](schemas/agent-tiers.md) | Model tiers S/A/B/C, the default tier per agent, escalation one tier up on rejection, and how a tier resolves to a company's model |
 | [contract-ids.md](schemas/contract-ids.md) | `C*` clause IDs, kind→level defaults, red (and preserve-clause green) evidence, the mechanical phase-6.x contract diff |
 | [project-md-schema.md](schemas/project-md-schema.md) | `.ai-rules/project.md` — the repo-facts file that retires guessing in test, browser, and PR steps |
 
@@ -53,13 +54,13 @@ Everything the plan specifies is written, and the manifest lint passes. **Not ye
 - [templates/README.md](templates/README.md) — generic artifact skeleton, gate/task packets, visual standards, and the structured templates (`INDEX.md`, `FINDINGS.md`, `.ai-rules/project.md`, `.ai-rules/review.md`, `8-qa-plan.md`)
 - [agents/README.md](agents/README.md) — the orchestrator, flow adapters, and subagent roster
 - [skills/README.md](skills/README.md) — which skill backs which subagent and phase
-- [contexts/duelbits/](contexts/duelbits/) — the one context pack so far: Duelbits PR conventions, resolved by `create-pr` via `context_pack`
+- [contexts/](contexts/) — per-company packs: `models.md` (which model is each tier, per tool) for [duelbits](contexts/duelbits/models.md) and [clair](contexts/clair/models.md), plus Duelbits PR conventions resolved by `create-pr` via `context_pack`
 
 ## Proposals (drafted, not wired in)
 
 | Draft | What |
 |---|---|
-| [schemas/agent-tiers.md](schemas/agent-tiers.md) | Per-phase cost tiers (`reasoning`/`execution`) so mechanical post-planning phases can hand off to a cheaper model, with the mapping left to a per-repo `.ai-rules/project.md` section. Not yet applied to the flow manifests |
+| `scripts/install-agents` | Writes `model:` into agent files per company and tool, and generates the `-up` escalation twins — see [agent-tiers.md § Resolving a tier to a model](schemas/agent-tiers.md#resolving-a-tier-to-a-model). Waits on a Copilot bring-your-own-key test |
 
 ## History
 

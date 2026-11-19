@@ -33,6 +33,8 @@ Every task starts at the [orchestrator](src/agents/orchestrator.agent.md). It re
 
 A thin orchestrator spawns stateless subagents, one bounded task each. Markdown artifacts in `.ai-workflow/[feature]/` are the contract between them, and `INDEX.md` lets a flow resume in a new session. A severity gate at the start sizes the process to the change, so a two-file fix doesn't get the full treatment. Repo facts (commands, test runner, PR conventions) come from `.ai-rules/project.md` in the target repo instead of being guessed.
 
+**Model tiers.** Agents carry a tier, not a model: **S** for planning, the ADR, review, and rules; **A** for analysis; **B** for executing a decided plan (coding, docs, specs); **C** for trivial work. Each company's `models.md` says which model is each tier in each tool — [Duelbits](src/contexts/duelbits/models.md) (OpenRouter via Copilot), [Clair](src/contexts/clair/models.md) (Claude Code, Cursor). Keep them current with `src/scripts/models_refresh.py <company>`. Details: [agent-tiers.md](src/schemas/agent-tiers.md).
+
 Start with [src/README.md](src/README.md) for the index, then [src/PLAN.md](src/PLAN.md) for the design.
 
 **Status**: everything is written, but no flow has been run end to end on a real task yet — see [src/VERIFICATION.md](src/VERIFICATION.md).
