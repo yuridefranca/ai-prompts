@@ -15,13 +15,13 @@ Each skill follows the [Agent Skills spec](https://agentskills.io/) (see the rep
 | [component-mapper](component-mapper/SKILL.md) | standalone, `data-flow-analyst` | 3.0, 3.2 |
 | [system-designer](system-designer/SKILL.md) | `architect` | 3.1 |
 | [tradeoff-analyzer](tradeoff-analyzer/SKILL.md) | `synthesizer`, `solution-planner` | 3.4, 6.0 |
-| [test-generator](test-generator/SKILL.md) | `tdd-engineer` | 5 (all test levels — absorbed the old `integration-test-generator`) |
+| [test-generator](test-generator/SKILL.md) | `tdd-engineer` (contract), `test-writer` (tests) | 5 (all test levels — absorbed the old `integration-test-generator`) |
 | [solution-critic](solution-critic/SKILL.md) | `solution-planner`, `reviewer` | 6.0, 7 |
 | [minimal-impl-generator](minimal-impl-generator/SKILL.md) | `implementer` | 6.1..n (feature, improvement, greenfield) |
 | [patch-implementer](patch-implementer/SKILL.md) | `implementer` | 6.1..n (debug) |
 | [refactor-optimizer](refactor-optimizer/SKILL.md) | `implementer` | end of each 6.1..n task |
 | [documentation-writer](documentation-writer/SKILL.md) | `doc-writer` | 6.y |
-| [code-review](code-review/SKILL.md) | `reviewer` | 7 |
+| [code-review](code-review/SKILL.md) | `rules-checker` (written rules), `reviewer` | 7.0, 7 |
 | [design-implementation-validator](design-implementation-validator/SKILL.md) | `qa-automator` | 8.3 (UI branch) |
 | [create-pr](create-pr/SKILL.md) | `pr-manager` | 9, 9.1 |
 

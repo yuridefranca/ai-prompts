@@ -4,7 +4,7 @@
 
 ## Subagent roster
 
-18 thin subagents. Each is stateless, reads an exact file list, applies a skill, writes one artifact, and returns the fixed format: **5-bullet summary + open questions + artifact path + new/updated finding IDs** (deviations from that shape are called out per-agent where the phase needs them — e.g. `implementer`'s task mode reports deviations instead of open questions).
+20 thin subagents. Each is stateless, reads an exact file list, applies a skill, writes one artifact, and returns the fixed format: **5-bullet summary + open questions + artifact path + new/updated finding IDs** (deviations from that shape are called out per-agent where the phase needs them — e.g. `implementer`'s task mode reports deviations instead of open questions).
 
 The workflow adapters spawn these. **Tier** is the model tier each runs at — see [agent-tiers.md](../schemas/agent-tiers.md); the orchestrator and adapters run at S.
 
@@ -23,6 +23,8 @@ The workflow adapters spawn these. **Tier** is the model tier each runs at — s
 | [tdd-engineer](tdd-engineer.agent.md) | Behavior contract + failing tests | `test-generator` | 5 | A |
 | [solution-planner](solution-planner.agent.md) | Plan + stress test + pre-mortem | `tradeoff-analyzer`, `solution-critic` | 6.0 | S |
 | [implementer](implementer.agent.md) | Task execution + refactor, reconciliation, greenfield scaffold | `minimal-impl-generator` or `patch-implementer`, then `refactor-optimizer` | 6.1..n, 6.x, 3.5 (greenfield) | B |
+| [test-writer](test-writer.agent.md) | Tests from the contract's intents + red evidence | `test-generator` | 5 (tests) | B |
+| [rules-checker](rules-checker.agent.md) | Written-rule compliance against `.ai-rules/review.md` | `code-review` (rules part) | 7.0 | B |
 | [doc-writer](doc-writer.agent.md) | Real-repo documentation | `documentation-writer` | 6.y | B |
 | [reviewer](reviewer.agent.md) | Code review + solution critic | `code-review`, `solution-critic` | 7 | S |
 | [qa-planner](qa-planner.agent.md) | Adversarial QA plan | — | 8.1 | A |

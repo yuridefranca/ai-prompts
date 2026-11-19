@@ -157,10 +157,10 @@ graph LR
 
 | Field | Value |
 |---|---|
-| Role | `tdd-engineer` |
+| Role | `tdd-engineer` (A), then `test-writer` (B) |
 | Skill | `test-generator` |
 | Input | `2-prd.md`, the phase-5-relevant analysis sections, **`.ai-rules/project.md` §Test** |
-| Task | Behavior contract with numbered, levelled, citable clauses (`C1..Cn` — see [contract-ids.md](../schemas/contract-ids.md)) + failing tests encoding each clause, with pasted red evidence per clause |
+| Task | `tdd-engineer`: behavior contract with numbered, levelled, citable clauses (`C1..Cn` — see [contract-ids.md](../schemas/contract-ids.md)), each with a test intent exact enough to write without deciding anything. `test-writer`: writes each clause's test, runs it, pastes the red evidence. A test that passes before implementation, or an intent that can't be written, goes back to `tdd-engineer` |
 | Output | `5-contract.md` `[knowledge]` + failing tests in the repo |
 
 A clause with no red evidence means this phase did not complete — see [contract-ids.md](../schemas/contract-ids.md#red-evidence--mandatory).
@@ -226,19 +226,18 @@ An uncited `C*` clause opens a new task (`T{n+1}: cover C4`) rather than silentl
 
 ```mermaid
 graph LR
-    CODE[code + artifacts] --> REV1[reviewer: code-review mode]
-    CODE --> REV2[reviewer: solution-critic mode]
-    REV1 --> OUT[7-review.md]
-    REV2 --> OUT
+    CODE[code + artifacts] --> RULES[rules-checker → 7.0-rules.md]
+    RULES --> REV1[reviewer: code-review mode → 7-review.md]
+    RULES --> REV2[reviewer: solution-critic mode → FINDINGS.md]
 ```
 
 | Field | Value |
 |---|---|
-| Role | `reviewer`, two modes in parallel |
-| Skill | `code-review` (mode 1), `solution-critic` (mode 2) |
-| Input | code + diff + `2-prd.md` + `3.4-tradeoffs.md` + `5-contract.md` + `6-solution.md` + `FINDINGS.md` + `.ai-rules/review.md` |
-| Task | Mode 1 checks business-logic compliance, project-specific rules (`.ai-rules/review.md`), and general quality. Mode 2 re-attacks findings **open since 6.0** against the real code and updates their status — it never re-reports a finding it re-confirms |
-| Output | `7-review.md` `[process]` |
+| Role | 7.0: `rules-checker` (B). Then `reviewer` (S), two modes in parallel |
+| Skill | `code-review` (rules part at 7.0; mode 1), `solution-critic` (mode 2) |
+| Input | 7.0: diff + `.ai-rules/review.md` + `FINDINGS.md`. Reviewer: code + diff + `2-prd.md` + `3.4-tradeoffs.md` + `5-contract.md` + `6-solution.md` + `FINDINGS.md` + `7.0-rules.md` |
+| Task | 7.0 checks every written rule in `.ai-rules/review.md` — mechanical, so it runs cheap. Mode 1 checks business-logic compliance and the judgment calls no rule states (design, security, performance), taking the rules row from 7.0. Mode 2 re-attacks findings **open since 6.0** against the real code and updates their status — it never re-reports a finding it re-confirms |
+| Output | `7.0-rules.md` `[process]`, `7-review.md` `[process]` (mode 1), `FINDINGS.md` updates (mode 2) |
 
 **Layer 1 must include**: rules compliance row (`✅ 12/12 rules checked · ⚠️ 1 deviation`), contract coverage row (verbatim from the 6.x diff), Business Logic Review table (see [Business Logic Awareness](../PLAN.md#business-logic-awareness-in-review)), finding delta (`2 closed · 1 still open · 1 new`).
 

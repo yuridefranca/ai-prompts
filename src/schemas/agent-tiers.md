@@ -31,13 +31,15 @@ The tier lives on the **agent**, because the agent is the job: the same skill ca
 | `rca-analyst` | 2.5 (debug) | **S** | A wrong root cause wastes every phase after it |
 | `synthesizer` | 3.4 | **S** | The most judgment-heavy step: adjudicates three conflicting analyses into the ADR |
 | `solution-planner` | 6.0 | **S** | Task plan + stress test + pre-mortem |
-| `reviewer` | 7 | **S** | Business-logic judgment and the re-attack of open findings |
+| `reviewer` | 7 | **S** | Business-logic and design judgment, and the re-attack of open findings — written rules are already checked at 7.0 |
 | `task-explainer` | 0.5 + updates | **A** | Plain-language alternatives and watch-outs; the dev checks it at the 0.5 gate |
 | `architect`, `data-flow-analyst`, `feature-analyst` | 3.1–3.3 | **A** | Independent analyses; `synthesizer` (S) reconciles them |
 | `quiz-master` | 4 | **A** | Decision questions, answered by the dev |
-| `tdd-engineer` | 5 | **A** | Clause kind/level is judgment; the test code is mechanical |
+| `tdd-engineer` | 5 (contract) | **A** | Clause kind/level and the test intent are judgment |
 | `qa-planner` | 8.1 | **A** | Adversarial scenario design |
 | `implementer` | 6.1..n, 6.x, 3.5 | **B**, or **A per task** | Implements a task 6.0 already specified; each task spec carries its own tier — an A task is spawned as `implementer-up` from the start. Reconciliation is a mechanical diff |
+| `test-writer` | 5 (tests) | **B** | Writes and runs the tests the contract's intents describe |
+| `rules-checker` | 7.0 | **B** | Checks written rules — no judgment beyond what a rule states |
 | `doc-writer` | 6.y | **B** | Transcribes decisions already made |
 | `qa-automator` | 8.3 | **B** | Plan + real DOM → specs |
 | `pr-manager` | 9, 9.1 | **B** | Assembles already-decided content |

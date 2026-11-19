@@ -31,6 +31,7 @@
 | `5-contract.md` | knowledge | Source of truth for behavior; referenced by future changes |
 | `6-solution.md` | knowledge | Plan + as-built record explains surprising code |
 | `6.y-docs.md` | knowledge | Written straight into the repo's real docs, not the workflow folder |
+| `7.0-rules.md` | process | Rules compliance for this diff; its catches feed `review.md`'s `triggered:` counts |
 | `7-review.md` | process | Findings are either fixed or promoted to the ledger |
 | `8-qa-plan.md` | knowledge | Scenarios become the regression suite's starting point |
 | `8-qa-results.md` / `8-qa-automated-results.md` | process | Point-in-time run record |

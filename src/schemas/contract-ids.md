@@ -10,13 +10,13 @@ This is what makes the phase 6.x contract diff **mechanical rather than inferent
 ## Clause table schema (`5-contract.md`)
 
 ````markdown
-| ID | Clause | Kind | Level | Red evidence |
-|---|---|---|---|---|
-| C1 | `createWallet(userId, "USD")` returns a Wallet with balance 0.00 | happy | unit | `AssertionError: expected undefined to be 0.00` |
-| C2 | Duplicate currency for same user → 409, no wallet created | error | integration | `Expected 409, got 500` |
-| C3 | Wallet mutation emits `WalletUpdated` within the same transaction | side-effect | integration | `0 events captured, expected 1` |
-| C4 | Upstream ledger timeout (>5s) → 503, wallet not persisted | error | integration | `Timeout stub not wired — TypeError` |
-| C5 | User sees the new wallet in the list without refreshing | happy | e2e | `locator not found: [data-testid=wallet-row]` |
+| ID | Clause | Kind | Level | Test intent | Red evidence |
+|---|---|---|---|---|---|
+| C1 | `createWallet(userId, "USD")` returns a Wallet with balance 0.00 | happy | unit | `src/wallet/wallet.spec.ts` · "creates with zero balance" · call with a fresh user · `balance` is `0.00` | `AssertionError: expected undefined to be 0.00` |
+| C2 | Duplicate currency for same user → 409, no wallet created | error | integration | `test/integration/wallet.int.spec.ts` · seed a USD wallet · POST another USD · 409 and wallet count still 1 | `Expected 409, got 500` |
+| C3 | Wallet mutation emits `WalletUpdated` within the same transaction | side-effect | integration | same file · capture events · update a wallet · exactly one `WalletUpdated`, inside the txn | `0 events captured, expected 1` |
+| C4 | Upstream ledger timeout (>5s) → 503, wallet not persisted | error | integration | same file · ledger stub delays 6s · POST · 503 and no row | `Timeout stub not wired — TypeError` |
+| C5 | User sees the new wallet in the list without refreshing | happy | e2e | `e2e/wallet.spec.ts` · create via the form · `[data-testid=wallet-row]` appears | `locator not found: [data-testid=wallet-row]` |
 ````
 
 | Column | Contents |
@@ -25,7 +25,8 @@ This is what makes the phase 6.x contract diff **mechanical rather than inferent
 | `Clause` | one sentence, specific enough that a test can assert it directly |
 | `Kind` | `happy` \| `error` \| `side-effect` \| cross-boundary contract \| user-visible flow — drives the default `Level` below |
 | `Level` | `unit` \| `integration` \| `e2e` — see the default table |
-| `Red evidence` | the **actual pasted failure output** from running the test before implementation exists |
+| `Test intent` | file path, test name, setup, action, and assertion — exact enough that `test-writer` (tier B) writes the test without deciding anything |
+| `Red evidence` | the **actual pasted failure output** from running the test before implementation exists — `pending` until `test-writer` runs it |
 
 ## Clause kind → default level
 
@@ -41,7 +42,7 @@ The `tdd-engineer` may override a default, but must say why in one line on the c
 
 ## Red evidence — mandatory
 
-The `tdd-engineer` runs the suite and pastes the *actual* failure output per clause, not a description of what it expects to fail. **A clause with no red evidence means phase 5 did not complete.** This is the single most common LLM-TDD failure mode: writing a test that already passes, or a tautology, and never noticing because nobody ran it. See assertion 7a in [Verification](../PLAN.md#dry-run-slice-8--with-a-baseline).
+`test-writer` runs the suite and pastes the *actual* failure output per clause, not a description of what it expects to fail. **A clause with no red evidence means phase 5 did not complete.** This is the single most common LLM-TDD failure mode: writing a test that already passes, or a tautology, and never noticing because nobody ran it. See assertion 7a in [Verification](../PLAN.md#dry-run-slice-8--with-a-baseline).
 
 ## Preserve clauses (improvement flow)
 

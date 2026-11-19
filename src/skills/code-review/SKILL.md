@@ -31,7 +31,10 @@ Read `{{phase}}`, `{{output}}`, and `{{findings}}` from a [skill-params block](.
 
 ## Where this runs
 
-Phase 7, code-review mode of the [`reviewer`](../../agents/reviewer.agent.md) subagent. Besides the diff, read:
+Two spawns:
+
+- **Phase 7.0**, [`rules-checker`](../../agents/rules-checker.agent.md) (B): only the rules-compliance part — every rule in `.ai-rules/review.md`, writing `7.0-rules.md`.
+- **Phase 7**, code-review mode of the [`reviewer`](../../agents/reviewer.agent.md) (S): everything else, taking the rules row from `7.0-rules.md`. Besides the diff, read:
 
 - `.ai-rules/review.md` — project-specific rules. Absent is not a failure: note "no project-specific rules found" and proceed.
 - `2-prd.md`, `3.4-tradeoffs.md`, `5-contract.md`, `6-solution.md` — for the Business Logic Review table, which checks every `AC*` ID individually. See [PLAN.md § Business Logic Awareness in Review](../../PLAN.md#business-logic-awareness-in-review).

@@ -108,6 +108,7 @@ The founding question for this design was *"do we need all the files the AI gene
 | `5-contract.md` | knowledge | Source of truth for behavior; referenced by future changes |
 | `6-solution.md` | knowledge | Plan + as-built record explains surprising code |
 | `6.y-docs.md` | knowledge | Written straight into the repo's real docs, not the workflow folder |
+| `7.0-rules.md` | process | Rules compliance for this diff; its catches feed `review.md`'s `triggered:` counts |
 | `7-review.md` | process | Findings are either fixed or promoted to the ledger |
 | `8-qa-plan.md` | knowledge | Scenarios become the regression suite's starting point |
 | `8-qa-results.md` / `8-qa-automated-results.md` | process | Point-in-time run record |
@@ -1090,10 +1091,12 @@ Built in 9 reviewable slices. Each slice is a PR-sized unit presented for approv
 | `synthesizer` | Phase 3.4 ADR — merges 3.1–3.3, surfaces conflicts | `tradeoff-analyzer` |
 | `rca-analyst` | Debug phase 2.5 root cause (no fixes) | `root-cause-analyzer` |
 | `quiz-master` | Phase 4 decision validation | `grill-me` |
-| `tdd-engineer` | Phase 5 behavior contract (`C*` IDs) + failing tests | `test-generator` |
+| `tdd-engineer` | Phase 5 behavior contract (`C*` IDs) + test intents | `test-generator` |
+| `test-writer` | Phase 5 tests from the intents + red evidence | `test-generator` |
 | `solution-planner` | Phase 6.0 plan + stress test + pre-mortem | `tradeoff-analyzer`, `solution-critic` |
 | `implementer` | Phase 6.1..n task execution (then refactor) + 6.x reconciliation + greenfield 3.5 scaffold | `minimal-impl-generator` or `patch-implementer`, then `refactor-optimizer` |
 | `doc-writer` | Phase 6.y documentation (as-built, into the repo's real docs) | `documentation-writer` |
+| `rules-checker` | Phase 7.0 written-rule compliance | `code-review` (rules part) |
 | `reviewer` | Phase 7 (two modes: code-review + solution-critic) | `code-review`, `solution-critic` |
 | `qa-planner` | Phase 8.1 adversarial QA plan | — |
 | `qa-automator` | Phase 8.3 Playwright MCP execution; UI branch | `design-implementation-validator` |

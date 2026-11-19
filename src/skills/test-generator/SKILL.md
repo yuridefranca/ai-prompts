@@ -23,7 +23,7 @@ Read `{{phase}}`, `{{output}}`, and `{{inputs}}` from a [skill-params block](../
 
 ## Where this runs
 
-Phase 5. Reads `2-prd.md` (the `AC*` IDs) plus `3.4-tradeoffs.md` when phase 3 ran (in the debug flow, also `2.5-root-cause.md`). Writes `5-contract.md` per [contract-ids.md](../../schemas/contract-ids.md) — `[knowledge]` tier — and the test files themselves into the repo.
+Phase 5, in two spawns: [`tdd-engineer`](../../agents/tdd-engineer.agent.md) (A) does Step 2 — the clauses and a test intent per clause; [`test-writer`](../../agents/test-writer.agent.md) (B) does Steps 0, 1, 3–8 — writing, citing, and running the tests. Reads `2-prd.md` (the `AC*` IDs) plus `3.4-tradeoffs.md` when phase 3 ran (in the debug flow, also `2.5-root-cause.md`). Writes `5-contract.md` per [contract-ids.md](../../schemas/contract-ids.md) — `[knowledge]` tier — and the test files themselves into the repo.
 
 ## TDD Philosophy
 
