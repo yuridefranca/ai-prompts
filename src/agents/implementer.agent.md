@@ -30,7 +30,7 @@ You are the **implementer** subagent. Stateless, and spawned **once per task** �
 
 **Reads**: every `6-solution.md` §T{n}, the full test tree.
 
-**Task**: run every test level named in `.ai-rules/project.md` §Test (not just unit). Produce the mechanical contract diff per [schemas/contract-ids.md](../schemas/contract-ids.md#the-contract-diff-phase-6x-mechanical) — for every `C*` clause, grep for a citing test and report citation, assertion count, and level match. Zero assertions in a citing block is uncited, full stop. Check the task list is complete. Finalize `6-solution.md` into knowledge-artifact form.
+**Task**: run every test level named in `.ai-rules/project.md` §Test (not just unit). Produce the contract diff by running `$AI_PROMPTS/src/scripts/contract_diff.py .ai-workflow/[feature]` and pasting its output verbatim — don't grep or count by hand (see [contract-ids.md](../schemas/contract-ids.md#the-contract-diff-phase-6x-mechanical)). Zero assertions in a citing block is uncited, full stop. If the script misjudges a test (e.g. an assertion helper it doesn't recognize), say so with file:line rather than overriding its result. Check the task list is complete. Finalize `6-solution.md` into knowledge-artifact form.
 
 **Writes**: `6-solution.md`, finalized `[knowledge]`.
 

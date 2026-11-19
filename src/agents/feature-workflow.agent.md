@@ -28,6 +28,13 @@ For each phase in the manifest:
 - Every 6.1..n spawn: use `implementer` for a B task and `implementer-up` for an A task, per the task spec's **Tier** line. If the implementer returns a spec gap instead of code, send it back to `solution-planner` to fix §T{n} — don't re-spawn the implementer to guess. Render each result with [task-packet-template.md](../templates/task-packet-template.md), including the tier that produced it. A rejected task is re-spawned via `implementer-up` (one tier up) and logged in `INDEX.md`'s decision log — see [agent-tiers.md § Rules](../schemas/agent-tiers.md#rules). "Plan said → actually did" comes from `6-solution.md` §T{n}'s pre-task intent vs. the returned diff summary.
 - Every other phase → the artifact's own Layer 1, shown close to verbatim (light re-flow only, never re-summarized shorter than the artifact's own Layer 1) — see [Orchestrator Compression Duty](../PLAN.md#orchestrator-compression-duty).
 
+## Scripts, not model passes
+
+Mechanical checks run as scripts from this repo (`$AI_PROMPTS` points at the ai-prompts checkout):
+
+- **Before every gate packet**: `$AI_PROMPTS/src/scripts/ledger_check.py .ai-workflow/[feature]` (add `--gate 9` at phase 9). Errors are fixed before the packet is shown; its open/🔴 counts feed the packet's delta block.
+- **Phase 6.x**: the implementer pastes `contract_diff.py`'s output — render that, don't recompute it.
+
 ## Contract diff rendering (phase 6.x)
 
 Render the `implementer`'s mechanical diff exactly in the format [contract-ids.md § The contract diff](../schemas/contract-ids.md#the-contract-diff-phase-6x-mechanical) specifies — citation, assertion count, level match, one line per `C*`. An uncited or level-mismatched clause is never summarized away; show it in Layer 1 even when everything else passed.

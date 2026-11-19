@@ -64,7 +64,7 @@ it('rejects duplicate currency with 409', async () => { ... });
 
 ## The contract diff (phase 6.x, mechanical)
 
-At reconciliation, for each `C*` ID the `implementer` greps the test tree for a citing test and reports three things — citation, assertion count, and level match:
+At reconciliation the `implementer` runs `$AI_PROMPTS/src/scripts/contract_diff.py .ai-workflow/[feature]` — no model does this by reading files. For each `C*` ID it finds the citing tests and reports three things — citation, assertion count, and level match — and exits non-zero if any clause isn't covered:
 
 ```
 C1 ✅ wallet.spec.ts:12        · 2 assertions · unit ✅

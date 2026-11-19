@@ -18,7 +18,8 @@ src/
 ├── agents/           orchestrator + 4 flow adapters + 18 subagents
 ├── skills/           every skill the subagents apply, plus 2 standalone ones
 ├── contexts/         per-company packs: model lists (duelbits/, clair/), Duelbits PR conventions
-└── scripts/          manifest-lint.sh (portability check), models_refresh.py (model list refresh)
+└── scripts/          checks that run instead of a model pass — contract_diff.py (6.x),
+                      ledger_check.py (gates, resume) — plus manifest-lint.sh and models_refresh.py
 ```
 
 ## Status

@@ -57,6 +57,12 @@ ln -s ~/Projects/personal/ai-prompts/src/skills/* .claude/skills/
 
 Agents and skills link to `flows/`, `schemas/`, and `templates/` by relative path inside `src/`, so the tool has to read them through the symlink to their real location.
 
+Mechanical checks run as scripts from this repo, so point `AI_PROMPTS` at your checkout (e.g. in `~/.zshrc`):
+
+```bash
+export AI_PROMPTS=~/Projects/personal/ai-prompts
+```
+
 Then start a task through the orchestrator, e.g. `@orchestrator add user profile picture upload`.
 
 Check for broken links after moving things:

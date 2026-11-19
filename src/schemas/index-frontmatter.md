@@ -48,7 +48,7 @@ Run this at the start of **every** session, before anything else:
 1. Read `.ai-workflow/[feature]/INDEX.md` frontmatter → get `current_phase`, `gates_pending`.
 2. Read the artifact named by `current_phase`. If its status header (see [artifact-status.md](artifact-status.md)) says `status: draft`, or the file is missing, re-spawn that phase's subagent with the original contract — **never resume or patch a draft**.
 3. If `current_phase` is `complete` but its gate ID is still in `gates_pending`, **re-present the gate packet**. Never assume a gate was approved off-record just because the artifact is complete.
-4. Read `FINDINGS.md` → surface every `open` finding in the next Layer 1 shown to the dev.
+4. Run `$AI_PROMPTS/src/scripts/ledger_check.py .ai-workflow/[feature]` → it validates `FINDINGS.md` and checks `INDEX.md`'s `open_findings` matches it. Fix any mismatch before continuing, then surface every `open` finding in the next Layer 1 shown to the dev.
 5. Announce, verbatim shape: `Resuming [feature] at phase N (tier: X) · N gates passed · N open findings`.
 
 ## Idempotency rule

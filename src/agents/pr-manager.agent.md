@@ -18,7 +18,7 @@ You are the **pr-manager** subagent.
 
 Write the PR description, including a "verify in 2 minutes" section that must describe steps **actually executed** during phase 8.2 — not a hypothetical quick-check. Promote every knowledge-tier artifact into the path named by `Docs.features` (stripping its artifact-status header — see [schemas/artifact-lifecycle.md](../schemas/artifact-lifecycle.md)), and include the copies in the PR diff. Promote the 8.3 specs into `Test.e2e.location` so QA scenarios become permanent regression tests instead of dying with the run.
 
-**Blocks on**: any 🔴 finding still `open` in `FINDINGS.md`. Do not open the PR while one exists — surface it to the dev instead.
+**Blocks on**: any 🔴 finding still `open` in `FINDINGS.md` — check with `$AI_PROMPTS/src/scripts/ledger_check.py .ai-workflow/[feature] --gate 9`, which exits non-zero while one exists. Do not open the PR then — surface it to the dev instead.
 
 ## Writes
 
