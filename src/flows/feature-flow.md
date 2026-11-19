@@ -176,7 +176,7 @@ A clause with no red evidence means this phase did not complete — see [contrac
 | Role | `solution-planner` |
 | Skill | `tradeoff-analyzer`, `solution-critic` |
 | Input | `5-contract.md`, `3.4-tradeoffs.md` |
-| Task | Task breakdown (each task = one reviewable diff, ~<150 lines, states why via `AC*`/analysis links, what it touches, dependencies, size S/M/L — **L tasks must split or justify**). Then two adversarial sub-passes against the plan: **stress test** (`solution-critic`) and **pre-mortem** ("it's 3 months from now and this feature caused an incident — what happened?"). Both write to `FINDINGS.md` or a robustness statement — see [findings.md § No quotas](../schemas/findings.md#no-quotas) |
+| Task | Task breakdown — each task a full spec per [task-spec-template.md](../templates/task-spec-template.md) (one reviewable diff, ~<150 lines; exact files, interfaces, inlined context, tests to turn green, done-when; size S/M/L — **L tasks must split or justify**) with a **tier**: B when the spec leaves no decision open, A otherwise (see [agent-tiers.md](../schemas/agent-tiers.md#rules)). Then two adversarial sub-passes against the plan: **stress test** (`solution-critic`) and **pre-mortem** ("it's 3 months from now and this feature caused an incident — what happened?"). Both write to `FINDINGS.md` or a robustness statement — see [findings.md § No quotas](../schemas/findings.md#no-quotas) |
 | Output | `6-solution.md` `[knowledge]` |
 | Gate | ⛔ mini — dev reviews the task list (reorder/split/merge/reject) before any code is written |
 
@@ -188,7 +188,7 @@ One `implementer` spawn per approved task:
 
 | Field | Value |
 |---|---|
-| Role | `implementer` |
+| Role | `implementer` for B tasks, `implementer-up` for A tasks (the task spec's tier) |
 | Skill | `minimal-impl-generator`, `patch-implementer` |
 | Input | `5-contract.md` §(clauses for this task) + `6-solution.md` §T{n} + `FINDINGS.md` (open only). **Not** the full PRD or analysis — if T{n} needs architectural context, 6.0 must have inlined it into §T{n} (see [Quality Rules § Input budget](../PLAN.md#quality-rules)) |
 | Task | Implement T{n} only. Do not touch anything outside its scope. Every task touching existing behavior leaves 1 regression test per bug-class, not just the bug instance |
@@ -328,6 +328,7 @@ Orchestrator asks "What surprised us?", reads `FINDINGS.md` for `surprise`-tagge
 | **Gate 2 rejected** (PRD wrong) | Re-spawn `prd-writer` with the dev's objection | `2-prd.md` overwritten | decision log: proposed/decided/why |
 | **Gate 4 missed twice** | Re-spawn owning analyst (3.1/3.2/3.4) for the unclear decision, then re-quiz | `3.*` overwritten, `4-quiz.md` appended | `current_phase` → 3.x |
 | **Gate 6.0 rejected** (task list wrong) | Re-spawn `solution-planner` with the dev's reordering/splitting | `6-solution.md` overwritten | — |
+| **Implementer reports a spec gap** | Re-spawn `solution-planner` to fix that task's §T{n} only (and its tier, if the gap was a decision); dev sees the change in the next task packet, then the task re-runs | `6-solution.md` §T{n} | decision log: spec gap |
 | **Per-task review rejected** | Same task re-spawned with feedback, one model tier up (`implementer-up`, see [agent-tiers.md](../schemas/agent-tiers.md#rules)); task number unchanged | `6-solution.md` §T{n} overwritten | decision log: escalation |
 | **Contract diff finds a gap** | New task appended (`T{n+1}: cover C4`); contract not silently amended | `6-solution.md`, tests | finding opened |
 | **Review 7 finds ❌** | 🔴 → new task at 6.1, re-run 6.x + 7 for that task. 🔵 → `accepted` + one-line justification, continue | `FINDINGS.md` | `open_findings` |

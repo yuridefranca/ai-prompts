@@ -6,6 +6,7 @@ Fillable shapes for every artifact the flows produce. Each template implements t
 |---|---|---|
 | [artifact-template.md](artifact-template.md) | The generic Layer 1/Layer 2 + CHECKS skeleton every phase artifact follows | every phase |
 | [gate-packet-template.md](gate-packet-template.md) | The chat-surface packet built from a gate artifact's Layer 1 | phases 2, 4, 6.0, 9 |
+| [task-spec-template.md](task-spec-template.md) | One task's spec in `6-solution.md` §T{n} — exact enough for a cheap model, with its own tier | phase 6.0 (written), 6.1..n (read) |
 | [task-packet-template.md](task-packet-template.md) | The per-task review packet | phase 6.1..n |
 | [visual-standards.md](visual-standards.md) | Symbol vocabulary, Mermaid/table conventions, the four-backtick fence rule, the NOT-used list | every artifact |
 | [index-template.md](index-template.md) | `INDEX.md` | flow bootstrap, updated every phase |

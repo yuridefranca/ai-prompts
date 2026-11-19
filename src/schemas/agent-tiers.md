@@ -37,7 +37,7 @@ The tier lives on the **agent**, because the agent is the job: the same skill ca
 | `quiz-master` | 4 | **A** | Decision questions, answered by the dev |
 | `tdd-engineer` | 5 | **A** | Clause kind/level is judgment; the test code is mechanical |
 | `qa-planner` | 8.1 | **A** | Adversarial scenario design |
-| `implementer` | 6.1..n, 6.x, 3.5 | **B** | Implements a task 6.0 already specified; reconciliation is a mechanical diff |
+| `implementer` | 6.1..n, 6.x, 3.5 | **B**, or **A per task** | Implements a task 6.0 already specified; each task spec carries its own tier — an A task is spawned as `implementer-up` from the start. Reconciliation is a mechanical diff |
 | `doc-writer` | 6.y | **B** | Transcribes decisions already made |
 | `qa-automator` | 8.3 | **B** | Plan + real DOM → specs |
 | `pr-manager` | 9, 9.1 | **B** | Assembles already-decided content |
@@ -52,11 +52,12 @@ Skills used **outside** the flows may carry a `tier:` in their frontmatter (`btw
 ## Rules
 
 1. **Gate artifacts are produced at S or A, never B/C.** Every agent that writes a ⛔ artifact is S except `task-explainer` (A, 0.5 mini-gate) and `pr-manager` (B) — the phase 9 gate is the dev approving a PR assembled from S/A artifacts, which is acceptable.
-2. **Escalation, not retry at the same tier.** When the dev rejects a B/C agent's output at per-task review (or a QA failure loops back to 6.1), the re-spawn runs **one tier up**, via the escalation twin `<agent>-up` that the install step generates for every B/C agent (e.g. `implementer-up` at A). The adapter logs the escalation in `INDEX.md`'s decision log. A second rejection follows the normal [failure edges](../flows/feature-flow.md#failure-edges).
-3. **The tier shows in the packet.** Task and gate packets note the tier that produced the artifact (`spawned at B · implementer`), so a reviewer knows what to expect and a pattern of escalations is visible.
-4. **Capabilities filter the pick.** An agent that declares `needs: vision` (`task-explainer` for screenshots, `qa-automator` for the UI branch) gets the first model in its tier with ✅ in the **Vision** column, not just the first row.
-5. **A tier with no model falls up.** If a company's `models.md` has no B model for a tool, B agents use that tool's A model, and so on up to S. Never down.
-6. **A repeated escalation is a gotcha.** If the same kind of task escalates in two runs, the 9.5 harvest proposes a tier change for that agent or a sharper task template in 6.0 — so the defaults above self-correct.
+2. **Per-task tier.** `solution-planner` gives each task in `6-solution.md` a tier — B when the [task spec](../templates/task-spec-template.md) leaves no decision open, A when it does. The adapter spawns `implementer` for B tasks and `implementer-up` for A tasks.
+3. **Escalation, not retry at the same tier.** When the dev rejects a B/C agent's output at per-task review (or a QA failure loops back to 6.1), the re-spawn runs **one tier up**, via the escalation twin `<agent>-up` that the install step generates for every B/C agent (e.g. `implementer-up` at A). The adapter logs the escalation in `INDEX.md`'s decision log. A second rejection follows the normal [failure edges](../flows/feature-flow.md#failure-edges).
+4. **The tier shows in the packet.** Task and gate packets note the tier that produced the artifact (`spawned at B · implementer`), so a reviewer knows what to expect and a pattern of escalations is visible.
+5. **Capabilities filter the pick.** An agent that declares `needs: vision` (`task-explainer` for screenshots, `qa-automator` for the UI branch) gets the first model in its tier with ✅ in the **Vision** column, not just the first row.
+6. **A tier with no model falls up.** If a company's `models.md` has no B model for a tool, B agents use that tool's A model, and so on up to S. Never down.
+7. **A repeated escalation is a gotcha.** If the same kind of task escalates in two runs, the 9.5 harvest proposes a tier change for that agent or a sharper task template in 6.0 — so the defaults above self-correct.
 
 ## Resolving a tier to a model
 

@@ -25,7 +25,7 @@ For each phase in the manifest:
 ## Rendering gates and tasks
 
 - Every ⛔ phase (2, 4, 6.0, 9) → [gate-packet-template.md](../templates/gate-packet-template.md). Compute the delta block by diffing this gate's state against the last one recorded in `INDEX.md`'s decision log (tasks completed, deviations logged, findings opened since).
-- Every 6.1..n spawn → [task-packet-template.md](../templates/task-packet-template.md), including the tier that produced it. A rejected task is re-spawned via `implementer-up` (one tier up) and logged in `INDEX.md`'s decision log — see [agent-tiers.md § Rules](../schemas/agent-tiers.md#rules). "Plan said → actually did" comes from `6-solution.md` §T{n}'s pre-task intent vs. the returned diff summary.
+- Every 6.1..n spawn: use `implementer` for a B task and `implementer-up` for an A task, per the task spec's **Tier** line. If the implementer returns a spec gap instead of code, send it back to `solution-planner` to fix §T{n} — don't re-spawn the implementer to guess. Render each result with [task-packet-template.md](../templates/task-packet-template.md), including the tier that produced it. A rejected task is re-spawned via `implementer-up` (one tier up) and logged in `INDEX.md`'s decision log — see [agent-tiers.md § Rules](../schemas/agent-tiers.md#rules). "Plan said → actually did" comes from `6-solution.md` §T{n}'s pre-task intent vs. the returned diff summary.
 - Every other phase → the artifact's own Layer 1, shown close to verbatim (light re-flow only, never re-summarized shorter than the artifact's own Layer 1) — see [Orchestrator Compression Duty](../PLAN.md#orchestrator-compression-duty).
 
 ## Contract diff rendering (phase 6.x)

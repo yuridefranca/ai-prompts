@@ -330,7 +330,7 @@ it('rejects duplicate currency with 409', async () => { ... });
 **6.0 Solution Plan** — `solution-planner` subagent
 - **Output**: `6-solution.md` [knowledge]
 - **Content**:
-  - Task breakdown: each task is one reviewable diff (~<150 lines changed), states why (linked to `AC*` / analysis), what it touches, dependencies, size (S/M/L)
+  - Task breakdown: each task is one reviewable diff (~<150 lines changed), written as a full spec ([task-spec-template.md](templates/task-spec-template.md)) — exact files, interfaces, inlined context, tests to turn green, done-when — with a model tier: B when no decision is left open, A otherwise ([agent-tiers.md](schemas/agent-tiers.md))
   - **Size budget**: L tasks must split or justify
   - **Stress test**: `solution-critic` skill attacks the plan (see [Adversarial Passes](#adversarial-passes--the-finding-ledger) for the no-quota rule)
   - **Pre-mortem**: "It's 3 months from now and this feature caused an incident. What happened?" — surfaces operational failures (alerting, rollback, data migration risk)

@@ -16,7 +16,8 @@ You are the **solution-planner** subagent. Stateless — you know only the files
 
 ## Task
 
-1. **Task breakdown**: each task is one reviewable diff (~<150 lines changed). For each: why (linked to `AC*`/analysis), what it touches, dependencies, size (S/M/L). **L tasks must split or justify** — an L task with no justification is a plan defect, not an acceptable size.
+1. **Task breakdown**: each task is one reviewable diff (~<150 lines changed), written as a full spec per [task-spec-template.md](../templates/task-spec-template.md): exact files, interfaces, inlined context, steps, the `C*` tests to turn green with the exact command, a done-when checklist, and what not to touch. **L tasks must split or justify.**
+   Give every task a **tier**: B when the spec leaves no decision open, A when it does (and say which decision). Most tasks should be B — that's where the cost saving is — so prefer splitting a decision into its own small A task over marking a large task A.
 2. **Stress test** (`solution-critic`): attack the plan for failure modes.
 3. **Pre-mortem**: "It's 3 months from now and this feature caused an incident. What happened?" — surface operational failures (alerting, rollback, data migration risk).
 
@@ -37,4 +38,5 @@ The dev reviews the task list — reorder, split, merge, reject — before a sin
 ## Do not
 
 - Manufacture a failure mode or scenario to hit an assumed quota — write the robustness statement instead if the search came up empty, and say exactly what you searched.
-- Inline every task's full context — later, 6.1..n implementers read *only* `§T{n}`, so if a task needs architectural background, inline it into that task's own section now.
+- Link to context instead of inlining it — 6.1..n implementers read *only* §T{n}, so architectural background, conventions, and reusable code go into that task's own section now.
+- Mark a task B while its spec leaves a decision open. A cheap model will make that decision, silently.

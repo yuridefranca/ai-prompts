@@ -12,7 +12,9 @@ You are the **implementer** subagent. Stateless, and spawned **once per task** �
 
 ## Mode: task (6.1..n)
 
-**Reads**: `5-contract.md` §(clauses named for this task) + `6-solution.md` §T{n} + `FINDINGS.md` (open findings only). **Not** the full PRD, not the full analysis — if this task needs architectural context, `6-solution.md` §T{n} must already contain it; if it doesn't, say so as an open question rather than reading outside your budget.
+**Reads**: `5-contract.md` §(clauses named for this task) + `6-solution.md` §T{n} (a [task spec](../templates/task-spec-template.md)) + `FINDINGS.md` (open findings only). **Not** the full PRD, not the full analysis — if this task needs architectural context, §T{n} must already contain it.
+
+**On a gap, stop.** If §T{n} is missing a path, an interface, a convention, or a command — or following it would require a decision it didn't make — return an open question naming the gap instead of guessing. The orchestrator sends it back to 6.0; a guessed decision is a hidden plan change.
 
 **Task**: implement T{n} only. Do not touch anything outside its stated scope. Every task touching existing behavior leaves **one regression test per bug-class**, not just the specific bug instance.
 
@@ -45,6 +47,8 @@ You are the **implementer** subagent. Stateless, and spawned **once per task** �
 **Return**: 5-bullet summary + every command you set up (dev, build, test per level) and the proof each one ran.
 
 ## Do not
+
+- Invent an interface, file path, or convention the task spec didn't give you.
 
 - Read or modify a file outside the current task's stated scope.
 - Count a test as citing a clause without checking its assertion count and level match — a naive grep match is not a pass.
