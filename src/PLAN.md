@@ -334,7 +334,7 @@ it('rejects duplicate currency with 409', async () => { ... });
 - **Content**:
   - Task breakdown: each task is one reviewable diff (~<150 lines changed), written as a full spec ([task-spec-template.md](templates/task-spec-template.md)) — exact files, interfaces, inlined context, tests to turn green, done-when — with a model tier: B when no decision is left open, A otherwise ([agent-tiers.md](schemas/agent-tiers.md))
   - **Size budget**: L tasks must split or justify
-  - **Stress test**: `solution-critic` skill attacks the plan (see [Adversarial Passes](#adversarial-passes--the-finding-ledger) for the no-quota rule)
+  - **Stress test** (`plan-critic`, on a different vendor's model than the planner): `solution-critic` skill attacks the plan (see [Adversarial Passes](#adversarial-passes--the-finding-ledger) for the no-quota rule)
   - **Pre-mortem**: "It's 3 months from now and this feature caused an incident. What happened?" — surfaces operational failures (alerting, rollback, data migration risk)
   - Both write findings to `FINDINGS.md` with IDs
 - ⛔ **mini-GATE**: Dev reviews the task list — reorder, split, merge, reject — before a single line of code is written
@@ -1093,7 +1093,8 @@ Built in 9 reviewable slices. Each slice is a PR-sized unit presented for approv
 | `quiz-master` | Phase 4 decision validation | `grill-me` |
 | `tdd-engineer` | Phase 5 behavior contract (`C*` IDs) + test intents | `test-generator` |
 | `test-writer` | Phase 5 tests from the intents + red evidence | `test-generator` |
-| `solution-planner` | Phase 6.0 plan + stress test + pre-mortem | `tradeoff-analyzer`, `solution-critic` |
+| `solution-planner` | Phase 6.0 task plan (specs + per-task tier) | `tradeoff-analyzer` |
+| `plan-critic` | Phase 6.0 stress test + pre-mortem, on another vendor | `solution-critic` |
 | `implementer` | Phase 6.1..n task execution (then refactor) + 6.x reconciliation + greenfield 3.5 scaffold | `minimal-impl-generator` or `patch-implementer`, then `refactor-optimizer` |
 | `doc-writer` | Phase 6.y documentation (as-built, into the repo's real docs) | `documentation-writer` |
 | `rules-checker` | Phase 7.0 written-rule compliance | `code-review` (rules part) |

@@ -173,10 +173,10 @@ A clause with no red evidence means this phase did not complete — see [contrac
 
 | Field | Value |
 |---|---|
-| Role | `solution-planner` |
-| Skill | `tradeoff-analyzer`, `solution-critic` |
-| Input | `5-contract.md`, `3.4-tradeoffs.md` |
-| Task | Task breakdown — each task a full spec per [task-spec-template.md](../templates/task-spec-template.md) (one reviewable diff, ~<150 lines; exact files, interfaces, inlined context, tests to turn green, done-when; size S/M/L — **L tasks must split or justify**) with a **tier**: B when the spec leaves no decision open, A otherwise (see [agent-tiers.md](../schemas/agent-tiers.md#rules)). Then two adversarial sub-passes against the plan: **stress test** (`solution-critic`) and **pre-mortem** ("it's 3 months from now and this feature caused an incident — what happened?"). Both write to `FINDINGS.md` or a robustness statement — see [findings.md § No quotas](../schemas/findings.md#no-quotas) |
+| Role | `solution-planner` (S), then `plan-critic` (A, different vendor) |
+| Skill | `tradeoff-analyzer` (plan), `solution-critic` (critic) |
+| Input | `5-contract.md`, `3.4-tradeoffs.md`; the critic also reads `6-solution.md` |
+| Task | Task breakdown — each task a full spec per [task-spec-template.md](../templates/task-spec-template.md) (one reviewable diff, ~<150 lines; exact files, interfaces, inlined context, tests to turn green, done-when; size S/M/L — **L tasks must split or justify**) with a **tier**: B when the spec leaves no decision open, A otherwise (see [agent-tiers.md](../schemas/agent-tiers.md#rules)). Then `plan-critic`, on a different vendor's model than the planner, runs two adversarial passes against the plan: **stress test** and **pre-mortem** ("it's 3 months from now and this feature caused an incident — what happened?"). Both write to `FINDINGS.md` or a robustness statement — see [findings.md § No quotas](../schemas/findings.md#no-quotas) |
 | Output | `6-solution.md` `[knowledge]` |
 | Gate | ⛔ mini — dev reviews the task list (reorder/split/merge/reject) before any code is written |
 

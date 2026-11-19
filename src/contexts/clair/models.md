@@ -19,6 +19,8 @@ The **first row of each tier is the default** the install step uses; later rows 
 | B | anthropic/claude-sonnet-5.5 | sonnet | ? | ✅ | 2 / 10 | 1000000 | Clair has no cheap strong coder in regular use yet, so B = A here — see candidates |
 | C | anthropic/claude-haiku-5.5 | haiku | ? | ✅ | 0.1 / 0.5 | 1000000 | Side questions, summaries |
 
+**Independent agents** (`plan-critic`, `feature-analyst`) need an A model from a vendor other than Anthropic — Clair has none classified yet, so they fall back to Sonnet and say `not independent`. Classifying a GPT model at A (see candidates) fixes that.
+
 Claude Code IDs are aliases that follow the latest model of each family, so they don't go stale on a version bump — the `Model` column still records which version was classified. Fable is left out on purpose: the harness makes Opus good enough at S.
 
 ## Candidates to evaluate

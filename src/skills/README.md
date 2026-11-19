@@ -16,7 +16,7 @@ Each skill follows the [Agent Skills spec](https://agentskills.io/) (see the rep
 | [system-designer](system-designer/SKILL.md) | `architect` | 3.1 |
 | [tradeoff-analyzer](tradeoff-analyzer/SKILL.md) | `synthesizer`, `solution-planner` | 3.4, 6.0 |
 | [test-generator](test-generator/SKILL.md) | `tdd-engineer` (contract), `test-writer` (tests) | 5 (all test levels — absorbed the old `integration-test-generator`) |
-| [solution-critic](solution-critic/SKILL.md) | `solution-planner`, `reviewer` | 6.0, 7 |
+| [solution-critic](solution-critic/SKILL.md) | `plan-critic`, `reviewer` | 6.0, 7 |
 | [minimal-impl-generator](minimal-impl-generator/SKILL.md) | `implementer` | 6.1..n (feature, improvement, greenfield) |
 | [patch-implementer](patch-implementer/SKILL.md) | `implementer` | 6.1..n (debug) |
 | [refactor-optimizer](refactor-optimizer/SKILL.md) | `implementer` | end of each 6.1..n task |

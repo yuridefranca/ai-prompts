@@ -30,10 +30,12 @@ The tier lives on the **agent**, because the agent is the job: the same skill ca
 | `roadmap-planner` | 2.1 (greenfield) | **S** | Scopes Milestone 1 — a planning decision |
 | `rca-analyst` | 2.5 (debug) | **S** | A wrong root cause wastes every phase after it |
 | `synthesizer` | 3.4 | **S** | The most judgment-heavy step: adjudicates three conflicting analyses into the ADR |
-| `solution-planner` | 6.0 | **S** | Task plan + stress test + pre-mortem |
+| `solution-planner` | 6.0 | **S** | The task plan and every task's spec and tier |
+| `plan-critic` | 6.0 | **A, independent** | Stress test + pre-mortem of the plan, on another vendor |
 | `reviewer` | 7 | **S** | Business-logic and design judgment, and the re-attack of open findings — written rules are already checked at 7.0 |
 | `task-explainer` | 0.5 + updates | **A** | Plain-language alternatives and watch-outs; the dev checks it at the 0.5 gate |
-| `architect`, `data-flow-analyst`, `feature-analyst` | 3.1–3.3 | **A** | Independent analyses; `synthesizer` (S) reconciles them |
+| `architect`, `data-flow-analyst` | 3.1–3.2 | **A** | Independent analyses; `synthesizer` (S) reconciles them |
+| `feature-analyst` | 3.3 | **A, independent** | The third analysis, on another vendor — so `synthesizer` gets a genuinely different view |
 | `quiz-master` | 4 | **A** | Decision questions, answered by the dev |
 | `tdd-engineer` | 5 (contract) | **A** | Clause kind/level and the test intent are judgment |
 | `qa-planner` | 8.1 | **A** | Adversarial scenario design |
@@ -57,10 +59,11 @@ Skills used **outside** the flows may carry a `tier:` in their frontmatter (`btw
 2. **Per-task tier.** `solution-planner` gives each task in `6-solution.md` a tier — B when the [task spec](../templates/task-spec-template.md) leaves no decision open, A when it does. The adapter spawns `implementer` for B tasks and `implementer-up` for A tasks.
 3. **Escalation, not retry at the same tier.** When the dev rejects a B/C agent's output at per-task review (or a QA failure loops back to 6.1), the re-spawn runs **one tier up**, via the escalation twin `<agent>-up` that the install step generates for every B/C agent (e.g. `implementer-up` at A). The adapter logs the escalation in `INDEX.md`'s decision log. A second rejection follows the normal [failure edges](../flows/feature-flow.md#failure-edges).
 4. **The tier shows in the packet.** Task and gate packets note the tier that produced the artifact (`spawned at B · implementer`), so a reviewer knows what to expect and a pattern of escalations is visible.
-5. **Capabilities filter the pick.** An agent that declares `needs: vision` (`task-explainer` for screenshots, `qa-automator` for the UI branch) gets the first model in its tier with ✅ in the **Vision** column, not just the first row.
-6. **A tier with no model falls up.** If a company's `models.md` has no B model for a tool, B agents use that tool's A model, and so on up to S. Never down.
-7. **Decide tiers from runs, not just reputation.** Every spawn is logged in `RUNS.md`; at 9.5 `scripts/runs_log.py record` keeps an anonymized per-company log, and `models_refresh.py` shows each listed model's approval rate next to its tier. A model that keeps getting rejected at B moves out of B; a candidate that does well on a few real tasks earns a row.
-8. **A repeated escalation is a gotcha.** If the same kind of task escalates in two runs, the 9.5 harvest proposes a tier change for that agent or a sharper task template in 6.0 — so the defaults above self-correct.
+5. **Independence picks another vendor.** An agent with `independent: true` (`plan-critic`, `feature-analyst`) gets the first model in its tier whose vendor (the part of the `Model` slug before `/`) differs from the S default's. If the company has none in that tier, it takes the tier default and its packet says `not independent`. A second vendor is worth more than a stronger model from the same one, because a model critiquing reasoning shaped like its own mostly agrees.
+6. **Capabilities filter the pick.** An agent that declares `needs: vision` (`task-explainer` for screenshots, `qa-automator` for the UI branch) gets the first model in its tier with ✅ in the **Vision** column, not just the first row.
+7. **A tier with no model falls up.** If a company's `models.md` has no B model for a tool, B agents use that tool's A model, and so on up to S. Never down.
+8. **Decide tiers from runs, not just reputation.** Every spawn is logged in `RUNS.md`; at 9.5 `scripts/runs_log.py record` keeps an anonymized per-company log, and `models_refresh.py` shows each listed model's approval rate next to its tier. A model that keeps getting rejected at B moves out of B; a candidate that does well on a few real tasks earns a row.
+9. **A repeated escalation is a gotcha.** If the same kind of task escalates in two runs, the 9.5 harvest proposes a tier change for that agent or a sharper task template in 6.0 — so the defaults above self-correct.
 
 ## Resolving a tier to a model
 

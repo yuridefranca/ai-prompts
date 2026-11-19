@@ -4,7 +4,7 @@
 
 ## Subagent roster
 
-20 thin subagents. Each is stateless, reads an exact file list, applies a skill, writes one artifact, and returns the fixed format: **5-bullet summary + open questions + artifact path + new/updated finding IDs** (deviations from that shape are called out per-agent where the phase needs them — e.g. `implementer`'s task mode reports deviations instead of open questions).
+21 thin subagents. Each is stateless, reads an exact file list, applies a skill, writes one artifact, and returns the fixed format: **5-bullet summary + open questions + artifact path + new/updated finding IDs** (deviations from that shape are called out per-agent where the phase needs them — e.g. `implementer`'s task mode reports deviations instead of open questions).
 
 The workflow adapters spawn these. **Tier** is the model tier each runs at — see [agent-tiers.md](../schemas/agent-tiers.md); the orchestrator and adapters run at S.
 
@@ -16,12 +16,13 @@ The workflow adapters spawn these. **Tier** is the model tier each runs at — s
 | [roadmap-planner](roadmap-planner.agent.md) | Epics, stories, milestones; scopes Milestone 1 | `product-manager` | 2.1 (greenfield) | S |
 | [architect](architect.agent.md) | Architecture analysis | `system-designer` | 3.1 | A |
 | [data-flow-analyst](data-flow-analyst.agent.md) | Data flow analysis | `component-mapper` | 3.2 | A |
-| [feature-analyst](feature-analyst.agent.md) | Senior SWE perspective | — | 3.3 | A |
+| [feature-analyst](feature-analyst.agent.md) | Senior SWE perspective, on another vendor | — | 3.3 | A, independent |
 | [synthesizer](synthesizer.agent.md) | ADR — merges 3.1–3.3, surfaces conflicts | `tradeoff-analyzer` | 3.4 | S |
 | [rca-analyst](rca-analyst.agent.md) | Debug root cause (no fixes) | `root-cause-analyzer` | 2.5 (debug) | S |
 | [quiz-master](quiz-master.agent.md) | Decision validation | `grill-me` | 4 | A |
 | [tdd-engineer](tdd-engineer.agent.md) | Behavior contract + failing tests | `test-generator` | 5 | A |
-| [solution-planner](solution-planner.agent.md) | Plan + stress test + pre-mortem | `tradeoff-analyzer`, `solution-critic` | 6.0 | S |
+| [solution-planner](solution-planner.agent.md) | Task plan: execution-ready specs, a tier per task | `tradeoff-analyzer` | 6.0 | S |
+| [plan-critic](plan-critic.agent.md) | Stress test + pre-mortem of the plan, on another vendor | `solution-critic` | 6.0 | A, independent |
 | [implementer](implementer.agent.md) | Task execution + refactor, reconciliation, greenfield scaffold | `minimal-impl-generator` or `patch-implementer`, then `refactor-optimizer` | 6.1..n, 6.x, 3.5 (greenfield) | B |
 | [test-writer](test-writer.agent.md) | Tests from the contract's intents + red evidence | `test-generator` | 5 (tests) | B |
 | [rules-checker](rules-checker.agent.md) | Written-rule compliance against `.ai-rules/review.md` | `code-review` (rules part) | 7.0 | B |

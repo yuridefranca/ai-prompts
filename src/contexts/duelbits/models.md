@@ -26,6 +26,8 @@ The **first row of each tier is the default** the install step uses; later rows 
 | C | qwen/qwen3.8-flash | ? | ✅ | 0.15 / 0.47 | 1000000 | Alternate C |
 | C | minimax/minimax-m3.1-flash | ? | ✅ | 0.15 / 0.6 | 1048576 | Alternate C |
 
+**Independent agents** (`plan-critic`, `feature-analyst` — see [agent-tiers.md § Rules](../../schemas/agent-tiers.md#rules)) take the first A model from a vendor other than the S default's: here, `moonshotai/kimi-k3.1-pro`.
+
 Tiers set 2026-11-19 from the models in regular use: Opus/Sonnet for judgment, GLM/MiniMax/Qwen/Kimi for the cheaper work. Fable is left out on purpose — the harness makes Opus good enough at S.
 
 ## Candidates to evaluate

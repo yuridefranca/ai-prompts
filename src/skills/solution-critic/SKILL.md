@@ -32,7 +32,7 @@ Read `{{phase}}`, `{{output}}`, and `{{findings}}` from a [skill-params block](.
 
 Two distinct invocations:
 
-- **Phase 6.0** ([`solution-planner`](../../agents/solution-planner.agent.md)): the stress-test half of the solution plan, attacking `6-solution.md` before any code is written.
+- **Phase 6.0** ([`plan-critic`](../../agents/plan-critic.agent.md), on a different vendor than the planner): stress test and pre-mortem of `6-solution.md` before any code is written.
 - **Phase 7** ([`reviewer`](../../agents/reviewer.agent.md), solution-critic mode): re-attacks findings still `open` since 6.0 against the real, shipped code.
 
 Every invocation writes to `{{findings}}` (`FINDINGS.md`) with a stable `F*` ID, or a robustness statement if nothing was found — see [findings.md § No quotas](../../schemas/findings.md#no-quotas).
