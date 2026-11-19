@@ -174,7 +174,31 @@ def report(company, meta, rows, models, args):
         for m, why in grouped[tier][: args.top]:
             print(f"| {tier} | `{m['id']}` | {price_cell(m)} | {m.get('context_length') or '?'} | {why} |")
     print("\nSuggestions are hints. Confirm each tier against what you know of the model (benchmarks, your own runs) before adding it.")
+    print_runs(company, listed)
     return removed, repriced, grouped
+
+
+def print_runs(company, listed):
+    """Your own outcomes per listed model, from scripts/runs_log.py's log — evidence for keeping or moving a tier."""
+    try:
+        import runs_log
+    except ImportError:
+        return
+    data = runs_log.stats(company)
+    if not data:
+        print(f"\n## Your runs\n\nNo runs logged for {company} yet — tiers above are by reputation and price only.")
+        return
+    print("\n## Your runs (from the run log)\n")
+    print("| Tier | Model | Spawns | Approval (excl. spec gaps) | Rejected | Escalations into it |")
+    print("|---|---|---|---|---|---|")
+    for mid, row in listed.items():
+        s = data.get(mid)
+        if not s:
+            print(f"| {row.get('Tier')} | `{mid}` | 0 | — | — | — |")
+            continue
+        judged = s["spawns"] - s["spec_gap"]
+        rate = f"{100 * s['approved'] / judged:.0f}%" if judged else "—"
+        print(f"| {row.get('Tier')} | `{mid}` | {s['spawns']} | {rate} | {s['rejected']} | {s['as_escalation']} |")
 
 
 def apply(path, text, header, rows, span, models, removed, repriced, grouped, top):

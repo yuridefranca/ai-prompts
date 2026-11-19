@@ -46,6 +46,9 @@ aliases: {alias → path, comma-separated, or "none"}
 new_component: {path pattern}
 new_service: {path pattern}
 new_route: {path pattern}
+
+## Agents
+company: {context pack name, e.g. duelbits | clair — or "none"}      tool: {copilot | claude | cursor}
 ````
 
 ## Filling this in

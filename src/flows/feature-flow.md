@@ -316,7 +316,7 @@ The specs are code and belong in the repo — phase 9 commits them into `Test.e2
 
 ## Phase 9.5 — Gotcha Harvest
 
-Orchestrator asks "What surprised us?", reads `FINDINGS.md` for `surprise`-tagged entries. Any surprise → one-line addition to the relevant skill's Gotchas section. Also checks: "Did any review finding violate a pattern not in `.ai-rules/review.md`?" → suggests additions (see [Keeping It Accurate](../PLAN.md#keeping-it-accurate) for the trigger-count pruning half of this mechanism). Decision log finalized in `INDEX.md`. Process-tier artifacts may now be deleted.
+Orchestrator asks "What surprised us?", reads `FINDINGS.md` for `surprise`-tagged entries. Any surprise → one-line addition to the relevant skill's Gotchas section. Also checks: "Did any review finding violate a pattern not in `.ai-rules/review.md`?" → suggests additions (see [Keeping It Accurate](../PLAN.md#keeping-it-accurate) for the trigger-count pruning half of this mechanism). Decision log finalized in `INDEX.md`. **Run log**: `runs_log.py record .ai-workflow/[feature] --company <project.md Agents.company>` appends `RUNS.md`'s rows, anonymized, to the company's model log (see [runs-template.md](../templates/runs-template.md)); if an agent escalated on two or more tasks, propose a tier change for it per [agent-tiers.md](../schemas/agent-tiers.md#rules). Process-tier artifacts may now be deleted.
 
 ---
 

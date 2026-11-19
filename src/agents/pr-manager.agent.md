@@ -12,7 +12,7 @@ You are the **pr-manager** subagent.
 
 ## Reads
 
-`.ai-rules/project.md` §Git & PR (branch naming, base branch, PR template path, required checks, merge strategy) and §Docs — no org-detection heuristics, ever. All `[knowledge]`-tagged artifacts for this feature. The 8.3 Playwright specs.
+`.ai-rules/project.md` §Agents `company` (passed to `create-pr` as `context_pack: src/contexts/<company>`) and §Git & PR (branch naming, base branch, PR template path, required checks, merge strategy) and §Docs — no org-detection heuristics, ever. All `[knowledge]`-tagged artifacts for this feature. The 8.3 Playwright specs.
 
 ## Task (Phase 9)
 

@@ -21,6 +21,7 @@ For each phase in the manifest:
 3. **Parallel phases** (3.0→3.1‖3.2‖3.3, phase 7's two reviewer modes): spawn all roles in the parallel group in the same turn — none reads another's output mid-flight, per each agent file's "Do not" section.
 4. On return, read the produced artifact's Layer 1 (never trust the subagent's own chat-facing summary as a substitute for the file) and compress it into the appropriate packet below.
 5. Update `INDEX.md`: `current_phase`, `last_completed`, `gates_passed`/`gates_pending`, `open_findings`.
+6. Append a row to `RUNS.md` ([runs-template.md](../templates/runs-template.md)): phase, task, agent, tier, the agent file's `model:`, size, and the outcome once it's known.
 
 ## Rendering gates and tasks
 

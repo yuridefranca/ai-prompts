@@ -55,6 +55,9 @@ aliases: @/ → src/, @components/ → src/components/
 new_component: src/components/<Domain>/<Name>/
 new_service: src/services/<domain>/
 new_route: src/routes/
+
+## Agents
+company: duelbits      tool: copilot
 ````
 
 ### Section reference
@@ -67,6 +70,7 @@ new_route: src/routes/
 | `Git & PR` | branch pattern + ticket regex, base branch, merge strategy, commit convention, PR template path, required checks | phase 9 |
 | `Docs` | `features`, `adr`, `glossary`, `api` paths | phase 6.y, phase 9 promotion (see [artifact-lifecycle.md](artifact-lifecycle.md)) |
 | `Structure` | path aliases, `new_component`/`new_service`/`new_route` conventions | severity gate, phase 6.1..n |
+| `Agents` (optional) | `company` — the context pack under `src/contexts/` (model list, PR conventions); `tool` — `copilot` \| `claude` \| `cursor`. Dev-supplied, not inspected | `create-pr` (`context_pack`), 9.5 run log, the install step |
 
 Every `verify:` command is a **cheap, mechanical check** (`ls`, `jq`, a grep) — never a heuristic guess. A field with no verify command is either unverifiable in principle (e.g. `dev_url`) or the field itself *is* a command.
 

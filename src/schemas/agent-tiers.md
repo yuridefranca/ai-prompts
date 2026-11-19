@@ -57,7 +57,8 @@ Skills used **outside** the flows may carry a `tier:` in their frontmatter (`btw
 4. **The tier shows in the packet.** Task and gate packets note the tier that produced the artifact (`spawned at B · implementer`), so a reviewer knows what to expect and a pattern of escalations is visible.
 5. **Capabilities filter the pick.** An agent that declares `needs: vision` (`task-explainer` for screenshots, `qa-automator` for the UI branch) gets the first model in its tier with ✅ in the **Vision** column, not just the first row.
 6. **A tier with no model falls up.** If a company's `models.md` has no B model for a tool, B agents use that tool's A model, and so on up to S. Never down.
-7. **A repeated escalation is a gotcha.** If the same kind of task escalates in two runs, the 9.5 harvest proposes a tier change for that agent or a sharper task template in 6.0 — so the defaults above self-correct.
+7. **Decide tiers from runs, not just reputation.** Every spawn is logged in `RUNS.md`; at 9.5 `scripts/runs_log.py record` keeps an anonymized per-company log, and `models_refresh.py` shows each listed model's approval rate next to its tier. A model that keeps getting rejected at B moves out of B; a candidate that does well on a few real tasks earns a row.
+8. **A repeated escalation is a gotcha.** If the same kind of task escalates in two runs, the 9.5 harvest proposes a tier change for that agent or a sharper task template in 6.0 — so the defaults above self-correct.
 
 ## Resolving a tier to a model
 

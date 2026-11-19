@@ -35,6 +35,7 @@
 | `8-qa-plan.md` | knowledge | Scenarios become the regression suite's starting point |
 | `8-qa-results.md` / `8-qa-automated-results.md` | process | Point-in-time run record |
 | `9-pr-notes.md` | knowledge | The PR body itself; survives in GitHub |
+| `RUNS.md` | process | Which model ran each spawn and how it went; anonymized into the company run log at 9.5, then deleted |
 | `FINDINGS.md` | process | Open findings block the PR; resolved ones die with the run |
 | `INDEX.md` | process | Flow state — see [index-frontmatter.md](index-frontmatter.md) |
 
